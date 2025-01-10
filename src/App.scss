@@ -1,0 +1,30 @@
+//import function
+@use "./styles/components/functions" as *;
+
+//import components
+@import "./styles/components/variables";
+@import "./styles/components/mixins";
+
+//font
+@import url('https://fonts.googleapis.com/css2?family=Inria+Sans:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap');
+
+* {
+  margin: 0;
+  padding: 0;
+  color: red;
+}
+
+body {
+  background: url(./images/LoginBg.jpg);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  height: 90vh;
+}
+
+.baseContainer {
+  background-color: $primaryColor;
+  width: 100%;
+  border-radius: px-to-rem(30); //30px
+  @include grid(5vw 1fr, 5vh 1fr, px-to-rem(5));
+}
