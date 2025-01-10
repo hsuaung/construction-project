@@ -1,24 +1,30 @@
-import logo from './logo.svg';
-import './App.css';
-
+import React from 'react';
+import {BrowserRouter as Router, Routes, Route} from 'react-router-dom';
+import BaseLayout from './components/BaseLayout';
+import Home from './pages/Home';
+import Schedule from './pages/schedule/List';
+import SiteList from './pages/site/List';
+import StaffList from './pages/menu/staff/List';
+import VehicleList from './pages/menu/vehicle/List';
+import BusinessPartnerList from './pages/menu/businessPartner/List';
+import OperationTypeList from './pages/menu/operationType/List';
+import './App.scss';
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Router>
+      <Routes>
+        <Route path="/" element={<BaseLayout />}>
+          {/* Add your routes here */}
+          <Route index element={<Home />} />
+          <Route path="schedule" element={<Schedule />} />
+          <Route path="site" element={<SiteList />} />
+          <Route path="staff" element={<StaffList />} />
+          <Route path="vehicle" element={<VehicleList />} />
+          <Route path="business-partner" element={<BusinessPartnerList />} />
+          <Route path="operation-type" element={<OperationTypeList />} />
+        </Route>
+      </Routes>
+    </Router>
   );
 }
 

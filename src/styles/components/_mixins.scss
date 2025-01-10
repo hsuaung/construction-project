@@ -1,0 +1,21 @@
+//flex
+@mixin flex($direction, $justify, $align, $gap) {
+    display: flex;
+    flex-direction: $direction;
+    justify-content: $justify;
+    align-items: $align;
+    @if $gap != 0 {
+      gap: $gap;
+    }
+    flex-wrap: wrap;
+}
+
+//grid
+@mixin grid($template-columns, $template-rows, $gap) {
+    display: grid;
+    grid-template-columns: $template-columns;
+    grid-template-rows: $template-rows;
+    @if $gap != 0 {
+        gap: $gap;
+    }
+}
