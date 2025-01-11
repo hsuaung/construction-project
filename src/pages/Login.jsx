@@ -1,11 +1,11 @@
 import React from "react";
 import "../assets/styles/login.scss";
-
+import Logo from "../assets/images/logo.png"
 const Login = () => {
   return (
     <div className="loginContainer">
       <div className="loginBox">
-        <img src="/assets/images/logo.png" alt="Logo" />
+        <img src={Logo} alt="Logo" width={180} height={150}/>
         <div>
           <label htmlFor="email">Email *</label>
           <div>
