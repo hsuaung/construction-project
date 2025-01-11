@@ -1,6 +1,7 @@
 import React from 'react';
 import {BrowserRouter as Router, Routes, Route} from 'react-router-dom';
 import BaseLayout from './components/BaseLayout';
+import Login from './pages/Login';
 import Home from './pages/Home';
 import Schedule from './pages/schedule/List';
 import SiteList from './pages/site/List';
@@ -13,15 +14,16 @@ function App() {
   return (
     <Router>
       <Routes>
+        <Route path="/login" element={<Login />} />
         <Route path="/" element={<BaseLayout />}>
           {/* Add your routes here */}
           <Route index element={<Home />} />
-          <Route path="schedule" element={<Schedule />} />
-          <Route path="site" element={<SiteList />} />
-          <Route path="staff" element={<StaffList />} />
-          <Route path="vehicle" element={<VehicleList />} />
-          <Route path="business-partner" element={<BusinessPartnerList />} />
-          <Route path="operation-type" element={<OperationTypeList />} />
+          <Route path="/schedule" element={<Schedule />} />
+          <Route path="/site" element={<SiteList />} />
+          <Route path="/staff" element={<StaffList />} />
+          <Route path="/vehicle" element={<VehicleList />} />
+          <Route path="/business-partner" element={<BusinessPartnerList />} />
+          <Route path="/operation-type" element={<OperationTypeList />} />
         </Route>
       </Routes>
     </Router>

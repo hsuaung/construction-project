@@ -1,9 +1,9 @@
 //import function
-@use "./styles/components/functions" as *;
+@use "./assets/styles/components/functions" as *;
 
 //import components
-@import "./styles/components/variables";
-@import "./styles/components/mixins";
+@import "./assets/styles/components/variables";
+@import "./assets/styles/components/mixins";
 
 //font
 @import url('https://fonts.googleapis.com/css2?family=Inria+Sans:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap');
@@ -11,20 +11,106 @@
 * {
   margin: 0;
   padding: 0;
-  color: red;
+  color: $whiteColor;
+  font-family: "Inria Sans", serif;
+  font-weight: 400;
+  font-style: normal;
 }
 
 body {
-  background: url(./images/LoginBg.jpg);
+  background: url(./assets/images/LoginBg.jpg);
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-  height: 90vh;
+  height: 95vh;
 }
 
+svg,
+button {
+  cursor: pointer;
+}
+
+//Layout
 .baseContainer {
   background-color: $primaryColor;
-  width: 100%;
+  width: auto;
+  height: 95vh;
+  margin: px-to-rem(20);
+  // padding: px-to-rem(10);
   border-radius: px-to-rem(30); //30px
-  @include grid(5vw 1fr, 5vh 1fr, px-to-rem(5));
+  @include grid(5% 1fr, 10% 1fr 8%, px-to-rem(5));
+}
+
+.sideMenu {
+  grid-row: 1/4;
+  @include flex(column, space-between, center, 0);
+  padding: px-to-rem(10);
+  border-right: 1px solid #36363691;
+
+  // box-shadow: $itemGrayColor 1px 0px 4px;
+  .menuIcon {
+    position: relative;
+    top: 0;
+  }
+
+  .menu {
+    position: absolute;
+    left: 100px;
+    top: 0px;
+    width: 10vw;
+    background-color: #1e1e1e;
+    border-radius: px-to-rem(20);
+    padding: px-to-rem(10);
+
+    .menuTitles {
+      @include flex(row, start, center, px-to-rem(5));
+
+      &:hover {
+        color: $itemOrangeColor;
+        cursor: pointer;
+      }
+    }
+
+  }
+}
+
+.sideIcon {
+  background-color: $itemGrayColor;
+  border-radius: 50%;
+  padding: px-to-rem(4);
+  margin: px-to-rem(6);
+  transition: background-color .3s ease;
+
+  svg {
+    width: px-to-rem(20);
+    height: px-to-rem(20);
+  }
+
+  &:hover {
+    background-color: $itemOrangeColor;
+  }
+
+  &.active {
+    background-color: $itemOrangeColor;
+  }
+}
+
+.topMenu {
+  @include flex(row, space-between, center, 0);
+  padding: px-to-rem(10) px-to-rem(20) px-to-rem(10) px-to-rem(10);
+
+  .menuTitle {
+    @include flex(row, start, baseline, px-to-rem(5));
+  }
+
+  .userProfile {
+    @include flex(row, start, center, px-to-rem(5));
+
+    div {
+      img {
+        border-radius: 50%;
+        cursor: pointer;
+      }
+    }
+  }
 }
