@@ -11,6 +11,7 @@ export default function TopMenu() {
         '/vehicle': 'List of Vehicles',
         '/business-partner': 'List of Business Partners',
         '/operation-type': 'List of Operation Types',
+        '/userprofile': 'User Profile',
     }
     const menuTitle = titles[pathname];
   return (
@@ -26,7 +27,9 @@ export default function TopMenu() {
         <div className='userProfile'>
             <p>Welcome Back!</p>
             <div>
-                <img src={Profile} alt="" width={45} height={45}/>
+                <Link to="/userprofile">
+                    <img src={Profile} alt="" width={45} height={45}/>
+                </Link>
             </div>
         </div>
     </section>

@@ -17,6 +17,11 @@
   font-style: normal;
 }
 
+Link,
+a {
+  text-decoration: none;
+}
+
 body {
   background: url(./assets/images/LoginBg.jpg);
   background-size: cover;
