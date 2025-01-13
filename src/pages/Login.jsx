@@ -1,11 +1,54 @@
-import React from "react";
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import "../assets/styles/login.scss";
-import Logo from "../assets/images/logo.png"
+import Logo from "../assets/images/logo.png";
 const Login = () => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [emailError, setEmailError] = useState("");
+  const [passwordError, setPasswordError] = useState("");
+
+  const navigate = useNavigate();
+
+  const handleLogin = async (e) => {
+    e.preventDefault();
+
+    setEmailError("");
+    setPasswordError("");
+
+    let hasError = false;
+
+    // Validate email
+    if (!email) {
+      setEmailError("Email is required");
+      hasError = true;
+    } else if (!/\S+@\S+\.\S+/.test(email)) {
+      setEmailError("Invalid email format");
+      hasError = true;
+    }
+
+    // Validate password
+    if (!password) {
+      setPasswordError("Password is required");
+      hasError = true;
+    } else if (password.length < 6) {
+      setPasswordError("Password must be at least 6 characters");
+      hasError = true;
+    }
+
+   
+
+    // Stop if there are errors
+    if (hasError) return;
+
+    // Redirect to home route
+    navigate("/");
+  };
+
   return (
     <div className="loginContainer">
-      <div className="loginBox">
-        <img src={Logo} alt="Logo" width={180} height={150}/>
+      <form onSubmit={handleLogin} className="loginBox">
+        <img src={Logo} alt="Logo" width={180} height={150} />
         <div>
           <label htmlFor="email">Email *</label>
           <div>
@@ -24,9 +67,19 @@ const Login = () => {
                 stroke-linejoin="round"
               />
             </svg>
-            <input type="text" placeholder="Enter Your Email" />
+            <input
+              type="text"
+              placeholder="Enter Your Email"
+              onChange={(e) => setEmail(e.target.value)}
+            />
           </div>
-          <small>Email is required.</small>
+          <div>
+            {emailError ? (
+              <p style={{ color: "red" }}>{emailError}</p>
+            ) : (
+              <p style={{ opacity: "0" }}>hee</p>
+            )}
+          </div>
         </div>
 
         <div>
@@ -39,13 +92,23 @@ const Login = () => {
               />
             </svg>
 
-            <input type="password" placeholder="Enter Your Password" />
+            <input
+              type="password"
+              placeholder="Enter Your Password"
+              onChange={(e) => setPassword(e.target.value)}
+            />
           </div>
-          <small>Password is required.</small>
+          <div>
+            {passwordError ? (
+              <p style={{ color: "red" }}>{passwordError}</p>
+            ) : (
+              <p style={{ opacity: "0" }}>hee</p>
+            )}
+          </div>
         </div>
 
-        <button>Login</button>
-      </div>
+        <button type="submit">Login</button>
+      </form>
     </div>
   );
 };
