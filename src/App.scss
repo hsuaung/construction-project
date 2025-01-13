@@ -17,9 +17,14 @@
   font-style: normal;
 }
 
+button {
+  cursor: pointer;
+}
+
 Link,
 a {
   text-decoration: none;
+  cursor: pointer;
 }
 
 body {
@@ -121,6 +126,43 @@ button {
 }
 
 .mainContent {
-  background-color: red;
+  // background-color: red;
   padding: px-to-rem(10) px-to-rem(20) px-to-rem(10) px-to-rem(10);
+}
+
+//button
+
+.buttonOne {
+  background-color: $itemGrayColor;
+  color: $itemOrangeColor;
+  border-radius: px-to-rem(20);
+  padding: px-to-rem(2) px-to-rem(10);
+
+  svg path {
+    color: $itemOrangeColor;
+  }
+
+  &:hover,
+  &:focus {
+    background-color: $itemOrangeColor;
+    color: $whiteColor;
+
+    svg path {
+      color: $whiteColor;
+    }
+  }
+}
+
+.buttonTwo {
+  background-color: $itemOrangeColor;
+  border: none;
+  color: $whiteColor;
+  border-radius: px-to-rem(20);
+  opacity: .95;
+  padding: px-to-rem(6) px-to-rem(15);
+
+  &:hover,
+  &:focus {
+    opacity: 1;
+  }
 }
