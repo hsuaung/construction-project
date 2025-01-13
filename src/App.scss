@@ -6,7 +6,7 @@
 @import "./assets/styles/components/mixins";
 
 //font
-@import url('https://fonts.googleapis.com/css2?family=Inria+Sans:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Inria+Sans:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap");
 
 * {
   margin: 0;
@@ -43,7 +43,7 @@ button {
   margin: px-to-rem(20);
   // padding: px-to-rem(10);
   border-radius: px-to-rem(30); //30px
-  @include grid(5% 1fr, 10% 1fr, px-to-rem(5));
+  @include grid(5% 1fr, 10% 3fr, px-to-rem(5));
 }
 
 .sideMenu {
@@ -75,7 +75,6 @@ button {
         cursor: pointer;
       }
     }
-
   }
 }
 
@@ -84,7 +83,7 @@ button {
   border-radius: 50%;
   padding: px-to-rem(4);
   margin: px-to-rem(6);
-  transition: background-color .3s ease;
+  transition: background-color 0.3s ease;
 
   svg {
     width: px-to-rem(20);
@@ -121,6 +120,6 @@ button {
 }
 
 .mainContent {
-  background-color: red;
+  // background-color: red;
   padding: px-to-rem(10) px-to-rem(20) px-to-rem(10) px-to-rem(10);
 }
