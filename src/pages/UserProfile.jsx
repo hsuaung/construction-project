@@ -88,8 +88,8 @@ export default function userProfile() {
 
         <hr />
         <div className="btnGp">
-          <button>Cancel</button>
-          <button>Save</button>
+          <button className="buttonThree">Cancel</button>
+          <button className="buttonTwo">Save</button>
         </div>
       </form>
     </div>

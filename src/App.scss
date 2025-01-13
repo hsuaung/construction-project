@@ -128,13 +128,12 @@ button {
   // background-color: red;
   padding: px-to-rem(10) px-to-rem(20) px-to-rem(10) px-to-rem(10);
 }
-<<<<<<< HEAD
-=======
 
 //button
 
 .buttonOne {
   background-color: $itemGrayColor;
+  border: none;
   color: $itemOrangeColor;
   border-radius: px-to-rem(20);
   padding: px-to-rem(2) px-to-rem(10);
@@ -159,12 +158,27 @@ button {
   border: none;
   color: $whiteColor;
   border-radius: px-to-rem(20);
-  opacity: .95;
+  opacity: 0.9;
   padding: px-to-rem(6) px-to-rem(15);
 
   &:hover,
   &:focus {
+    background-color: $itemGrayColor;
+    color: $secondaryColor;
     opacity: 1;
   }
 }
->>>>>>> 8d59ceace8dfb280bc805e501c9c313b30e26db8
+
+.buttonThree {
+  background-color: $itemGrayColor;
+  color: $secondaryColor;
+  border: none;
+  border-radius: px-to-rem(20);
+  opacity: 0.9;
+  padding: px-to-rem(6) px-to-rem(15);
+  &:hover,
+  &:focus {
+    background-color: $itemOrangeColor;
+    color: $whiteColor;
+  }
+}
