@@ -10,10 +10,10 @@ export default function BaseLayout() {
     <div className='baseContainer'>
         <SideMenu/>
         <TopMenu/>
-        <main>
+        <main className='mainContent'>
         <Outlet />
         </main>
-        <Pagination/>
+        {/* <Pagination/> */}
     </div>
   )
 }
