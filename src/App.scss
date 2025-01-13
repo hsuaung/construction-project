@@ -6,7 +6,7 @@
 @import "./assets/styles/components/mixins";
 
 //font
-@import url('https://fonts.googleapis.com/css2?family=Inria+Sans:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Inria+Sans:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap");
 
 * {
   margin: 0;
@@ -48,7 +48,7 @@ button {
   margin: px-to-rem(20);
   // padding: px-to-rem(10);
   border-radius: px-to-rem(30); //30px
-  @include grid(5% 1fr, 10% 1fr, px-to-rem(5));
+  @include grid(5% 1fr, 10% 3fr, px-to-rem(5));
 }
 
 .sideMenu {
@@ -80,7 +80,6 @@ button {
         cursor: pointer;
       }
     }
-
   }
 }
 
@@ -89,7 +88,7 @@ button {
   border-radius: 50%;
   padding: px-to-rem(4);
   margin: px-to-rem(6);
-  transition: background-color .3s ease;
+  transition: background-color 0.3s ease;
 
   svg {
     width: px-to-rem(20);
@@ -134,6 +133,7 @@ button {
 
 .buttonOne {
   background-color: $itemGrayColor;
+  border: none;
   color: $itemOrangeColor;
   border-radius: px-to-rem(20);
   padding: px-to-rem(2) px-to-rem(10);
@@ -158,11 +158,27 @@ button {
   border: none;
   color: $whiteColor;
   border-radius: px-to-rem(20);
-  opacity: .9;
+  opacity: 0.9;
   padding: px-to-rem(6) px-to-rem(15);
 
   &:hover,
   &:focus {
+    background-color: $itemGrayColor;
+    color: $secondaryColor;
     opacity: 1;
+  }
+}
+
+.buttonThree {
+  background-color: $itemGrayColor;
+  color: $secondaryColor;
+  border: none;
+  border-radius: px-to-rem(20);
+  opacity: 0.9;
+  padding: px-to-rem(6) px-to-rem(15);
+  &:hover,
+  &:focus {
+    background-color: $itemOrangeColor;
+    color: $whiteColor;
   }
 }
