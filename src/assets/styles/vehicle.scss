@@ -10,6 +10,7 @@
     height: 94%;
     border-radius: px-to-rem(20); //20px
     padding: px-to-rem(20);
+    z-index: 0;
 
     .searchAndFilter {
         @include flex(row, space-between, center, 0);
@@ -43,7 +44,33 @@
 
         .filterContainer {
             @include flex(row, space-between, center, px-to-rem(5));
+            position: relative;
+            top: 0;
+
+            .filterDropDown {
+                position: absolute;
+                top: px-to-rem(40);
+                left: px-to-rem(-120);
+                padding: px-to-rem(15);
+                border-radius: px-to-rem(10);
+                line-height: px-to-rem(30);
+                z-index: 10;
+                background-color: $itemGrayColor;
+
+                p {
+                    color: $whiteColor;
+
+                    &:hover {
+                        cursor: pointer;
+                        // background-color: $itemOrangeColor;
+                        color: $secondaryColor;
+                    }
+                }
+
+            }
         }
+
+
     }
 
     .list {
