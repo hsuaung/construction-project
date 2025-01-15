@@ -48,13 +48,14 @@
 
     .list {
         padding: px-to-rem(30) 0;
+        height: 80%;
 
         .listHeader {
             position: static;
             background-color: $itemOrangeColor;
             padding: px-to-rem(20);
             border-radius: px-to-rem(15);
-            @include grid(20% 20% 30% 20% 1fr, 1fr, px-to-rem(10));
+            @include grid(px-to-rem(10) 20% 20% 30% 20% 1fr, 1fr, px-to-rem(10));
 
             div {
                 @include flex(row, start, center, px-to-rem(5));
@@ -62,18 +63,19 @@
         }
 
         .listData {
+            width: 100%;
+            // background-color: #f2f3f3;
+
             .data {
-                @include grid(20% 20% 30% 20% 1fr, 1fr, px-to-rem(10));
-                background-color: $whiteColor;
-
-                div {
-                    color: $blackColor;
-                }
-
+                @include grid(px-to-rem(10) 20% 20% 30% 20% 1fr, 1fr, px-to-rem(10));
+                align-items: start;
+                background-color: $listBoxGrayColor;
                 margin: px-to-rem(10) 0;
                 padding: px-to-rem(20);
                 border-radius: px-to-rem(15);
-                .detailBtn{
+                touch-action: none;
+
+                .detailBtn {
                     text-align: right;
                 }
             }
