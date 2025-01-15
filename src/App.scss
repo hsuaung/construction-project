@@ -176,11 +176,21 @@ button {
   }
 }
 
-.buttonThree {
+.cancelBtn {
   background-color: $itemGrayColor;
-  color: $secondaryColor;
   border: none;
+  color: $itemOrangeColor;
   border-radius: px-to-rem(20);
+
+  padding: px-to-rem(7) px-to-rem(10);
+}
+.saveBtn {
+  background-color: $itemOrangeColor;
+  border: none;
+  color: $whiteColor;
+  border-radius: px-to-rem(20);
+  padding: px-to-rem(7) px-to-rem(13);
+
   opacity: 0.9;
   padding: px-to-rem(6) px-to-rem(15);
 
@@ -190,3 +200,4 @@ button {
     color: $whiteColor;
   }
 }
+
