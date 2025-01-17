@@ -1,16 +1,15 @@
 import React from "react";
 import "../assets/styles/accInfo.scss";
 import Profile from "../assets/images/sampleProfile.jpg";
-import Orange from "../assets/images/orange.png";
-import Blue from "../assets/images/blue.png";
-import Green from "../assets/images/green.png";
-export default function userProfile() {
+import ImageUpload from "../components/ImageUpload";
+export default function UserProfile() {
   return (
     <div className="infoContainer">
       <div className="coverDiv">
-        <img src={Profile} alt="" />
+        <div className="img">
+          <ImageUpload />
+        </div>
       </div>
-
       <form>
         <div className="inputFieldContainer">
           <div>
@@ -38,6 +37,7 @@ export default function userProfile() {
                 disabled
               />
             </div>
+
             <div className="inputGp">
               <label htmlFor="team">
                 <div>Team</div>
