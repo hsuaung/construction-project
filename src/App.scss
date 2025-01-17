@@ -17,11 +17,12 @@
 }
 
 h2 {
-  @include responsive-font(1.1rem, 1.3rem, 1.5rem)
+  @include responsive-font(1.1rem, 1.3rem, 1.5rem);
 }
 
-p {
-  @include responsive-font(.75rem, 0.9rem, 1rem)
+p,
+div {
+  @include responsive-font(0.75rem, 0.9rem, 1rem);
 }
 
 button {
@@ -181,8 +182,12 @@ button {
   border: none;
   color: $itemOrangeColor;
   border-radius: px-to-rem(20);
-
+  opacity: 0.9;
   padding: px-to-rem(7) px-to-rem(10);
+  &:hover,
+  &:focus {
+    opacity: 0.5;
+  }
 }
 .saveBtn {
   background-color: $itemOrangeColor;
@@ -190,14 +195,12 @@ button {
   color: $whiteColor;
   border-radius: px-to-rem(20);
   padding: px-to-rem(7) px-to-rem(13);
-
   opacity: 0.9;
   padding: px-to-rem(6) px-to-rem(15);
 
   &:hover,
   &:focus {
-    background-color: $itemOrangeColor;
+    opacity: 0.5;
     color: $whiteColor;
   }
 }
-
