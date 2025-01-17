@@ -109,3 +109,22 @@
         }
     }
 }
+
+.entryContainer {
+    background-color: $modelBoxBgColor;
+    position: absolute;
+    top: 20%;
+    left: 30%;
+    z-index: 20;
+    // padding: px-to-rem(5);
+    border-radius: px-to-rem(15);
+    @include flex(column, center, center, 0);
+
+    .modelTitle {
+        background-color: $itemGrayColor;
+        width: 100%;
+        padding: px-to-rem(5);
+        border-radius: px-to-rem(15) px-to-rem(15) px-to-rem(0) px-to-rem(0);
+        text-align: center;
+    }
+}

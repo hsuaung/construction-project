@@ -28,7 +28,7 @@ export default function TopMenu() {
             <p>Welcome Back!</p>
             <div>
                 <Link to="/userprofile">
-                    <img src={Profile} alt="" width={45} height={45}/>
+                    <img src={Profile} alt="profile" className='profilePopUp'/>
                 </Link>
             </div>
         </div>

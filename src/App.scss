@@ -34,12 +34,12 @@ a {
   cursor: pointer;
 }
 
-body {
+html {
   background: url(./assets/images/LoginBg.jpg);
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-  height: 95vh;
+  height: 100vh;
 }
 
 svg,
@@ -47,7 +47,25 @@ button {
   cursor: pointer;
 }
 
-//Layout
+.flexRow {
+  @include flex(row, start, center, px-to-rem(5))
+}
+
+.flexCol {
+  @include flex(column, start, center, px-to-rem(5))
+}
+
+//Layout  
+
+.loginContainer {
+  background-color: $whiteColor;
+  width: 400px;
+  height: 500px;
+  margin: auto;
+  border-radius: px-to-rem(20);
+  padding: px-to-rem(20);
+}
+
 .baseContainer {
   background-color: $primaryColor;
   width: auto;
@@ -55,61 +73,76 @@ button {
   margin: px-to-rem(20);
   // padding: px-to-rem(10);
   border-radius: px-to-rem(30); //30px
-  @include grid(5% 1fr, 10% 3fr, px-to-rem(5));
+  @include grid(80px 1fr, 10% 3fr, px-to-rem(5));
 }
 
 .sideMenu {
   grid-row: 1/3;
-  @include flex(column, space-between, center, 0);
+  @include flex(column, start, center, px-to-rem(20));
   padding: px-to-rem(10);
   border-right: 1px solid #36363691;
 
   // box-shadow: $itemGrayColor 1px 0px 4px;
+
   .menuIcon {
     position: relative;
     top: 0;
+  }
+
+  .menuIcons {
+    height: 80vh;
+    @include flex(column, space-between, center, 0);
   }
 
   .menu {
     position: absolute;
     left: 100px;
     top: 0px;
-    width: 10vw;
-    background-color: #1e1e1e;
+    min-width: 150px;
+    background-color: $itemGrayColor;
     border-radius: px-to-rem(20);
-    padding: px-to-rem(10);
+    padding: px-to-rem(15);
+
 
     .menuTitles {
-      @include flex(row, start, center, px-to-rem(5));
+      @include flex(row, start, center, px-to-rem(10));
 
-      &:hover {
+      &:hover p,
+      &:hover svg path {
         color: $itemOrangeColor;
+        fill: $itemOrangeColor;
         cursor: pointer;
       }
     }
   }
+
+  .logout {
+    justify-self: flex-end;
+  }
+
+  .sideIcon {
+    background-color: $itemGrayColor;
+    border-radius: 50%;
+    padding: px-to-rem(7);
+    margin: px-to-rem(10) 0;
+    transition: background-color 0.3s ease;
+
+    svg {
+      width: px-to-rem(20);
+      height: px-to-rem(20);
+    }
+
+    &:hover {
+      background-color: $itemOrangeColor;
+    }
+
+    &.active {
+      background-color: $itemOrangeColor;
+    }
+  }
 }
 
-.sideIcon {
-  background-color: $itemGrayColor;
-  border-radius: 50%;
-  padding: px-to-rem(4);
-  margin: px-to-rem(6);
-  transition: background-color 0.3s ease;
 
-  svg {
-    width: px-to-rem(20);
-    height: px-to-rem(20);
-  }
-
-  &:hover {
-    background-color: $itemOrangeColor;
-  }
-
-  &.active {
-    background-color: $itemOrangeColor;
-  }
-}
 
 .topMenu {
   @include flex(row, space-between, center, 0);
@@ -120,10 +153,11 @@ button {
   }
 
   .userProfile {
-    @include flex(row, start, center, px-to-rem(5));
+    @include flex(row, start, center, px-to-rem(10));
 
     div {
-      img {
+      .profilePopUp {
+        max-width: px-to-rem(35);
         border-radius: 50%;
         cursor: pointer;
       }
@@ -184,6 +218,7 @@ button {
 
   padding: px-to-rem(7) px-to-rem(10);
 }
+
 .saveBtn {
   background-color: $itemOrangeColor;
   border: none;
@@ -200,4 +235,3 @@ button {
     color: $whiteColor;
   }
 }
-
