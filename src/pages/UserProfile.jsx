@@ -1,7 +1,7 @@
 import React from "react";
 import "../assets/styles/accInfo.scss";
 import Profile from "../assets/images/sampleProfile.jpg";
-import ImageUpload from "../components/ImageUpload";
+import ImageUpload from "../components/inputBoxes/ImageUpload";
 export default function UserProfile() {
   return (
     <div className="infoContainer">

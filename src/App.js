@@ -10,7 +10,7 @@ import StaffList from "./pages/menu/staff/List";
 import VehicleList from "./pages/menu/vehicle/List";
 import BusinessPartnerList from "./pages/menu/businessPartner/List";
 import OperationTypeList from "./pages/menu/operationType/List";
-import ImageUpload from "./components/ImageUpload";
+import ImageUpload from "./components/inputBoxes/ImageUpload";
 import "./App.scss";
 function App() {
   return (

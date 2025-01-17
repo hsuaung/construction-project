@@ -1,14 +1,15 @@
 //import function
-@use "./components/functions" as *;
+@use "../components/functions" as *;
 
 //import components
-@import "./components/variables";
-@import "./components/mixins";
+@import "../components/variables";
+@import "../components/mixins";
 
 .imageUploadContainer {
   width: max-content;
 
   border-radius: px-to-rem(15);
+
   .image {
     width: px-to-rem(100);
     height: px-to-rem(100);
@@ -16,12 +17,14 @@
     border-radius: px-to-rem(15);
     background-color: $itemGrayColor;
     position: relative;
+
     img {
       width: 100%;
       height: 100%;
       object-fit: fit;
     }
   }
+
   .imageUploadIcon {
     position: absolute;
     bottom: 0;
@@ -30,6 +33,7 @@
     width: 100%;
     @include flex(row, center, center, px-to-rem(1));
     padding: px-to-rem(3);
+
     svg {
       width: px-to-rem(20);
       height: px-to-rem(20);

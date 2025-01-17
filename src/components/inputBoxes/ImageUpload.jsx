@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import "../assets/styles/imageUpload.scss";
+import "../../assets/styles/inputBoxes/imageUpload.scss";
 const ImageUpload = () => {
   const [image, setImage] = useState(null);
 
