@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import Pagination from '../../../components/Pagination'
+import Pagination from '../../../components/Layouts/Pagination'
 import "../../../assets/styles/vehicle.scss";
 import { closestCorners, DndContext } from '@dnd-kit/core';
 import  Column from './Column/Column';
