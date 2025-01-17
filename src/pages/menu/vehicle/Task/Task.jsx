@@ -2,7 +2,7 @@ import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import React from 'react'
 
-export const Task = ({id,name,group,VIEDate_RIDate,IEDate}) => {
+export const Task = ({id,name,group,VIEDate_RIDate,IEDate,status}) => {
     const {attributes,listeners,setNodeRef,transition,transform} = useSortable({id})
     const style = { 
         transition,
