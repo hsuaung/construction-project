@@ -49,14 +49,14 @@ button {
 }
 
 .flexRow {
-  @include flex(row, start, center, px-to-rem(5))
+  @include flex(row, start, center, px-to-rem(5));
 }
 
 .flexCol {
-  @include flex(column, start, center, px-to-rem(5))
+  @include flex(column, start, center, px-to-rem(5));
 }
 
-//Layout  
+//Layout
 
 .loginContainer {
   background-color: $whiteColor;
@@ -91,7 +91,7 @@ button {
   }
 
   .menuIcons {
-    height: 80vh;
+    height: 76vh;
     @include flex(column, space-between, center, 0);
   }
 
@@ -103,7 +103,6 @@ button {
     background-color: $itemGrayColor;
     border-radius: px-to-rem(20);
     padding: px-to-rem(15);
-
 
     .menuTitles {
       @include flex(row, start, center, px-to-rem(10));
@@ -142,8 +141,6 @@ button {
     }
   }
 }
-
-
 
 .topMenu {
   @include flex(row, space-between, center, 0);
