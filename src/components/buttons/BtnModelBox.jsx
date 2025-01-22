@@ -1,8 +1,10 @@
-import React from 'react'
-
-export default function btnModelBox() {
+import React from "react";
+import "../../assets/styles/buttons/btnModalBox.scss";
+export default function btnModelBox({ cancel, save }) {
   return (
-    <div>btnModelBox</div>
-  )
+    <div className="btnModalBoxContainer">
+      <button>{cancel}</button>
+      <button>{save}</button>
+    </div>
+  );
 }
-

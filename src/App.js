@@ -10,8 +10,10 @@ import StaffList from "./pages/menu/staff/List";
 import VehicleList from "./pages/menu/vehicle/List";
 import BusinessPartnerList from "./pages/menu/businessPartner/List";
 import OperationTypeList from "./pages/menu/operationType/List";
-import ImageUpload from "./components/inputBoxes/ImageUpload";
+
+import Ui from "./pages/Ui";
 import "./App.scss";
+
 function App() {
   return (
     <Router>
@@ -19,7 +21,9 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/" element={<BaseLayout />}>
           {/* Add your routes here */}
-          <Route path="/image-upload" element={<ImageUpload />} />
+
+          <Route path="/ui" element={<Ui />} />
+
           <Route index element={<Home />} />
           <Route path="/userprofile" element={<UserProfile />} />
           <Route path="/schedule" element={<Schedule />} />

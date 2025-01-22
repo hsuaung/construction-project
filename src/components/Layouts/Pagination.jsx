@@ -1,7 +1,5 @@
-import React from 'react'
+import React, { useState } from "react";
 
-export default function Pagination() {
-  return (
-    <div>Pagination</div>
-  )
+export default function Pagination({ data, itemsPerPage }) {
+  return <div>pangination</div>;
 }
