@@ -5,6 +5,8 @@ import { closestCorners, DndContext } from '@dnd-kit/core';
 import  Column from './Column/Column';
 import { arrayMove } from '@dnd-kit/sortable';
 import Entry from './Entry';
+import Search from '../../../components/searchAndFilter/Search';
+import Filter from '../../../components/searchAndFilter/Filter';
 export default function List() {
   const [showFitlerBox,setShowFilterBox] = useState(false);
   const [vehicles,setVehicles] = useState([
@@ -76,12 +78,7 @@ export default function List() {
       <>
       <div className='container'>
         <section className='searchAndFilter'>
-          <div className="searchContainer">
-            <input type="text" placeholder="Search" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)}/>
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M9.5 16C7.68333 16 6.146 15.3707 4.888 14.112C3.63 12.8533 3.00067 11.316 3 9.5C2.99933 7.684 3.62867 6.14667 4.888 4.888C6.14733 3.62933 7.68467 3 9.5 3C11.3153 3 12.853 3.62933 14.113 4.888C15.373 6.14667 16.002 7.684 16 9.5C16 10.2333 15.8833 10.925 15.65 11.575C15.4167 12.225 15.1 12.8 14.7 13.3L20.3 18.9C20.4833 19.0833 20.575 19.3167 20.575 19.6C20.575 19.8833 20.4833 20.1167 20.3 20.3C20.1167 20.4833 19.8833 20.575 19.6 20.575C19.3167 20.575 19.0833 20.4833 18.9 20.3L13.3 14.7C12.8 15.1 12.225 15.4167 11.575 15.65C10.925 15.8833 10.2333 16 9.5 16ZM9.5 14C10.75 14 11.8127 13.5627 12.688 12.688C13.5633 11.8133 14.0007 10.7507 14 9.5C13.9993 8.24933 13.562 7.187 12.688 6.313C11.814 5.439 10.7513 5.00133 9.5 5C8.24867 4.99867 7.18633 5.43633 6.313 6.313C5.43967 7.18967 5.002 8.252 5 9.5C4.998 10.748 5.43567 11.8107 6.313 12.688C7.19033 13.5653 8.25267 14.0027 9.5 14Z" fill="#FF7B04"/>
-            </svg>
-          </div>
+          <Search searchQuery={searchQuery} onSearch={setSearchQuery}/>
           <div className="filterContainer">
             <div className="filter buttonOne" onClick={handleFilterModelBox}>
               <svg xmlns="http://www.w3.org/2000/svg" width="20" viewBox="0 0 28 28" fill="currentColor">
@@ -89,20 +86,16 @@ export default function List() {
               </svg>
             </div>
             {showFitlerBox && 
-            <div className="filterDropDown">
-            {uniqueStatuses.map((status) => (
-              <p key={status} onClick={() => setSearchQuery(status)}>
-                {status}
-              </p>
-            ))}
-          </div>
+            <Filter uniqueStatuses={uniqueStatuses}
+            onSelect={(status) => setSearchQuery(status)}
+            isVisible={showFitlerBox}/>
           }
             <div className="download buttonOne">
               <svg xmlns="http://www.w3.org/2000/svg" width="20" viewBox="0 0 24 24" fill="currentColor">
                 <path d="M12 16L17 11L15.6 9.55L13 12.15V4H11V12.15L8.4 9.55L7 11L12 16ZM18 20C18.55 20 19.0207 19.8043 19.412 19.413C19.8033 19.0217 19.9993 18.5507 20 18V15H18V18H6V15H4V18C4 18.55 4.19567 19.021 4.587 19.413C4.97833 19.805 5.44933 20.0007 6 20H18Z" fill="currentColor"/>
               </svg>
             </div>
-            <button className='buttonTwo' onClick={handleCreateModel}>+ New Vehicle</button>
+            <button className='createNewBtn' onClick={handleCreateModel}>+ Create New</button>
           </div>
         </section>
         
@@ -135,32 +128,6 @@ export default function List() {
             </div>
             <div></div>
           </div>
-          {/* <div className="listData">
-            {vehicles.map(vehicle =>(
-              <div key={vehicle.id} className='data'>
-                <div className='dragSortBtn'>
-                  <svg xmlns="http://www.w3.org/2000/svg" width="20" viewBox="0 0 30 30" fill="none">
-                    <path d="M12.5 11.25C13.1904 11.25 13.75 10.6904 13.75 10C13.75 9.30964 13.1904 8.75 12.5 8.75C11.8096 8.75 11.25 9.30964 11.25 10C11.25 10.6904 11.8096 11.25 12.5 11.25Z" fill="#F27D14"/>
-                    <path d="M12.5 21.25C13.1904 21.25 13.75 20.6904 13.75 20C13.75 19.3096 13.1904 18.75 12.5 18.75C11.8096 18.75 11.25 19.3096 11.25 20C11.25 20.6904 11.8096 21.25 12.5 21.25Z" fill="#F27D14"/>
-                    <path d="M17.5 11.25C18.1904 11.25 18.75 10.6904 18.75 10C18.75 9.30964 18.1904 8.75 17.5 8.75C16.8096 8.75 16.25 9.30964 16.25 10C16.25 10.6904 16.8096 11.25 17.5 11.25Z" fill="#F27D14"/>
-                    <path d="M17.5 21.25C18.1904 21.25 18.75 20.6904 18.75 20C18.75 19.3096 18.1904 18.75 17.5 18.75C16.8096 18.75 16.25 19.3096 16.25 20C16.25 20.6904 16.8096 21.25 17.5 21.25Z" fill="#F27D14"/>
-                    <path d="M17.5 16.25C18.1904 16.25 18.75 15.6904 18.75 15C18.75 14.3096 18.1904 13.75 17.5 13.75C16.8096 13.75 16.25 14.3096 16.25 15C16.25 15.6904 16.8096 16.25 17.5 16.25Z" fill="#F27D14"/>
-                    <path d="M12.5 16.25C13.1904 16.25 13.75 15.6904 13.75 15C13.75 14.3096 13.1904 13.75 12.5 13.75C11.8096 13.75 11.25 14.3096 11.25 15C11.25 15.6904 11.8096 16.25 12.5 16.25Z" fill="#F27D14"/>
-                  </svg>
-                </div>
-                <div>{vehicle.name}</div>
-                <div>{vehicle.group}</div>
-                <div>{vehicle.VIEDate_RIDate}</div>
-                <div>{vehicle.IEDate}</div>
-                <div className='detailBtn'>
-                  <svg xmlns="http://www.w3.org/2000/svg" width="21" height="25" viewBox="0 0 21 25" fill="none">
-                    <path d="M6.13377 14.6432C6.58598 14.6432 7.01967 14.4316 7.33943 14.0549C7.65919 13.6783 7.83883 13.1674 7.83883 12.6348C7.83883 12.1021 7.65919 11.5912 7.33943 11.2146C7.01967 10.8379 6.58598 10.6263 6.13377 10.6263C5.68156 10.6263 5.24787 10.8379 4.92811 11.2146C4.60835 11.5912 4.42871 12.1021 4.42871 12.6348C4.42871 13.1674 4.60835 13.6783 4.92811 14.0549C5.24787 14.4316 5.68156 14.6432 6.13377 14.6432ZM12.1015 12.6348C12.1015 13.1674 11.9218 13.6783 11.6021 14.0549C11.2823 14.4316 10.8486 14.6432 10.3964 14.6432C9.94421 14.6432 9.51052 14.4316 9.19076 14.0549C8.871 13.6783 8.69136 13.1674 8.69136 12.6348C8.69136 12.1021 8.871 11.5912 9.19076 11.2146C9.51052 10.8379 9.94421 10.6263 10.3964 10.6263C10.8486 10.6263 11.2823 10.8379 11.6021 11.2146C11.9218 11.5912 12.1015 12.1021 12.1015 12.6348ZM14.6591 14.6432C15.1113 14.6432 15.545 14.4316 15.8647 14.0549C16.1845 13.6783 16.3641 13.1674 16.3641 12.6348C16.3641 12.1021 16.1845 11.5912 15.8647 11.2146C15.545 10.8379 15.1113 10.6263 14.6591 10.6263C14.2069 10.6263 13.7732 10.8379 13.4534 11.2146C13.1336 11.5912 12.954 12.1021 12.954 12.6348C12.954 13.1674 13.1336 13.6783 13.4534 14.0549C13.7732 14.4316 14.2069 14.6432 14.6591 14.6432Z" fill="currentColor" fill-opacity="0.8"/>
-                    <path fill-rule="evenodd" clip-rule="evenodd" d="M20.6267 12.6348C20.6267 19.2897 16.0461 24.6853 10.3964 24.6853C4.74666 24.6853 0.166016 19.2897 0.166016 12.6348C0.166016 5.97986 4.74666 0.584229 10.3964 0.584229C16.0461 0.584229 20.6267 5.97986 20.6267 12.6348ZM18.9217 12.6348C18.9217 18.181 15.1049 22.6769 10.3964 22.6769C5.68785 22.6769 1.87107 18.181 1.87107 12.6348C1.87107 7.08851 5.68785 2.59265 10.3964 2.59265C15.1049 2.59265 18.9217 7.08851 18.9217 12.6348Z" fill="currentColor" fill-opacity="0.8"/>
-                  </svg>
-                </div>
-              </div>
-            ))}
-          </div> */}
           <DndContext onDragEnd={handleDragEnd} collisionDetection={closestCorners}>
             <Column tasks={filteredVehicles}/>
           </DndContext>

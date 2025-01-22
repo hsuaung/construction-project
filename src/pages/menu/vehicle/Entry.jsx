@@ -1,5 +1,7 @@
 import React, { useState } from 'react'
 import "../../../assets/styles/vehicle.scss";
+import ImageUpload from '../../../components/inputBoxes/ImageUpload';
+import InputBoxOriginal from '../../../components/inputBoxes/InputBoxOriginal';
 export default function Entry({onSubmit,onClose}) {
     const groups = [ 'Group1', 'Group2', 'Group3' ];
     const [formData, setFormData] = useState({
@@ -28,7 +30,18 @@ export default function Entry({onSubmit,onClose}) {
         <div className='modelTitle'><p>Create New Vehicle</p></div>
         <div className='modelContent'>
             <form action="" onSubmit={handleSubmit}>
-                {/* image Component */}
+                <div>
+                    <label htmlFor="photo">Vehicle Photo *</label>
+                    <ImageUpload/>
+                </div>
+                <div>
+                    <label htmlFor="">
+                      <small>[Required]</small>
+                      <p>Display Name</p>
+                      <small>Please enter display name (max 20 chars)</small>
+                    </label>
+                    <input type="text" name="" id="" placeholder='Enter your car display name'/>
+                </div>
             </form>
         </div>
     </div>

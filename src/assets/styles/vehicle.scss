@@ -55,7 +55,7 @@
                 border-radius: px-to-rem(10);
                 line-height: px-to-rem(30);
                 z-index: 10;
-                background-color: $itemGrayColor;
+                background-color: $primaryColor;
 
                 p {
                     color: $whiteColor;
@@ -79,7 +79,7 @@
 
         .listHeader {
             position: static;
-            background-color: $itemOrangeColor;
+            background-color: #363636;
             padding: px-to-rem(20);
             border-radius: px-to-rem(15);
             @include grid(px-to-rem(10) 20% 20% 30% 20% 1fr, 1fr, px-to-rem(10));

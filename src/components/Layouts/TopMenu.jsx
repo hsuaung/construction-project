@@ -2,6 +2,7 @@ import React from "react";
 import { Link, useLocation } from "react-router-dom";
 import Profile from "../../assets/images/sampleProfile.jpg";
 // import Profile from "../assets/images/sampleProfile.jpg";
+
 export default function TopMenu() {
   const { pathname } = useLocation();
   const titles = {
