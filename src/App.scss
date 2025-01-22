@@ -100,7 +100,7 @@ button {
     left: 100px;
     top: 0px;
     min-width: 150px;
-    background-color: $itemGrayColor;
+    background-color: $primaryColor;
     border-radius: px-to-rem(20);
     padding: px-to-rem(15);
 
@@ -237,6 +237,20 @@ button {
   &:hover,
   &:focus {
     opacity: 0.5;
+    color: $whiteColor;
+  }
+}
+
+.createNewBtn {
+  background-color: $baseBgGrayColor;
+  border: 2px solid $itemOrangeColor;
+  color: $itemOrangeColor;
+  border-radius: px-to-rem(20);
+  padding: px-to-rem(6) px-to-rem(15);
+
+  &:hover,
+  &:focus {
+    background-color: $secondaryColor;
     color: $whiteColor;
   }
 }
