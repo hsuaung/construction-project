@@ -1,12 +1,11 @@
 import React, { useState } from 'react';
-import Pagination from '../../../components/Layouts/Pagination'
 import "../../../assets/styles/vehicle.scss";
 import { closestCorners, DndContext } from '@dnd-kit/core';
 import  Column from './Column/Column';
 import { arrayMove } from '@dnd-kit/sortable';
 import Entry from './Entry';
-import Search from '../../../components/searchAndFilter/Search';
-import Filter from '../../../components/searchAndFilter/Filter';
+import Search from '../../HOC/searchAndFilter/Search';
+import Filter from '../../HOC/searchAndFilter/Filter';
 export default function List() {
   const [showFitlerBox,setShowFilterBox] = useState(false);
   const [vehicles,setVehicles] = useState([
@@ -132,7 +131,6 @@ export default function List() {
             <Column tasks={filteredVehicles}/>
           </DndContext>
         </section>
-        <Pagination/>
       </div>
       {
         showCreateModelBox && <Entry/>

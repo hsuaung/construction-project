@@ -1,9 +1,8 @@
 import React from "react";
-import Checkbox from "../components/inputBoxes/Checkbox";
-import ImageUpload from "../components/inputBoxes/ImageUpload";
-import Pagination from "../components/Layouts/Pagination";
-import BtnModelBox from "../components/buttons/BtnModelBox";
-import ShowDate from "../components/buttons/ShowDate";
+import Checkbox from "./HOC/inputBoxes/Checkbox";
+import ImageUpload from "./HOC/inputBoxes/ImageUpload";
+import BtnModelBox from "./HOC/buttons/BtnModelBox";
+import ShowDate from "./HOC/buttons/ShowDate";
 export default function Home() {
   return (
     <div>
@@ -19,11 +18,6 @@ export default function Home() {
       <div>
         <h2>Image Upload</h2>
         <ImageUpload />
-      </div>
-      <div>
-        <h2>Pagination</h2>
-
-        <Pagination />
       </div>
       <div>
         <h2>Btn Model Box</h2>

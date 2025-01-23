@@ -1,5 +1,5 @@
 import React from "react";
-import "../../assets/styles/inputBoxes/checkbox.scss";
+import "../../../assets/styles/inputBoxes/checkbox.scss";
 export default function Checkbox({ label, id, value, name }) {
   return (
     <div className="checkboxContainer">

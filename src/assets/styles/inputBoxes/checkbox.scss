@@ -1,11 +1,12 @@
 //import function
-@use "../../../assets/styles/components/functions" as *;
+@use "../components/functions" as *;
 //import components
-@import "../../../assets/styles/components/mixins";
-@import "../../../assets/styles/components/variables";
+@import "../components/variables";
+@import "../components/mixins";
 
 .checkboxContainer {
   @include flex(row, start, center, px-to-rem(10));
+
   input[type="checkbox"] {
     -webkit-appearance: none;
     -moz-appearance: none;
@@ -17,9 +18,11 @@
     display: inline-block;
     position: relative;
   }
+
   input[type="checkbox"]:checked {
     background-color: $secondaryColor;
   }
+
   input[type="checkbox"]:checked:after {
     content: "";
     position: absolute;

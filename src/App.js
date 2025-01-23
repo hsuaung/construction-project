@@ -1,17 +1,17 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import BaseLayout from "./components/Layouts/BaseLayout";
-import Login from "./pages/Login";
-import Home from "./pages/Home";
-import UserProfile from "./pages/UserProfile";
-import Schedule from "./pages/schedule/List";
-import SiteList from "./pages/site/List";
-import StaffList from "./pages/menu/staff/List";
-import VehicleList from "./pages/menu/vehicle/List";
-import BusinessPartnerList from "./pages/menu/businessPartner/List";
-import OperationTypeList from "./pages/menu/operationType/List";
+import BaseLayout from "./components/HOC/Layouts/BaseLayout";
+import Login from "./components/auth/Login";
+import Home from "./components/Home";
+import UserProfile from "./components/UserProfile";
+import Schedule from "./components/schedule/List";
+import SiteList from "./components/site/List";
+import StaffList from "./components/menu/staff/List";
+import VehicleList from "./components/menu/vehicle/List";
+import BusinessPartnerList from "./components/menu/businessPartner/List";
+import OperationTypeList from "./components/menu/operationType/List";
 
-import Ui from "./pages/Ui";
+import Ui from "./components/Ui";
 import "./App.scss";
 
 function App() {

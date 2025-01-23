@@ -1,7 +1,6 @@
 import React, { useState } from 'react'
 import "../../../assets/styles/vehicle.scss";
-import ImageUpload from '../../../components/inputBoxes/ImageUpload';
-import InputBoxOriginal from '../../../components/inputBoxes/InputBoxOriginal';
+import ImageUpload from '../../HOC/inputBoxes/ImageUpload';
 export default function Entry({onSubmit,onClose}) {
     const groups = [ 'Group1', 'Group2', 'Group3' ];
     const [formData, setFormData] = useState({
