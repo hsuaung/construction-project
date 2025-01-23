@@ -10,7 +10,7 @@
   overflow: hidden;
   border-radius: px-to-rem(30);
   .coverDiv {
-    background-color: $secondaryColor;
+    background-color: $inputGrayColor;
     height: 28%;
     border-radius: px-to-rem(30);
     position: relative;
@@ -79,6 +79,7 @@
         width: 90%;
         margin: 0 auto;
         border: 1px solid #36363691;
+        margin-bottom: px-to-rem(5);
       }
 
       .btnGp {
