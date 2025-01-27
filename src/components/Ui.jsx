@@ -4,9 +4,15 @@ import ImageUpload from "./HOC/inputBoxes/ImageUpload";
 import BtnModelBox from "./HOC/buttons/BtnModelBox";
 import HomeDate from "./HOC/buttons/HomeDate";
 import SchedularDate from "./HOC/buttons/SchedularDate";
+import Calendar from "./Calender";
 export default function Home() {
   return (
     <div>
+      <div>
+        {/* <h2>Calendar</h2> */}
+        {/* <Calendar /> */}
+      </div>
+
       <div>
         <h2>Checkbox</h2>
         <Checkbox
