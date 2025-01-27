@@ -1,7 +1,8 @@
 import React from "react";
 import "../assets/styles/accInfo.scss";
-import Profile from "../assets/images/sampleProfile.jpg";
+
 import ImageUpload from "./HOC/inputBoxes/ImageUpload";
+import BtnModelBox from "./HOC/buttons/BtnModelBox";
 export default function UserProfile() {
   return (
     <div className="infoContainer">
@@ -97,10 +98,11 @@ export default function UserProfile() {
         </div>
         <div className="btnContainer">
           <hr />
-          <div className="btnGp">
+          <BtnModelBox cancel="Cancel" save="Save" />
+          {/* <div className="btnGp">
             <button className="cancelBtn">Cancel</button>
             <button className="saveBtn">Save</button>
-          </div>
+          </div> */}
         </div>
       </form>
     </div>

@@ -2,7 +2,8 @@ import React from "react";
 import Checkbox from "./HOC/inputBoxes/Checkbox";
 import ImageUpload from "./HOC/inputBoxes/ImageUpload";
 import BtnModelBox from "./HOC/buttons/BtnModelBox";
-import ShowDate from "./HOC/buttons/ShowDate";
+import HomeDate from "./HOC/buttons/HomeDate";
+import SchedularDate from "./HOC/buttons/SchedularDate";
 export default function Home() {
   return (
     <div>
@@ -23,9 +24,14 @@ export default function Home() {
         <h2>Btn Model Box</h2>
         <BtnModelBox cancel="Return" save="Add" />
       </div>
+
       <div>
-        <h2>Show Date</h2>
-        <ShowDate />
+        <h2>Home Date</h2>
+        <HomeDate />
+      </div>
+      <div>
+        <h2> Schedular Date</h2>
+        <SchedularDate />
       </div>
     </div>
   );
