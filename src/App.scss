@@ -56,6 +56,20 @@ button {
   @include flex(column, start, center, px-to-rem(5));
 }
 
+.input {
+  padding: px-to-rem(6) px-to-rem(10);
+  border: 0;
+  background-color: $inputGrayColor;
+  border-radius: px-to-rem(10);
+  width: 100%;
+  color: white;
+
+  &:hover,
+  &:focus {
+    outline: 1px solid $itemOrangeColor;
+  }
+}
+
 //Layout
 
 .loginContainer {
@@ -170,6 +184,10 @@ button {
 }
 
 //button
+.btnContainer {
+  @include flex(row, center, center, px-to-rem(20));
+  margin: px-to-rem(20) 0;
+}
 
 .buttonOne {
   background-color: $itemGrayColor;
@@ -251,4 +269,21 @@ button {
     background-color: $secondaryColor;
     color: $whiteColor;
   }
+}
+
+.inputLabel {
+  @include flex(row, space-between, center, 0);
+
+  .flexRow {
+    small {
+      color: $secondaryColor;
+    }
+  }
+
+  .instruction {
+    small {
+      color: $instructionGrayColor;
+    }
+  }
+
 }

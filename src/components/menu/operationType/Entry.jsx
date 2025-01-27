@@ -1,139 +1,142 @@
-import React, { useState, useEffect } from "react";
-import axios from "axios";
-import { useNavigate, useParams } from "react-router-dom";
 
-import { useCRUD } from "../../HOC/UseCRUD";
-import { useFetchData } from "../../HOC/UseFetchData";
+import React, { useState, useEffect } from "react"
+import { useNavigate, useParams } from "react-router-dom"
+import { useCRUD } from "../../HOC/UseCRUD"
+import { useFetchData } from "../../HOC/UseFetchData"
+import "../../../assets/styles/vehicle.scss"
 
-export default function Entry() {
+export default function Entry({showCreateModelbox,setShowCreateModelBox}) {
   const [formData, setFormData] = useState({
-    // name: "",
-    // color: "",
-    user_name:"",
-    user_email:""
-  });
-  const { id } = useParams();
-  const navigate = useNavigate();
+    name: "",
+    color: "#FF4400", // Default color
+  })
+  // const [errors, setErrors] = useState({}); //for validaiton
 
-  const { handleCreate, handleEdit, loading, error } = useCRUD();
 
-  // Fetch student data if id is provided
-  const { data: operationTypeData } = useFetchData(
-    id ? `http://localhost:8383/user/getByUserId/${id}` : null
-  );
+  const { id } = useParams()
+  const navigate = useNavigate()
+  const { handleCreate, handleEdit, loading, error } = useCRUD()
+
+  // Fetch data if id is provided
+  const { data: operationTypeData } = useFetchData(id ? `http://localhost:8383/user/getByUserId/${id}` : null)
+
   useEffect(() => {
     if (operationTypeData) {
-      setFormData(operationTypeData);
+      setFormData(operationTypeData)
     }
-  }, [operationTypeData]);
+  }, [operationTypeData])
 
+  // const validateForm = () => {
+  //   const newErrors = {};
+  
+  //   if (!formData.name.trim()) {
+  //     newErrors.name = "Operation type name is required.";
+  //   }
+  
+  //   if (!/^#[0-9A-Fa-f]{6}$/.test(formData.color)) {
+  //     newErrors.color = "Invalid color code.";
+  //   }
+  
+  //   setErrors(newErrors);
+  
+  //   // Return true if no errors
+  //   return Object.keys(newErrors).length === 0;
+  // };
+  
   // Handle input changes
   const handleChange = (e) => {
-    const { name, value } = e.target;
+    const { name, value } = e.target
     setFormData({
       ...formData,
       [name]: value,
-    });
-  };
+    })
+  }
 
   // Handle form submission
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log("Form Submitted:", formData);
-    // Add your form submission logic here, like sending data to an API
-    const url = id
-      ? `http://localhost:8383/user/update`
-      : "http://localhost:8383/student/create";
+    // if (!validateForm()) {
+    //   return; // Do not submit if there are validation errors
+    // }
+  
+    console.log("Form Submitted:", formData)
+
+    const url = id ? `http://localhost:8383/user/update` : "http://localhost:8383/user/create"
+
     if (id) {
-      handleEdit(url, id, formData).then(() => navigate("/operation-type/show-details"));
+      handleEdit(url, id, formData).then(() => navigate("/operation-type"))
     } else {
-      handleCreate(url, formData).then(() => navigate("/operation-type"));
+      handleCreate(url, formData).then(() => navigate("/operation-type"))
     }
-  };
+  }
 
   // Handle form clear/reset
   const handleClear = () => {
     setFormData({
-      // name: "",
-      // color: "",
-      user_name:"",
-      user_email:""
-    });
-  };
+      name: "",
+      color: "#FF4400",
+    })
+  }
+  const handleCancel = () => {
+    handleClear();
+    setShowCreateModelBox(false);
+  }
 
-  if (loading) return <div>Loading...</div>;
-  if (error) return <div>Error occurred: {error.message}</div>;
+  if (loading) return <div>Loading...</div>
+  if (error) return <div>Error occurred: {error.message}</div>
 
   return (
-    <div className="form-container">
-      <h1>{id ? "Student Update Form" : "Student Registration Form"}</h1>
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label htmlFor="name">Name:</label>
-          <input
-            type="text"
-            name="name"
-            value={formData.name}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <div>
-          <label htmlFor="email">Email:</label>
-          <input
-            type="email"
-            name="email"
-            value={formData.email}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <div>
-          <label htmlFor="gender">Gender:</label>
-          <select
-            name="gender"
-            value={formData.gender}
-            onChange={handleChange}
-            required
-          >
-            <option value="">Select Gender</option>
-            <option value="male">Male</option>
-            <option value="female">Female</option>
-          </select>
-        </div>
-        <div>
-          <label htmlFor="phonenumber">Phone Number:</label>
-          <input
-            type="text"
-            name="phonenumber"
-            value={formData.phonenumber}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <div>
-          <label htmlFor="address">Address:</label>
-          <input
-            type="text"
-            name="address"
-            value={formData.address}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <div className="btn-container">
-          <button type="submit" className="btn">
-            {id ? "Update" : "Register"}
-          </button>
-          <button
-            type="button"
-            onClick={handleClear}
-            className="btn delete-btn"
-          >
-            Clear
-          </button>
-        </div>
-      </form>
+    <div className="entryContainer">
+      <div className="modelTitle">
+        <h4>{id ? "Edit Operation Type" : "Create New Operation Type"}</h4>
+      </div>
+      <div className="modelContent">
+        <form onSubmit={handleSubmit}>
+          <div className="formGroup">
+            <label htmlFor="name" className="inputLabel">
+              <div className="flexRow">
+                <small>[Required]</small>
+                <p>Operation Type Name</p>
+              </div>
+              <div className="instruction">
+                <small>Please enter Operation type</small>
+              </div>
+            </label>
+            <div className="flexRow colorFlexRow">
+              <div className="colorPickerWrapper">
+                <input
+                  type="color"
+                  name="color"
+                  value={formData.color}
+                  onChange={handleChange}
+                  className="colorInput"
+                  aria-label="Choose color"
+                />
+                <div className="colorPreview" style={{ backgroundColor: formData.color }} />
+              </div>
+              <input
+                type="text"
+                name="name"
+                value={formData.name}
+                onChange={handleChange}
+                required
+                className="input"
+                placeholder="Enter operation type name"
+              />
+            </div>
+          </div>
+          
+          <div className="btnContainer">
+            <button type="button" onClick={handleCancel} className="cancelBtn">
+              Cancel
+            </button>
+            <button type="submit" className="saveBtn" onClick={handleSubmit}>
+              {id ? "Update" : "Save"}
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
-  );
+  )
 }
+

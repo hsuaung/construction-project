@@ -3,7 +3,7 @@ import React from 'react'
 export default function Search({searchQuery,onSearch}) {
   return (
     <div className="searchContainer">
-        <input
+        <input className='input'
         type="text"
         placeholder="Search"
         value={searchQuery}

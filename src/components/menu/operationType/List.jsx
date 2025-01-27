@@ -133,7 +133,7 @@ export default function List(params) {
         </DndContext>
         </section>
       </div>
-      {showCreateModelBox && <Entry />}
+      {showCreateModelBox && <Entry showCreateModelBox={showCreateModelBox} setShowCreateModelBox={setShowCreateModelBox}/>}
     </>
   );
 }
