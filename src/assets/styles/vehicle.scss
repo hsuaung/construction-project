@@ -7,7 +7,7 @@
 
 .container {
     background-color: $baseBgGrayColor;
-    height: 94%;
+    // height: 92%;
     border-radius: px-to-rem(20); //20px
     padding: px-to-rem(20);
     z-index: 0;
@@ -74,8 +74,8 @@
     }
 
     .list {
-        padding: px-to-rem(30) 0;
-        height: 80%;
+        padding-top: px-to-rem(30);
+        // height: 80%;
 
         .listHeader {
             position: static;
