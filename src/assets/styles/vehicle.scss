@@ -19,19 +19,19 @@
             position: relative;
             top: 0;
 
-            input {
-                padding: px-to-rem(6) px-to-rem(10);
-                border: 0;
-                background-color: $inputGrayColor;
-                border-radius: px-to-rem(10);
-                width: 100%;
-                color: white;
+            // input {
+            //     padding: px-to-rem(6) px-to-rem(10);
+            //     border: 0;
+            //     background-color: $inputGrayColor;
+            //     border-radius: px-to-rem(10);
+            //     width: 100%;
+            //     color: white;
 
-                &:hover,
-                &:focus {
-                    outline: 1px solid $itemOrangeColor;
-                }
-            }
+            //     &:hover,
+            //     &:focus {
+            //         outline: 1px solid $itemOrangeColor;
+            //     }
+            // }
 
             svg {
                 position: absolute;
@@ -114,17 +114,41 @@
     background-color: $modelBoxBgColor;
     position: absolute;
     top: 20%;
-    left: 30%;
+    left: 35%;
     z-index: 20;
     // padding: px-to-rem(5);
     border-radius: px-to-rem(15);
     @include flex(column, center, center, 0);
+    width: 30vw;
+    box-shadow: rgba(244, 244, 244, 0.15) 1.95px 1.95px 2.6px;
 
     .modelTitle {
         background-color: $itemGrayColor;
         width: 100%;
-        padding: px-to-rem(5);
+        padding: px-to-rem(5) 0;
         border-radius: px-to-rem(15) px-to-rem(15) px-to-rem(0) px-to-rem(0);
         text-align: center;
+
+        h4 {
+            color: $secondaryColor;
+        }
+    }
+
+    .modelContent {
+        // background-color: $modelBoxBgColor;
+        width: 100%;
+
+        border-radius: px-to-rem(15) px-to-rem(15) px-to-rem(0) px-to-rem(0);
+
+        // text-align: center;
+        .formGroup {
+            // width: 100%;
+            padding: px-to-rem(20);
+
+            .colorFlexRow {
+                flex-wrap: nowrap;
+                padding: px-to-rem(20) 0;
+            }
+        }
     }
 }
