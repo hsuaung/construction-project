@@ -72,7 +72,11 @@ export const Task = ({ id, name, group, onClick }) => {
                      <path d="M12.5 16.25C13.1904 16.25 13.75 15.6904 13.75 15C13.75 14.3096 13.1904 13.75 12.5 13.75C11.8096 13.75 11.25 14.3096 11.25 15C11.25 15.6904 11.8096 16.25 12.5 16.25Z" fill="#F27D14"/>
                    </svg>
       </div>
+      <p>img</p>
       <p>{name}</p>
+      <p>{name}</p>
+      <p>{group}</p>
+      <p>{group}</p>
       <p>{group}</p>
       <div className='detailBtn' onClick={onClick}>
         <svg xmlns="http://www.w3.org/2000/svg" width="18" viewBox="0 0 18 4" fill="currentColor">

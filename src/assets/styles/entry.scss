@@ -1,0 +1,46 @@
+//import function
+@use "./components/functions" as *;
+
+//import components
+@import "./components/variables";
+@import "./components/mixins";
+
+.entryContainer {
+    background-color: $modelBoxBgColor;
+    position: absolute;
+    z-index: 20;
+    // padding: px-to-rem(5);
+    border-radius: px-to-rem(15);
+    @include flex(column, center, center, 0);
+    box-shadow: rgba(244, 244, 244, 0.15) 1.95px 1.95px 2.6px;
+
+    .modelTitle {
+        background-color: $itemGrayColor;
+        width: 100%;
+        padding: px-to-rem(5) 0;
+        border-radius: px-to-rem(15) px-to-rem(15) px-to-rem(0) px-to-rem(0);
+        text-align: center;
+
+        h4 {
+            color: $secondaryColor;
+        }
+    }
+
+    .modelContent {
+        // background-color: $modelBoxBgColor;
+        width: 100%;
+
+        border-radius: px-to-rem(15) px-to-rem(15) px-to-rem(0) px-to-rem(0);
+
+        // text-align: center;
+        .formGroup {
+            // width: 100%;
+            padding: px-to-rem(20);
+
+            .colorFlexRow {
+                flex-wrap: nowrap;
+                padding: px-to-rem(20) 0;
+            }
+        }
+    }
+}

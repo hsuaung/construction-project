@@ -16,6 +16,7 @@ export default function List(params) {
   const [operationTypes, setOperationTypes] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [showCreateModelBox, setShowCreateModelBox] = useState(false);
+  const [selectedTaskId, setSelectedTaskId] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -23,11 +24,6 @@ export default function List(params) {
       setOperationTypes(users);
     }
   }, [users]);
-
-  const handleEdit = (id) => {
-    console.log("Edit subject:", id);
-    navigate(`/operation-type/detail/edit/${id}`);
-  };
 
   const handleDragEnd = async (event) => {
     const { active, over } = event;
@@ -63,7 +59,21 @@ export default function List(params) {
     )
   );
 
-  const toggleCreateModelBox = () => setShowCreateModelBox((prev) => !prev);
+  const handleCreateModelBox = () => {
+    setShowCreateModelBox(true);
+    console.log("Testing CreateModelBox");
+    setSelectedTaskId(null);
+  }
+  // const handleCloseEditModelBox = (id) => {
+  //   setShowCreateModelBox(false);
+  //   setSelectedTaskId(null);
+  // }
+  // const handleCloseCreateModelBox = () => {
+  //   setShowCreateModelBox(false);
+  //   setSelectedTaskId(null);
+  // }
+
+  // const toggleCreateModelBox = () => setShowCreateModelBox((prev) => !prev);
 
   if (loading) return <div>Loading...</div>;
   if (error) return <div>Error: {error.message}</div>;
@@ -79,14 +89,14 @@ export default function List(params) {
                 <path d="M12 16L17 11L15.6 9.55L13 12.15V4H11V12.15L8.4 9.55L7 11L12 16ZM18 20C18.55 20 19.0207 19.8043 19.412 19.413C19.8033 19.0217 19.9993 18.5507 20 18V15H18V18H6V15H4V18C4 18.55 4.19567 19.021 4.587 19.413C4.97833 19.805 5.44933 20.0007 6 20H18Z" />
               </svg>
             </div>
-          <button className="createNewBtn" onClick={toggleCreateModelBox}>
+          <button className="createNewBtn" onClick={handleCreateModelBox}>
             + Create New
           </button>
           </div>
         </section>
 
         <section className="list">
-          <div className="listHeader">
+          <div className="operationTypeListHeader">
             <div></div>
             <div>
               <p>Operation Type Name</p>
@@ -130,10 +140,11 @@ export default function List(params) {
           <SortableContext items={filteredOperationTypes} strategy={verticalListSortingStrategy}>
             <Column tasks={filteredOperationTypes} />
           </SortableContext>
-        </DndContext>
+          </DndContext>
         </section>
       </div>
-      {showCreateModelBox && <Entry showCreateModelBox={showCreateModelBox} setShowCreateModelBox={setShowCreateModelBox}/>}
+      {/* {showCreateModelBox && <Entry />} */}
+      {showCreateModelBox && <Entry showCreateModelBox={showCreateModelBox} setShowCreateModelBox={setShowCreateModelBox} />}
     </>
   );
 }

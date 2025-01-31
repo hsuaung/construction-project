@@ -1,61 +1,86 @@
-import React, { useState } from 'react';
+import axios from "axios";
+import React, { useEffect, useState } from 'react';
 import "../../../assets/styles/vehicle.scss";
 import { closestCorners, DndContext } from '@dnd-kit/core';
 import  Column from './Column/Column';
-import { arrayMove } from '@dnd-kit/sortable';
+import { arrayMove, SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import Entry from './Entry';
 import Search from '../../HOC/searchAndFilter/Search';
 import Filter from '../../HOC/searchAndFilter/Filter';
-export default function List() {
+import { useCRUD } from '../../HOC/UseCRUD';
+import { useFetchData } from '../../HOC/UseFetchData';
+import { useNavigate } from 'react-router-dom';
+export default function List(params) {
+  const {handleDelete,loading:crudLoading,error:crudError,deleteStatus} = useCRUD();
+  // const { data: vehicles, loading, error } = useFetchData("http://localhost:8383/vehicle/list", deleteStatus);
+  const { data: users, loading, error } = useFetchData("http://localhost:8383/user/list", deleteStatus);
+
   const [showFitlerBox,setShowFilterBox] = useState(false);
-  const [vehicles,setVehicles] = useState([
-    {
-        id: 1,
-        name: 'Toyota Mark II',
-        group: 'Group1',
-        VIEDate_RIDate: '22-12-2025',
-        IEDate:'20-12-2025',
-        status: 'Currently Deployed',
-      },
-      {
-        id: 2,
-        name: 'SUV',
-        group: 'Group1',
-        VIEDate_RIDate: '22-12-2024',
-        IEDate:'20-12-2025',
-        status: 'Scrapped',
-      },
-      {
-        id: 3,
-        name: 'Toyota',
-        group: 'Group2',
-        VIEDate_RIDate: '22-12-2025',
-        IEDate:'20-12-2025',
-        status: 'Currently Deployed',
-      },
-  ])
-  const getVehiclePosition = id => vehicles.findIndex(v => v.id === id)
-  const handleDragEnd = (event) => {
+  const [vehicles,setVehicles] = useState([]);
+
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (users) {
+      setVehicles(users);
+    }
+  }, [users]);
+
+  const handleEdit = (id) => {
+    console.log("Edit vehicle:", id);
+    navigate(`/vehicle/edit/${id}`);
+  };
+
+  const handleDragEnd = async (event) => {
     const { active, over } = event;
-    if (active.id !== over.id) {
-      setVehicles((prevVehicles) => {
-        const oldIndex = getVehiclePosition(active.id);
-        const newIndex = getVehiclePosition(over.id);
-        return arrayMove(prevVehicles, oldIndex, newIndex); // Use array-move library or custom logic
-      });
+    if (!over || active.id === over.id) return;
+
+    const oldIndex = vehicles.findIndex((item) => item.id === active.id);
+    const newIndex = vehicles.findIndex((item) => item.id === over.id);
+
+    const updatedVehicles = arrayMove(vehicles, oldIndex, newIndex);
+    setVehicles(updatedVehicles);
+
+     // Persist the updated order to the backend
+     try {
+      await axios.post("http://localhost:8383/user/update-order", { items: updatedVehicles });
+    } catch (error) {
+      console.error("Error updating order:", error);
     }
   };
 
   const sortVehicles = (key, isDate = false) => {
     setVehicles((prevVehicles) => {
       return [...prevVehicles].sort((a, b) => {
-        if (isDate) {
-          return new Date(a[key]) - new Date(b[key]);
-        }
-        return a[key].localeCompare(b[key]);
+        const valA = a[key] || "";
+        const valB = b[key] || "";
+        return isDate ? new Date(valA) - new Date(valB) : valA.localeCompare(valB);
       });
     });
   };
+  
+  // const getVehiclePosition = id => vehicles.findIndex(v => v.id === id)
+  // const handleDragEnd = (event) => {
+  //   const { active, over } = event;
+  //   if (active.id !== over.id) {
+  //     setVehicles((prevVehicles) => {
+  //       const oldIndex = getVehiclePosition(active.id);
+  //       const newIndex = getVehiclePosition(over.id);
+  //       return arrayMove(prevVehicles, oldIndex, newIndex); // Use array-move library or custom logic
+  //     });
+  //   }
+  // };
+
+  // const sortVehicles = (key, isDate = false) => {
+  //   setVehicles((prevVehicles) => {
+  //     return [...prevVehicles].sort((a, b) => {
+  //       if (isDate) {
+  //         return new Date(a[key]) - new Date(b[key]);
+  //       }
+  //       return a[key].localeCompare(b[key]);
+  //     });
+  //   });
+  // };
 
   const [searchQuery, setSearchQuery] = useState('');
   const filteredVehicles = vehicles.filter(
@@ -128,12 +153,14 @@ export default function List() {
             <div></div>
           </div>
           <DndContext onDragEnd={handleDragEnd} collisionDetection={closestCorners}>
-            <Column tasks={filteredVehicles}/>
-          </DndContext>
+                    <SortableContext items={filteredVehicles} strategy={verticalListSortingStrategy}>
+                      <Column tasks={filteredVehicles} />
+                    </SortableContext>
+                  </DndContext>
         </section>
       </div>
       {
-        showCreateModelBox && <Entry/>
+        showCreateModelBox && <Entry showCreateModelBox={showCreateModelBox} setShowCreateModelBox={setShowCreateModelBox}/>
       }
       </>
       
