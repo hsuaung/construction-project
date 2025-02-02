@@ -5,11 +5,14 @@ import { useCRUD } from "../../HOC/UseCRUD"
 import { useFetchData } from "../../HOC/UseFetchData"
 import "../../../assets/styles/entry.scss"
 import "./entry.scss"
-
+import ImageUpload from '../../HOC/inputBoxes/ImageUpload'
 export default function Entry({ id, showCreateModelBox, setShowCreateModelBox,setShowEditModelBox,showEditModelBox}) {
   const [formData, setFormData] = useState({
     name: "",
-    color: "#FF4400", // Default color
+    image:"",
+    phonenumber: "",
+    email:"",
+    address:""
   })
   // const [errors, setErrors] = useState({}); //for validaiton
 
@@ -36,22 +39,6 @@ export default function Entry({ id, showCreateModelBox, setShowCreateModelBox,se
     });
   };
 
-  // const validateForm = () => {
-  //   const newErrors = {};
-  
-  //   if (!formData.name.trim()) {
-  //     newErrors.name = "Operation type name is required.";
-  //   }
-  
-  //   if (!/^#[0-9A-Fa-f]{6}$/.test(formData.color)) {
-  //     newErrors.color = "Invalid color code.";
-  //   }
-  
-  //   setErrors(newErrors);
-  
-  //   // Return true if no errors
-  //   return Object.keys(newErrors).length === 0;
-  // };
 
   // Handle form submission
   const handleSubmit = (e) => {
@@ -80,7 +67,10 @@ export default function Entry({ id, showCreateModelBox, setShowCreateModelBox,se
   const handleClear = () => {
     setFormData({
       name: "",
-      color: "#FF4400",
+      image:"",
+      phonenumber: "",
+      email:"",
+      address:""
     })
   }
   const handleCancel = () => {
@@ -97,13 +87,13 @@ export default function Entry({ id, showCreateModelBox, setShowCreateModelBox,se
   if (error) return <div>Error occurred: {error.message}</div>
 
   return (
-    <div className={`entryContainer OTentryContainer`}>
+    <div className={`entryContainer BPentryContainer`}>
       <div className="modelTitle">
-        <h4>{id ? "Edit Operation Type" : "Create New Operation Type"}</h4>
+        <h4>{id ? "Edit Business Partner" : "Create Business Partner"}</h4>
       </div>
       <div className="modelContent">
         <form onSubmit={handleSubmit}>
-          <div className="formGroup">
+          {/* <div className="formGroup">
             <label htmlFor="name" className="inputLabel">
               <div className="flexRow">
                 <small>[Required]</small>
@@ -135,6 +125,75 @@ export default function Entry({ id, showCreateModelBox, setShowCreateModelBox,se
                 placeholder="Enter operation type name"
               />
             </div>
+          </div> */}
+          <div className={`formGroup modelTwoColumn`}>
+            <div>
+              <div>
+                <label htmlFor="name" className="inputLabel">
+                  <div className="flexRow">
+                    <small>[Required]</small>
+                    <p>Partner Name</p>
+                  </div>
+                  <div className="instruction">
+                    <small>Please enter partnername( max 20 chars )</small>
+                  </div>
+                </label>
+                <input type="text" name="" value={formData.name}
+                onChange={handleChange}
+                required
+                className="input" id="" placeholder="Enter business partner name" />
+              </div>
+              <div>
+                <label htmlFor="name" className="inputLabel">
+                  <div className="flexRow">
+                    <small>[Required]</small>
+                    <p>Phone Number</p>
+                  </div>
+                  <div className="instruction">
+                    <small>Please enter phonenumber</small>
+                  </div>
+                </label>
+                <input type="text" value={formData.phonenumber}
+                onChange={handleChange}
+                required
+                className="input" name="" id="" placeholder="Enter business partner's phone number" />
+              </div>
+              <div>
+                <label htmlFor="name" className="inputLabel">
+                  <div className="flexRow">
+                    <small>[Required]</small>
+                    <p>Email</p>
+                  </div>
+                  <div className="instruction">
+                    <small>Please enter email</small>
+                  </div>
+                </label>
+                <input type="email" name="" value={formData.email}
+                onChange={handleChange}
+                required
+                className="input" id="" placeholder="Enter business partner's mail" />
+              </div>
+              <div>
+                <label htmlFor="name" className="inputLabel">
+                  <div className="flexRow">
+                    <small>[Optional]</small>
+                    <p>Partner Name</p>
+                  </div>
+                  <div className="instruction">
+                    <small>Please select address</small>
+                  </div>
+                </label>
+                {/* Address map */}
+                <input type="text" name="" value={formData.address}
+                onChange={handleChange}
+                required
+                className="input" id="" placeholder="Enter business partner's address" />
+              </div>
+            </div>
+            <div>
+              <p>Profile Photo</p>
+              <ImageUpload/>
+            </div>
           </div>
           
           <div className="btnContainer">
@@ -142,7 +201,7 @@ export default function Entry({ id, showCreateModelBox, setShowCreateModelBox,se
               Cancel
             </button>
             <button type="submit" className="saveBtn" onClick={handleSubmit}>
-              {id ? "Update" : "Save"}
+              {id ? "Update" : "Register"}
             </button>
             {id &&
               <button type="button" onClick={() =>handleDelete(id)} className="deleteBtn">

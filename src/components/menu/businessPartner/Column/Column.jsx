@@ -42,7 +42,7 @@ export default function Column({ tasks }) {
 
   return (
     <div className="scrollable">
-      <div className="operationTypeListData">
+      <div className="businessPartnerListData">
         {tasks.map((task) => (
           <Task
             key={task.id}
