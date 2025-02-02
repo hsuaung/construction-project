@@ -50,6 +50,7 @@ export const Task = ({ id, image, name, email, team, staffType, status }) => {
           />
         </svg>
       </div>
+
       <p>{image}</p>
       <p>{name}</p>
       <p>{email}</p>

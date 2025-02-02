@@ -1,0 +1,68 @@
+//import function
+
+@use "../../../assets/styles/components/functions" as *;
+
+//import components
+@import "../../../assets/styles/components/variables";
+@import "../../../assets/styles/components/mixins";
+.modalForm {
+  background-color: $modelBoxBgColor;
+  position: absolute;
+  top: 20%;
+  z-index: 20;
+  border-radius: px-to-rem(15);
+  @include flex(column, center, center, 0);
+  width: max-content;
+  box-shadow: rgba(244, 244, 244, 0.15) 1.95px 1.95px 2.6px;
+  .modelTitle {
+    background-color: $itemGrayColor;
+    width: 100%;
+    padding: px-to-rem(5) 0;
+    border-radius: px-to-rem(15) px-to-rem(15) px-to-rem(0) px-to-rem(0);
+    text-align: center;
+    h4 {
+      color: $secondaryColor;
+    }
+  }
+  .modelContent {
+    width: 100%;
+
+    border-radius: px-to-rem(15) px-to-rem(15) px-to-rem(0) px-to-rem(0);
+    .formGroup {
+      padding: px-to-rem(20);
+      height: 55vh;
+      overflow: scroll;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+      .inputRow {
+        flex-wrap: nowrap;
+        padding: px-to-rem(20) 0;
+      }
+    }
+    .btnGp {
+      hr {
+        border: none;
+        height: 1px;
+        background-color: #333; /* Adjust color to match */
+        width: 100%; /* Adjust width as needed */
+        opacity: 0.5; /* Adjust transparency */
+        margin-bottom: px-to-rem(10);
+      }
+
+      padding: px-to-rem(10);
+    }
+    .formTwoCol {
+      @include grid(1fr 1fr, 1fr, px-to-rem(20));
+    }
+  }
+}
+
+.staffModal {
+  top: 15%;
+  left: 25%;
+  .checkBoxContaier {
+    background-color: $itemGrayColor;
+    padding: px-to-rem(20);
+    border-radius: px-to-rem(10);
+  }
+}

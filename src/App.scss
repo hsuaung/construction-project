@@ -69,6 +69,27 @@ button {
     outline: 1px solid $itemOrangeColor;
   }
 }
+.select {
+  padding: px-to-rem(6) px-to-rem(10);
+  border: 0;
+  background-color: $inputGrayColor;
+  border-radius: px-to-rem(10);
+  width: 100%;
+  color: $secondaryColor;
+  border: 1px solid $secondaryColor;
+  &:hover,
+  &:focus {
+    outline: 1px solid $itemOrangeColor;
+  }
+
+  option {
+    background-color: $itemGrayColor;
+    color: $secondaryColor;
+    &::after {
+      background-color: red;
+    }
+  }
+}
 
 //Layout
 
@@ -271,58 +292,8 @@ button {
   }
 }
 
-.calendar-container {
-  font-family: Arial, sans-serif;
-  margin: 20px;
-}
-
-.calendar-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 10px;
-}
-
-.calendar-controls {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 20px;
-}
-
-.calendar-view {
-  display: flex;
-  flex-direction: column;
-}
-
-.week-view {
-  display: flex;
-  overflow-x: auto;
-}
-
-.month-view {
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  gap: 10px;
-}
-
-.date-cell {
-  padding: 10px;
-  text-align: center;
-  border: 1px solid #ddd;
-}
-
-.date-cell .day {
-  font-weight: bold;
-}
-
-.date-cell .date {
-  margin-top: 5px;
-  font-size: 14px;
-
-
 .inputLabel {
   @include flex(row, space-between, center, 0);
-
   .flexRow {
     small {
       color: $secondaryColor;
@@ -334,9 +305,6 @@ button {
       color: $instructionGrayColor;
     }
   }
-
-
-}
 }
 
 .inputLabel {
@@ -353,5 +321,5 @@ button {
       color: $instructionGrayColor;
     }
   }
-
 }
+

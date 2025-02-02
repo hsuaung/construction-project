@@ -3,8 +3,8 @@ import "../../../assets/styles/buttons/btnModalBox.scss";
 export default function btnModelBox({ cancel, save }) {
   return (
     <div className="btnModalBoxContainer">
-      <button>{cancel}</button>
-      <button>{save}</button>
+      <button type="reset">{cancel}</button>
+      <button type="submit">{save}</button>
     </div>
   );
 }
