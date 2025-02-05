@@ -8,7 +8,7 @@ import { arrayMove, SortableContext, verticalListSortingStrategy } from "@dnd-ki
 import { closestCorners, DndContext } from "@dnd-kit/core";
 import Entry from "./Entry";
 import Column from "./Column/Column";
-
+import "../../../assets/styles/list.scss"
 export default function List(params) {
   const { handleDelete, loading: crudLoading, error: crudError, deleteStatus } = useCRUD();
   const { data: users, loading, error } = useFetchData("http://localhost:8383/user/list", deleteStatus);
