@@ -1,7 +1,290 @@
-import React from 'react'
+import React, { useState, useEffect } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import { useCRUD } from "../HOC/UseCRUD";
+import { useFetchData } from "../HOC/UseFetchData";
+import "../../assets/styles/vehicle.scss";
+import "../menu/staff/entry.scss";
+import ImageUpload from "../HOC/inputBoxes/ImageUpload";
+import Checkbox from "../HOC/inputBoxes/Checkbox";
+import MapComponent from "../HOC/inputBoxes/MapComponent";
+export default function Entry({ showCreateModelBox, setShowCreateModelBox }) {
+  const [formData, setFormData] = useState({
+    name: "",
+    color: "#FF4400", // Default color
+  });
+  // const [errors, setErrors] = useState({}); //for validaiton
 
-export default function Entry() {
+  const navigate = useNavigate();
+  const { handleDelete, handleCreate, handleEdit, loading, error } = useCRUD();
+
+  // Fetch data if id is provided
+  //   const { data: staffData } = useFetchData(
+  //     id ? `http://localhost:8383/user/getByUserId/${id}` : null
+  //   );
+
+  //   useEffect(() => {
+  //     if (staffData) {
+  //       setFormData(staffData);
+  //     }
+  //   }, [staffData]);
+  const [address, setAddress] = useState("");
+
+  const handleAddressSelect = (address) => {
+    setAddress(address); // Update the address state when a user selects an address
+  };
+  // const validateForm = () => {
+  //   const newErrors = {};
+
+  //   if (!formData.name.trim()) {
+  //     newErrors.name = "Operation type name is required.";
+  //   }
+
+  //   if (!/^#[0-9A-Fa-f]{6}$/.test(formData.color)) {
+  //     newErrors.color = "Invalid color code.";
+  //   }
+
+  //   setErrors(newErrors);
+
+  //   // Return true if no errors
+  //   return Object.keys(newErrors).length === 0;
+  // };
+
+  // Handle input changes
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
+  };
+
+  // Handle form submission
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    // if (!validateForm()) {
+    //   return; // Do not submit if there are validation errors
+    // }
+
+    console.log("Form Submitted:", formData);
+
+    const url = "http://localhost:8383/user/create";
+
+    handleCreate(url, formData).then(() => navigate("/site"));
+  };
+
+  //   const handleDeleteData = async (id) => {
+  //     const url = `http://localhost:1818/user/delete`;
+  //     await handleDelete(url, id); // Trigger the delete action
+  //   };
+
+  // Handle form clear/reset
+  const handleClear = () => {
+    setFormData({
+      name: "",
+      color: "#FF4400",
+    });
+  };
+  const handleCancel = () => {
+    handleClear();
+    setShowCreateModelBox(false);
+  };
+
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>Error occurred: {error.message}</div>;
+
   return (
-    <div>Entry</div>
-  )
+    <div className="modalForm staffModal ">
+      <div className="modelTitle">
+        <h4>Create New Site</h4>
+      </div>
+      <div className="modelContent">
+        <form onSubmit={handleSubmit}>
+          <div className="formGroup">
+            <div className="formTwoCol">
+              <div>
+                <div>
+                  <label htmlFor="name" className="inputLabel">
+                    <div className="flexRow">
+                      <small>[Required]</small>
+                      <p>Site Name</p>
+                    </div>
+                    <div className="instruction">
+                      <small>Please Enter Site Name</small>
+                    </div>
+                  </label>
+                  <div className="flexRow inputRow">
+                    <input
+                      type="text"
+                      name="name"
+                      value={formData.name}
+                      onChange={handleChange}
+                      required
+                      className="input"
+                      placeholder="Enter Site Name"
+                    />
+                  </div>
+                </div>
+                <div>
+                  <label htmlFor="businessPartner" className="inputLabel">
+                    <div className="flexRow">
+                      <small>[Required]</small>
+                      <p>Business Partner</p>
+                    </div>
+                    <div className="instruction">
+                      <small>Please Select Partner</small>
+                    </div>
+                  </label>
+                  <div className="flexRow inputRow">
+                    <select
+                      name="businessPartner"
+                      id="businessPartner"
+                      className="select"
+                    >
+                      <option value="">Partner One</option>
+                      <option value="">Partner Two</option>
+                    </select>
+                  </div>
+                </div>
+                <div>
+                  <label htmlFor="siteManager" className="inputLabel">
+                    <div className="flexRow">
+                      <small>[Required]</small>
+                      <p>Site Manager</p>
+                    </div>
+                    <div className="instruction">
+                      <small>Please Select Manager</small>
+                    </div>
+                  </label>
+                  <div className="flexRow inputRow">
+                    <select
+                      name="siteManager"
+                      id="siteManager"
+                      className="select"
+                    >
+                      <option value="">Manager One</option>
+                      <option value="">Manager Two</option>
+                    </select>
+                  </div>
+                </div>
+                <div>
+                  <label htmlFor="address" className="inputLabel">
+                    <div className="flexRow">
+                      <small>[Required]</small>
+                      <p>Address</p>
+                    </div>
+                    <div className="instruction">
+                      <small>Please Enter Staff Address</small>
+                    </div>
+                  </label>
+
+                  <div className="flexRow inputRow">
+                    <textarea name="address" id="address"></textarea>
+                  </div>
+                </div>
+              </div>
+              <div>
+                <div>
+                  <label htmlFor="constructionStatus" className="inputLabel">
+                    <div className="flexRow">
+                      <small>[Required]</small>
+                      <p>Construction Status</p>
+                    </div>
+                    <div className="instruction">
+                      <small>Please Select Status</small>
+                    </div>
+                  </label>
+                  <div className="flexRow inputRow">
+                    <select
+                      name="constructionStatus"
+                      id="constructionStatus"
+                      className="select"
+                    >
+                     7
+                    </select>
+                  </div>
+                </div>
+                <div className="checkBoxContaier">
+                  <label htmlFor="name" className="inputLabel">
+                    <div className="flexRow">
+                      <p>Schedule</p>
+                    </div>
+                  </label>
+                  <div>
+                    <label htmlFor="joinedDate" className="inputLabel">
+                      <div className="flexRow">
+                        <small>[Required]</small>
+                        <p>Start Date</p>
+                      </div>
+                    </label>
+                    <div className="flexRow inputRow">
+                      <input
+                        type="date"
+                        name="joinedDate"
+                        value={formData.joinedDate}
+                        onChange={handleChange}
+                        required
+                        className="input"
+                        placeholder="Enter Joined Date"
+                      />
+                    </div>
+                  </div>
+                  <div>
+                    <label htmlFor="joinedDate" className="inputLabel">
+                      <div className="flexRow">
+                        <small>[Required]</small>
+                        <p>End Date</p>
+                      </div>
+                    </label>
+                    <div className="flexRow inputRow">
+                      <input
+                        type="date"
+                        name="joinedDate"
+                        value={formData.joinedDate}
+                        onChange={handleChange}
+                        required
+                        className="input"
+                        placeholder="Enter Joined Date"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="btnGp">
+            <hr />
+            <div className="btnContainer">
+              <div className="hint">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                >
+                  <path
+                    d="M12 4C16.411 4 20 7.589 20 12C20 16.411 16.411 20 12 20C7.589 20 4 16.411 4 12C4 7.589 7.589 4 12 4ZM12 2C6.477 2 2 6.477 2 12C2 17.523 6.477 22 12 22C17.523 22 22 17.523 22 12C22 6.477 17.523 2 12 2ZM13 15H11V17H13V15ZM11 13H13L13.5 7H10.5L11 13Z"
+                    fill="#FFA629"
+                  />
+                </svg>
+                Once you complete registration, you'll be redirected to your
+                site details page..
+              </div>
+              <button
+                type="button"
+                onClick={handleCancel}
+                className="cancelBtn"
+              >
+                Cancel
+              </button>
+              <button type="submit" className="saveBtn" onClick={handleSubmit}>
+                Register
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
 }

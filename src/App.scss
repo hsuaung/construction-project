@@ -62,8 +62,9 @@ button {
   background-color: $inputGrayColor;
   border-radius: px-to-rem(10);
   width: 100%;
-  color: white;
-
+  // color: white;
+  color: $secondaryColor;
+  border: 1px solid $secondaryColor;
   &:hover,
   &:focus {
     outline: 1px solid $itemOrangeColor;
@@ -322,7 +323,6 @@ button {
     }
   }
 }
-
 
 .modelTwoColumn {
   @include grid(1fr 1fr, 1fr, px-to-rem(30));

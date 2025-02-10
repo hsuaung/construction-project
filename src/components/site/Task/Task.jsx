@@ -1,16 +1,8 @@
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
+import React from "react";
 
-export const Task = ({
-  id,
-  image,
-  name,
-  email,
-  team,
-  staffType,
-  status,
-  onClick,
-}) => {
+export const Task = ({ id, name, group, onClick }) => {
   const { attributes, listeners, setNodeRef, transition, transform } =
     useSortable({ id });
 
@@ -39,7 +31,7 @@ export const Task = ({
           <path
             d="M17.5 11.25C18.1904 11.25 18.75 10.6904 18.75 10C18.75 9.30964 18.1904 8.75 17.5 8.75C16.8096 8.75 16.25 9.30964 16.25 10C16.25 10.6904 16.8096 11.25 17.5 11.25Z"
             fill="#F27D14"
-          />
+          />{" "}
           <path
             d="M17.5 21.25C18.1904 21.25 18.75 20.6904 18.75 20C18.75 19.3096 18.1904 18.75 17.5 18.75C16.8096 18.75 16.25 19.3096 16.25 20C16.25 20.6904 16.8096 21.25 17.5 21.25Z"
             fill="#F27D14"
@@ -55,12 +47,13 @@ export const Task = ({
         </svg>
       </div>
 
-      <p>{image}</p>
-      <p>{name}</p>
-      <p>{email}</p>
-      <p>{team}</p>
-      <p>{staffType}</p>
-      <p>{status}</p>
+      <p>{name} SName</p>
+      <p>{name} BP Name</p>
+      <p>{group} Company </p>
+      <p>{group} Schedule</p>
+      <p>
+        <div className="statusDiv underConstruction"></div>{" "}
+      </p>
       <div className="detailBtn" onClick={onClick}>
         <svg
           xmlns="http://www.w3.org/2000/svg"

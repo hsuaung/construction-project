@@ -37,6 +37,8 @@
       .inputRow {
         flex-wrap: nowrap;
         padding: px-to-rem(20) 0;
+        text-align: center;
+        justify-items: center;
       }
     }
     .btnGp {
@@ -49,10 +51,19 @@
         margin-bottom: px-to-rem(10);
       }
 
+      .hint {
+        display: flex;
+        color: $secondaryColor;
+      }
       padding: px-to-rem(10);
     }
     .formTwoCol {
       @include grid(1fr 1fr, 1fr, px-to-rem(20));
+      .skillContainer {
+        div {
+          margin-top: px-to-rem(10);
+        }
+      }
     }
   }
 }
@@ -65,4 +76,20 @@
     padding: px-to-rem(20);
     border-radius: px-to-rem(10);
   }
+}
+
+.svgAddButton {
+  background-color: transparent;
+  padding: px-to-rem(3);
+  border-radius: px-to-rem(5);
+  border: px-to-rem(1) solid $secondaryColor;
+  opacity: 0.8;
+  &:hover {
+    opacity: 1;
+  }
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(44%) sepia(100%) saturate(426%) hue-rotate(347deg)
+    brightness(104%) contrast(102%);
 }

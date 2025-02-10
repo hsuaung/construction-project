@@ -1,44 +1,44 @@
 import React, { useState } from "react";
 import { Task } from "../Task/Task";
-import Entry from "../Entry"; // Import modal component
+import Edit from "../Edit"; // Import modal component
 import "./column.scss";
+
 export default function Column({ tasks }) {
   const [showEditModelBox, setShowEditModelBox] = useState(false);
   const [selectedTaskId, setSelectedTaskId] = useState(null);
 
   const handleEditModelBox = (id) => {
     console.log("Editing task:", id);
-    setShowEditModelBox(true); // Show modal when editing task
-    setSelectedTaskId(tasks.find((task) => task.id === id)); // Store selected task details
+    setShowEditModelBox(true);
+    setSelectedTaskId(id); // Store only the ID, not an object
   };
 
   const closeModal = () => {
-    setSelectedTaskId(null); // Reset when closing modal
+    setShowEditModelBox(false); // Hide modal
+    setSelectedTaskId(null);
   };
 
   return (
     <div className="scrollable">
-      <div className="staffListData">
+      <div className="siteListData">
         {tasks.map((task) => (
           <Task
             key={task.id}
             id={task.id}
-            image={task.image}
             name={task.user_name}
-            email={task.user_email}
-            team={task.team}
-            staffType={task.staffType}
-            status={task.status}
-            onClick={() => handleEditModelBox(task.id)} // Pass function correctly
+            group={task.user_email}
+            onClick={() => handleEditModelBox(task.id)}
           />
         ))}
       </div>
-      {/* Show Modal Only When a Task is Selected */}
+
+      {/* Show Modal Only When Needed */}
       {showEditModelBox && (
-        <Entry
+        <Edit
           showEditModelBox={showEditModelBox}
           setShowEditModelBox={setShowEditModelBox}
           id={selectedTaskId}
+          closeModal={closeModal} // Ensure modal can close
         />
       )}
     </div>

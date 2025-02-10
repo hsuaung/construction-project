@@ -1,0 +1,156 @@
+//import function
+@use "../../assets/styles/components/functions" as *;
+
+//import components
+@import "../../assets/styles/components/variables";
+@import "../../assets/styles/components/mixins";
+
+.siteModal {
+  left: 25%;
+}
+.siteEditForm {
+  width: 800px;
+  //   height: 400px;
+  padding: px-to-rem(10);
+  top: 40%;
+  @include grid(13% 85%, 1fr, 2%);
+}
+.tabMenu {
+  @include flex(column, space-between, center, px-to-rem(50));
+  margin: px-to-rem(50) 0;
+  .tabMenuItem {
+    text-align: center;
+
+    width: px-to-rem(50);
+    height: px-to-rem(50);
+    padding: px-to-rem(10);
+    border-radius: px-to-rem(10);
+    svg {
+      width: px-to-rem(30);
+      height: px-to-rem(30);
+    }
+    small {
+      color: $secondaryColor;
+    }
+  }
+  .activeTabMenu {
+    background-color: $itemGrayColor;
+  }
+}
+
+.tabContent {
+  height: 65vh;
+
+  background-color: $itemGrayColor;
+  border-radius: px-to-rem(5);
+  .detailTab {
+    padding: px-to-rem(20);
+    @include grid(1fr 1fr, 1fr, px-to-rem(10));
+    &Content {
+      h1 {
+        color: $secondaryColor;
+        margin-bottom: px-to-rem(30);
+      }
+      &Item {
+        svg {
+          width: 30px;
+        }
+        margin-top: px-to-rem(10);
+        @include flex(row, flex-start, center, px-to-rem(20));
+      }
+    }
+    &MapContainer {
+      div {
+        background-color: $instructionGrayColor;
+
+        margin-bottom: px-to-rem(10);
+      }
+      // div {
+      //
+      //   height: 47vh;
+      //   margin-bottom: px-to-rem(10);
+      // }
+      button {
+        float: right;
+      }
+    }
+  }
+  .editSiteTab {
+    padding: px-to-rem(20);
+    h1 {
+      color: $secondaryColor;
+    }
+    &Content {
+      background-color: $listBoxGrayColor;
+      height: 45vh;
+      overflow: scroll;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+      padding: px-to-rem(20);
+      @include grid(1fr 1fr, 1fr, px-to-rem(20));
+      div {
+        margin-bottom: 7px;
+      }
+      .scheduleDiv {
+        background-color: $itemGrayColor;
+        padding: px-to-rem(10);
+        border-radius: px-to-rem(5);
+      }
+    }
+  }
+  .editScheduleTab {
+    padding: px-to-rem(20);
+    h1 {
+      color: $secondaryColor;
+    }
+    &Content {
+      height: 45vh;
+      background-color: $listBoxGrayColor;
+      padding: px-to-rem(20);
+      .operationRow {
+        flex-wrap: nowrap;
+      }
+      .twDivRow {
+        justify-content: space-around;
+        // input {
+        // }
+      }
+      // @include grid(1fr 1fr, 1fr, px-to-rem(20));
+      div {
+        margin-bottom: 7px;
+      }
+      .scheduleDiv {
+        background-color: $itemGrayColor;
+        padding: px-to-rem(10);
+        border-radius: px-to-rem(5);
+      }
+    }
+  }
+}
+
+.btnWrapper {
+  float: right;
+
+  margin-top: px-to-rem(10);
+  button:first-child {
+    background-color: transparent;
+    padding: px-to-rem(5) px-to-rem(10);
+    border-radius: px-to-rem(30);
+    margin-right: px-to-rem(10);
+    border: 1px solid $secondaryColor;
+    opacity: 0.8;
+    &:hover {
+      opacity: 1;
+    }
+  }
+}
+
+.flexContainer {
+  @include flex(row, space-between, center, px-to-rem(10));
+}
+.flexDiv {
+  @include flex(row, space-between, center, px-to-rem(10));
+  .input {
+    width: 150px;
+  }
+}
