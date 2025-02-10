@@ -52,14 +52,36 @@ button {
   @include flex(row, start, center, px-to-rem(5));
 }
 
+.flexStart {
+  @include flex(row, start, center, px-to-rem(5));
+}
+
 .flexCol {
   @include flex(column, start, center, px-to-rem(5));
 }
 
 .input {
-  padding: px-to-rem(6) px-to-rem(10);
+  padding: px-to-rem(6) 0;
+  text-indent: px-to-rem(10);
   border: 0;
-  background-color: $inputGrayColor;
+  background-color: $baseBgGrayColor;
+  border: 1px solid $itemOrangeColor;
+  border-radius: px-to-rem(8);
+  width: 100%;
+  color: $itemOrangeColor;
+
+  &:hover,
+  &:focus {
+    outline: 1px solid $itemOrangeColor;
+  }
+}
+
+.search {
+  padding: px-to-rem(6) 0;
+  text-indent: px-to-rem(10);
+  border: 0;
+  background-color: $itemGrayColor;
+  // border: 1px solid $itemOrangeColor;
   border-radius: px-to-rem(10);
   width: 100%;
   // color: white;
@@ -295,21 +317,8 @@ button {
 
 .inputLabel {
   @include flex(row, space-between, center, 0);
-  .flexRow {
-    small {
-      color: $secondaryColor;
-    }
-  }
-
-  .instruction {
-    small {
-      color: $instructionGrayColor;
-    }
-  }
-}
-
-.inputLabel {
-  @include flex(row, space-between, center, 0);
+  flex-wrap: wrap;
+  margin-bottom: px-to-rem(10);
 
   .flexRow {
     small {
@@ -323,6 +332,31 @@ button {
     }
   }
 }
+
+input[type="date"] {
+  position: relative;
+  color: $itemOrangeColor; // Adjust text color if needed
+
+  &::-webkit-calendar-picker-indicator {
+    filter: invert(0%) sepia(95%) saturate(500%) hue-rotate(0deg);
+    cursor: pointer;
+  }
+
+  // For better customization, hide default icon and replace it
+  &::-webkit-inner-spin-button,
+  &::-webkit-clear-button {
+    display: none;
+  }
+
+  // If you want to use a custom icon
+  &::-webkit-calendar-picker-indicator {
+    background: url('./assets/images/schedule.png') no-repeat center;
+    margin-right: px-to-rem(10);
+    background-size: contain;
+    opacity: 1;
+  }
+}
+
 
 .modelTwoColumn {
   @include grid(1fr 1fr, 1fr, px-to-rem(30));

@@ -2,7 +2,8 @@ import React, { useState, useEffect } from "react";
 import "../../../assets/styles/buttons/homeDate.scss";
 
 const HomeDate = () => {
-  const [selectedDate, setSelectedDate] = useState("2025-01-23");
+  // const [selectedDate, setSelectedDate] = useState("2025-01-23");
+  const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split("T")[0]);
   const [selectedView, setSelectedView] = useState("day");
   const [weekRange, setWeekRange] = useState("");
   const [monthDates, setMonthDates] = useState([]);
@@ -68,9 +69,34 @@ const HomeDate = () => {
   }, [selectedDate, selectedView]);
 
   // Handle date navigation
-  const adjustDate = (direction) => {
-    const currentDate = new Date(selectedDate);
+  // const adjustDate = (direction) => {
+  //   const currentDate = new Date(selectedDate);
 
+  //   if (direction === "prev") {
+  //     if (selectedView === "day") {
+  //       currentDate.setDate(currentDate.getDate() - 1);
+  //     } else if (selectedView === "week") {
+  //       currentDate.setDate(currentDate.getDate() - 7);
+  //     } else if (selectedView === "month") {
+  //       currentDate.setMonth(currentDate.getMonth() - 1);
+  //     }
+  //   } else if (direction === "next") {
+  //     if (selectedView === "day") {
+  //       currentDate.setDate(currentDate.getDate() + 1);
+  //     } else if (selectedView === "week") {
+  //       currentDate.setDate(currentDate.getDate() + 7);
+  //     } else if (selectedView === "month") {
+  //       currentDate.setMonth(currentDate.getMonth() + 1);
+  //     }
+  //   } else if (direction === "today") {
+  //     currentDate.setDate(new Date());
+  //   }
+
+  //   setSelectedDate(currentDate.toISOString().split("T")[0]);
+  // };
+  const adjustDate = (direction) => {
+    let currentDate = new Date(selectedDate);
+  
     if (direction === "prev") {
       if (selectedView === "day") {
         currentDate.setDate(currentDate.getDate() - 1);
@@ -88,9 +114,9 @@ const HomeDate = () => {
         currentDate.setMonth(currentDate.getMonth() + 1);
       }
     } else if (direction === "today") {
-      currentDate.setTime(new Date().getTime());
+      currentDate = new Date(); // Set to today's date
     }
-
+  
     setSelectedDate(currentDate.toISOString().split("T")[0]);
   };
 
