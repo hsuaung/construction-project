@@ -52,6 +52,10 @@ button {
   @include flex(row, start, center, px-to-rem(5));
 }
 
+.flexStart {
+  @include flex(row, start, center, px-to-rem(5));
+}
+
 .flexCol {
   @include flex(column, start, center, px-to-rem(5));
 }

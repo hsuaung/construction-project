@@ -37,3 +37,8 @@
         font-size: $small;
     }
 }
+
+@mixin applyWidth($widths) {
+    min-width: map-get($widths, min-width);
+    max-width: map-get($widths, max-width);
+}
