@@ -27,13 +27,14 @@ import Entry from "../Entry"; // Import modal component
 import "./column.scss";
 
 export default function Column({ tasks }) {
-    const [showEditModelBox, setShowEditModelBox] = useState(false);
+  const [showEditModelBox, setShowEditModelBox] = useState(false);
   const [selectedTaskId, setSelectedTaskId] = useState(null);
 
   const handleEditModelBox = (id) => {
     console.log("Editing task:", id);
     setShowEditModelBox(true); // Show modal when editing task
-    setSelectedTaskId(tasks.find(task => task.id === id)); // Store selected task details
+    setSelectedTaskId(id);
+    // setSelectedTaskId(tasks.find((task) => task.id === id)); // Store selected task details
   };
 
   const closeModal = () => {
@@ -47,8 +48,8 @@ export default function Column({ tasks }) {
           <Task
             key={task.id}
             id={task.id}
-            name={task.user_name}
-            group={task.user_email}
+            name={task.name}
+            group={task.color}
             onClick={() => handleEditModelBox(task.id)} // Pass function correctly
           />
         ))}
@@ -56,9 +57,12 @@ export default function Column({ tasks }) {
 
       {/* Show Modal Only When a Task is Selected */}
       {showEditModelBox && (
-        <Entry showEditModelBox={showEditModelBox} setShowEditModelBox={setShowEditModelBox} id={selectedTaskId} />
+        <Entry
+          showEditModelBox={showEditModelBox}
+          setShowEditModelBox={setShowEditModelBox}
+          id={selectedTaskId}
+        />
       )}
     </div>
   );
 }
-

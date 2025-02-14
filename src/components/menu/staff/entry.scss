@@ -12,7 +12,7 @@
   z-index: 20;
   border-radius: px-to-rem(15);
   @include flex(column, center, center, 0);
-  width: max-content;
+  width: 60vw;
   box-shadow: rgba(244, 244, 244, 0.15) 1.95px 1.95px 2.6px;
   .modelTitle {
     background-color: $itemGrayColor;

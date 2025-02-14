@@ -4,15 +4,28 @@ import { useNavigate } from "react-router-dom";
 import Search from "../../HOC/searchAndFilter/Search";
 import { useFetchData } from "../../HOC/UseFetchData";
 import { useCRUD } from "../../HOC/UseCRUD";
-import { arrayMove, SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
+import {
+  arrayMove,
+  SortableContext,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
 import { closestCorners, DndContext } from "@dnd-kit/core";
 import Entry from "./Entry";
 import Column from "./Column/Column";
-import "../../../assets/styles/list.scss"
+import "../../../assets/styles/list.scss";
 export default function List(params) {
-  const { handleDelete, loading: crudLoading, error: crudError, deleteStatus } = useCRUD();
-  const { data: users, loading, error } = useFetchData("http://localhost:8383/user/list", deleteStatus);
-  
+  const {
+    handleDelete,
+    loading: crudLoading,
+    error: crudError,
+    deleteStatus,
+  } = useCRUD();
+  const {
+    data: operationtypes,
+    loading,
+    error,
+  } = useFetchData("http://localhost:8383/operationtypes/list", deleteStatus);
+
   const [operationTypes, setOperationTypes] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [showCreateModelBox, setShowCreateModelBox] = useState(false);
@@ -20,10 +33,10 @@ export default function List(params) {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (users) {
-      setOperationTypes(users);
+    if (operationtypes) {
+      setOperationTypes(operationtypes);
     }
-  }, [users]);
+  }, [operationtypes]);
 
   const handleDragEnd = async (event) => {
     const { active, over } = event;
@@ -35,9 +48,11 @@ export default function List(params) {
     const updatedOperationTypes = arrayMove(operationTypes, oldIndex, newIndex);
     setOperationTypes(updatedOperationTypes);
 
-     // Persist the updated order to the backend
-     try {
-      await axios.post("http://localhost:8383/user/update-order", { items: updatedOperationTypes });
+    // Persist the updated order to the backend
+    try {
+      await axios.post("http://localhost:8383/operationtypes/update-order", {
+        items: updatedOperationTypes,
+      });
     } catch (error) {
       console.error("Error updating order:", error);
     }
@@ -48,14 +63,18 @@ export default function List(params) {
       return [...prevOperationTypes].sort((a, b) => {
         const valA = a[key] || "";
         const valB = b[key] || "";
-        return isDate ? new Date(valA) - new Date(valB) : valA.localeCompare(valB);
+        return isDate
+          ? new Date(valA) - new Date(valB)
+          : valA.localeCompare(valB);
       });
     });
   };
 
   const filteredOperationTypes = operationTypes.filter((operationType) =>
-    ["user_name", "user_email"].some((key) =>
-      String(operationType[key] || "").toLowerCase().includes(searchQuery.toLowerCase())
+    ["name", "color"].some((key) =>
+      String(operationType[key] || "")
+        .toLowerCase()
+        .includes(searchQuery.toLowerCase())
     )
   );
 
@@ -63,7 +82,7 @@ export default function List(params) {
     setShowCreateModelBox(true);
     console.log("Testing CreateModelBox");
     setSelectedTaskId(null);
-  }
+  };
   // const handleCloseEditModelBox = (id) => {
   //   setShowCreateModelBox(false);
   //   setSelectedTaskId(null);
@@ -85,13 +104,18 @@ export default function List(params) {
           <Search searchQuery={searchQuery} onSearch={setSearchQuery} />
           <div className="filterContainer">
             <div className="download buttonOne">
-              <svg xmlns="http://www.w3.org/2000/svg" width="20" viewBox="0 0 24 24" fill="currentColor">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="20"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+              >
                 <path d="M12 16L17 11L15.6 9.55L13 12.15V4H11V12.15L8.4 9.55L7 11L12 16ZM18 20C18.55 20 19.0207 19.8043 19.412 19.413C19.8033 19.0217 19.9993 18.5507 20 18V15H18V18H6V15H4V18C4 18.55 4.19567 19.021 4.587 19.413C4.97833 19.805 5.44933 20.0007 6 20H18Z" />
               </svg>
             </div>
-          <button className="createNewBtn" onClick={handleCreateModelBox}>
-            + Create New
-          </button>
+            <button className="createNewBtn" onClick={handleCreateModelBox}>
+              + Create New
+            </button>
           </div>
         </section>
 
@@ -101,7 +125,7 @@ export default function List(params) {
             <div>
               <p>Operation Type Name</p>
               <svg
-                onClick={() => sortOperationTypes("user_name")}
+                onClick={() => sortOperationTypes("name")}
                 xmlns="http://www.w3.org/2000/svg"
                 width="16"
                 viewBox="0 0 21 24"
@@ -119,7 +143,7 @@ export default function List(params) {
             <div>
               <p>Number of Sites Used</p>
               <svg
-                onClick={() => sortOperationTypes("user_email")}
+                onClick={() => sortOperationTypes("color")}
                 xmlns="http://www.w3.org/2000/svg"
                 width="16"
                 viewBox="0 0 21 24"
@@ -136,15 +160,26 @@ export default function List(params) {
             </div>
             <div></div>
           </div>
-          <DndContext onDragEnd={handleDragEnd} collisionDetection={closestCorners}>
-          <SortableContext items={filteredOperationTypes} strategy={verticalListSortingStrategy}>
-            <Column tasks={filteredOperationTypes} />
-          </SortableContext>
+          <DndContext
+            onDragEnd={handleDragEnd}
+            collisionDetection={closestCorners}
+          >
+            <SortableContext
+              items={filteredOperationTypes}
+              strategy={verticalListSortingStrategy}
+            >
+              <Column tasks={filteredOperationTypes} />
+            </SortableContext>
           </DndContext>
         </section>
       </div>
       {/* {showCreateModelBox && <Entry />} */}
-      {showCreateModelBox && <Entry showCreateModelBox={showCreateModelBox} setShowCreateModelBox={setShowCreateModelBox} />}
+      {showCreateModelBox && (
+        <Entry
+          showCreateModelBox={showCreateModelBox}
+          setShowCreateModelBox={setShowCreateModelBox}
+        />
+      )}
     </>
   );
 }
