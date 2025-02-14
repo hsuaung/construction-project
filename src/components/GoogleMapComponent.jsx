@@ -19,7 +19,6 @@ const GoogleMapComponent = () => {
   return (
     <LoadScript googleMapsApiKey="AIzaSyDCrDtDa-wdCdfjFQqFQDxMA6J9nxLAPkU">
       <GoogleMap mapContainerStyle={containerStyle} center={center} zoom={10}>
-       
         <Marker position={center} />
       </GoogleMap>
     </LoadScript>

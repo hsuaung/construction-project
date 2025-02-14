@@ -24,7 +24,17 @@ export default function List(params) {
     data: users,
     loading,
     error,
-  } = useFetchData("http://localhost:8383/user/list", deleteStatus);
+  } = useFetchData("http://localhost:8383/operationtypes/list", deleteStatus);
+
+  console.log("Hsu ", users);
+  // axios
+  //   .get("http://localhost:8383/skill/list")
+  //   .then((response) => {
+  //     console.log(response.data); // Logs the actual data
+  //   })
+  //   .catch((error) => {
+  //     console.error("Error fetching data:", error);
+  //   });
 
   const [staffs, setStaffs] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");

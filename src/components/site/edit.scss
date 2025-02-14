@@ -6,13 +6,12 @@
 @import "../../assets/styles/components/mixins";
 
 .siteModal {
-  left: 25%;
+  left: 20%;
 }
 .siteEditForm {
-  width: 800px;
-  //   height: 400px;
+  width: 58vw;
   padding: px-to-rem(10);
-  top: 40%;
+
   @include grid(13% 85%, 1fr, 2%);
 }
 .tabMenu {
@@ -20,7 +19,6 @@
   margin: px-to-rem(50) 0;
   .tabMenuItem {
     text-align: center;
-
     width: px-to-rem(50);
     height: px-to-rem(50);
     padding: px-to-rem(10);
@@ -40,7 +38,6 @@
 
 .tabContent {
   height: 65vh;
-
   background-color: $itemGrayColor;
   border-radius: px-to-rem(5);
   .detailTab {
@@ -65,11 +62,7 @@
 
         margin-bottom: px-to-rem(10);
       }
-      // div {
-      //
-      //   height: 47vh;
-      //   margin-bottom: px-to-rem(10);
-      // }
+
       button {
         float: right;
       }
@@ -105,6 +98,7 @@
     }
     &Content {
       height: 45vh;
+
       background-color: $listBoxGrayColor;
       padding: px-to-rem(20);
       .operationRow {
@@ -112,10 +106,7 @@
       }
       .twDivRow {
         justify-content: space-around;
-        // input {
-        // }
       }
-      // @include grid(1fr 1fr, 1fr, px-to-rem(20));
       div {
         margin-bottom: 7px;
       }
@@ -131,7 +122,7 @@
 .btnWrapper {
   float: right;
 
-  margin-top: px-to-rem(10);
+  // margin-top: px-to-rem(10);
   button:first-child {
     background-color: transparent;
     padding: px-to-rem(5) px-to-rem(10);
@@ -153,4 +144,8 @@
   .input {
     width: 150px;
   }
+}
+.editBtnContainer {
+  @include flex(row, space-between, center, px-to-rem(10));
+  margin-top: px-to-rem(20);
 }

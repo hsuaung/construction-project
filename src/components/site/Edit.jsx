@@ -1,6 +1,7 @@
 import React, { useState } from "react";
-
+import { useCRUD } from "../HOC/UseCRUD";
 import "./edit.scss";
+import "../../assets/styles/entry.scss";
 import GoogleMapComoponent from "../GoogleMapComponent";
 import ClickableMap from "../ClickableMap";
 // import "../menu/staff/entry.scss";
@@ -105,6 +106,7 @@ function Detail({ onCancel }) {
 }
 
 function EditSite({ onCancel }) {
+  const { handleDelete, handleCreate, handleEdit, loading, error } = useCRUD();
   return (
     <div className="editSiteTab">
       <h1>Edit Site</h1>
@@ -240,11 +242,26 @@ function EditSite({ onCancel }) {
           </div>
         </div>
       </form>
-      <div className="btnWrapper">
-        <button onClick={onCancel} className="">
-          Cancel
-        </button>
-        <button className="saveBtn">Update</button>
+      <div className="editBtnContainer">
+        <div onClick={() => handleDelete(1)} className="deleteBtn">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="30"
+            viewBox="0 0 30 30"
+            fill="none"
+          >
+            <path
+              d="M4.6875 7.5H8.4375V5.15625C8.4375 4.12207 9.27832 3.28125 10.3125 3.28125H19.6875C20.7217 3.28125 21.5625 4.12207 21.5625 5.15625V7.5H25.3125C25.8311 7.5 26.25 7.91895 26.25 8.4375V9.375C26.25 9.50391 26.1445 9.60938 26.0156 9.60938H24.2461L23.5225 24.9316C23.4756 25.9307 22.6494 26.7188 21.6504 26.7188H8.34961C7.34766 26.7188 6.52441 25.9336 6.47754 24.9316L5.75391 9.60938H3.98438C3.85547 9.60938 3.75 9.50391 3.75 9.375V8.4375C3.75 7.91895 4.16895 7.5 4.6875 7.5ZM10.5469 7.5H19.4531V5.39062H10.5469V7.5Z"
+              fill="#F24822"
+            />
+          </svg>
+        </div>
+        <div className="btnWrapper">
+          <button onClick={onCancel} className="">
+            Cancel
+          </button>
+          <button className="saveBtn">Update</button>
+        </div>
       </div>
     </div>
   );
@@ -410,11 +427,14 @@ function EditSchedule({ onCancel }) {
           </div>
         </div>
       </form>
-      <div className="btnWrapper">
-        <button onClick={onCancel} className="">
-          Cancel
-        </button>
-        <button className="saveBtn">Update</button>
+      <div className="editBtnContainer">
+        <div></div>
+        <div className="btnWrapper">
+          <button onClick={onCancel} className="">
+            Cancel
+          </button>
+          <button className="saveBtn">Update</button>
+        </div>
       </div>
     </div>
   );
@@ -515,41 +535,45 @@ function TabContent({ content }) {
   return <div className="p-4 text-gray-800">{content}</div>;
 }
 
-export default function Edit() {
+export default function Edit({
+  showEditModelBox,
+  setShowEditModelBox,
+  id,
+  closeModal,
+}) {
   const [activeTab, setActiveTab] = useState(tabs[0].id);
-  const [isModalOpen, setIsModalOpen] = useState(true);
-  const closeModal = () => setIsModalOpen(false);
+  // const [isModalOpen, setIsModalOpen] = useState(true);
+  // const closeModal = () => setIsModalOpen(false);
 
-  if (!isModalOpen) return null;
+  // if (!isModalOpen) return null;
   const activeTabContent = tabs.find((tab) => tab.id === activeTab)?.content;
   return (
-    <div className="modalForm siteModal">
-      <div className="modelTitle">
-        <h4>Detail Modal Box</h4>
-      </div>
-      <div className="modalContent siteEditForm">
-        <div className="tabMenu">
-          {tabs.map((tab) => (
-            <Tab
-              key={tab.id}
-              label={tab.label}
-              isActive={activeTab === tab.id}
-              onClick={() => setActiveTab(tab.id)}
+    <>
+      <div className="bgBlur"></div>
+      <div className="modalForm siteModal">
+        <div className="modelTitle">
+          <h4>Detail Modal Box</h4>
+        </div>
+        <div className="modalContent siteEditForm">
+          <div className="tabMenu">
+            {tabs.map((tab) => (
+              <Tab
+                key={tab.id}
+                label={tab.label}
+                isActive={activeTab === tab.id}
+                onClick={() => setActiveTab(tab.id)}
+              />
+            ))}
+          </div>
+          <div className="tabContent">
+            <TabContent
+              content={React.cloneElement(activeTabContent, {
+                onCancel: closeModal,
+              })}
             />
-          ))}
-        </div>
-        <div className="tabContent">
-          <TabContent
-            content={React.cloneElement(activeTabContent, {
-              onCancel: closeModal,
-            })}
-          />
-
-          {/* <TabContent
-            content={tabs.find((tab) => tab.id === activeTab)?.content}
-          /> */}
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }
