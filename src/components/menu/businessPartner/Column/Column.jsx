@@ -47,8 +47,11 @@ export default function Column({ tasks }) {
           <Task
             key={task.id}
             id={task.id}
-            name={task.user_name}
-            group={task.user_email}
+            name={task.name}
+            image= {task.image}
+            email={task.email}
+            phonenumber={task.phonenumber}
+            staffId={task.staffId}
             onClick={() => handleEditModelBox(task.id)} // Pass function correctly
           />
         ))}
