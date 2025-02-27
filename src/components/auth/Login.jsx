@@ -1,20 +1,23 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 import "../../assets/styles/login.scss";
 import Logo from "../../assets/images/logo.png";
 const Login = () => {
+  localStorage.clear();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [emailError, setEmailError] = useState("");
   const [passwordError, setPasswordError] = useState("");
-
+  const [apiEmailError, setApiEmailError] = useState("");
+  const [apiPasswordError, setApiPasswordError] = useState("");
   const navigate = useNavigate();
-
   const handleLogin = async (e) => {
     e.preventDefault();
-
     setEmailError("");
     setPasswordError("");
+    setApiEmailError("");
+    setApiPasswordError("");
 
     let hasError = false;
 
@@ -36,13 +39,60 @@ const Login = () => {
       hasError = true;
     }
 
-   
-
     // Stop if there are errors
     if (hasError) return;
 
-    // Redirect to home route
-    navigate("/");
+    console.log("EMAIL", email);
+    console.log("Password", password);
+    try {
+      const response = await axios.post("http://localhost:8383/auth/login", {
+        email,
+        password,
+      });
+
+      const { token, user } = response.data;
+
+      if (!user || !user.role) {
+        console.error("User role is undefined or missing!");
+        return;
+      }
+
+      localStorage.setItem("token", token);
+      localStorage.setItem("role", user.role);
+      localStorage.setItem("id", user.id);
+
+      console.log("Successfully Login:", response.data);
+      console.log("ROLE", user.role);
+
+      // Navigate based on role
+      if (localStorage.getItem("role") === "admin") {
+        console.log("admin dash");
+        navigate("/");
+      } else if (localStorage.getItem("role") === "staff") {
+        console.log("staff dash");
+        navigate("/staffDashboard");
+      } else {
+        navigate("/no");
+      }
+    } catch (error) {
+      if (error.response) {
+        if (error.response.status === 401) {
+          const errorMessage = error.response.data.message;
+          if (errorMessage === "User doesn't exist") {
+            setApiEmailError(errorMessage);
+          } else setApiPasswordError(errorMessage);
+        } else {
+          console.log("Error:", error.response.data);
+          alert("An error occurred. Please try again later.");
+        }
+      } else if (error.request) {
+        console.log("Error request:", error.request);
+        alert("No response from server. Please check your connection.");
+      } else {
+        console.log("Error message:", error.message);
+        alert("An unexpected error occurred. Please try again.");
+      }
+    }
   };
 
   return (
@@ -79,6 +129,11 @@ const Login = () => {
             ) : (
               <p style={{ opacity: "0" }}>hee</p>
             )}
+            {apiEmailError ? (
+              <p style={{ color: "red" }}>{apiEmailError}</p>
+            ) : (
+              <p style={{ opacity: "0" }}>hee</p>
+            )}
           </div>
         </div>
 
@@ -101,6 +156,12 @@ const Login = () => {
           <div>
             {passwordError ? (
               <p style={{ color: "red" }}>{passwordError}</p>
+            ) : (
+              <p style={{ opacity: "0" }}>hee</p>
+            )}
+
+            {apiPasswordError ? (
+              <p style={{ color: "red" }}>{apiPasswordError}</p>
             ) : (
               <p style={{ opacity: "0" }}>hee</p>
             )}

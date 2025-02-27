@@ -1,5 +1,5 @@
 import React from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom"; // Use Routes instead of Switch
 import BaseLayout from "./components/HOC/Layouts/BaseLayout";
 import Login from "./components/auth/Login";
 import Home from "./components/Home";
@@ -14,24 +14,78 @@ import OperationTypeList from "./components/menu/operationType/List";
 import Ui from "./components/Ui";
 import "./App.scss";
 
+import ProtectedRoute from "./components/auth/ProtectedRoute";
+
+import StaffDash from "./components/StaffDash";
+import NoAccess from "./components/NoAccess";
+import NotFound from "./components/NotFound";
 function App() {
   return (
     <Router>
       <Routes>
         <Route path="/login" element={<Login />} />
         <Route path="/" element={<BaseLayout />}>
-          {/* Add your routes here */}
-
           <Route path="/ui" element={<Ui />} />
-
           <Route index element={<Home />} />
           <Route path="/userprofile" element={<UserProfile />} />
-          <Route path="/schedule" element={<Schedule />} />
-          <Route path="/site" element={<SiteList />} />
-          <Route path="/staff" element={<StaffList />} />
-          <Route path="/vehicle" element={<VehicleList />} />
-          <Route path="/business-partner" element={<BusinessPartnerList />} />
-          <Route path="/operation-type" element={<OperationTypeList />} />
+
+          {/* Admin Route Start */}
+          <Route
+            path="/business-partner"
+            element={
+              <ProtectedRoute
+                requiredRole="admin"
+                component={BusinessPartnerList}
+              />
+            }
+          />
+          <Route
+            path="/operation-type"
+            element={
+              <ProtectedRoute
+                requiredRole="admin"
+                component={OperationTypeList}
+              />
+            }
+          />
+          <Route
+            path="/vehicle"
+            element={
+              <ProtectedRoute requiredRole="admin" component={VehicleList} />
+            }
+          />
+          <Route
+            path="/staff"
+            element={
+              <ProtectedRoute requiredRole="admin" component={StaffList} />
+            }
+          />
+          <Route
+            path="/site"
+            element={
+              <ProtectedRoute requiredRole="admin" component={SiteList} />
+            }
+          />
+          <Route
+            path="/schedule"
+            element={
+              <ProtectedRoute requiredRole="admin" component={Schedule} />
+            }
+          />
+          {/* Admin Route End */}
+
+          {/* Staff Route Start  */}
+          <Route
+            path="/staffDashboard"
+            element={
+              <ProtectedRoute requiredRole="staff" component={StaffDash} />
+            }
+          />
+
+          {/* Staff Route End  */}
+
+          <Route path="/no-access" element={<NoAccess replace />} />
+          <Route path="*" element={<NotFound replace />} />
         </Route>
       </Routes>
     </Router>

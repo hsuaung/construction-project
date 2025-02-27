@@ -54,8 +54,9 @@ export const Task = ({
           />
         </svg>
       </div>
-
-      <p>{image}</p>
+      {/* <img src={} alt="" /> */}
+      {/* <p>{image}</p> */}
+      <img src={image} alt="" width="30px" height="30px" />
       <p>{name}</p>
       <p>{email}</p>
       <p>{team}</p>

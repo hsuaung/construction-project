@@ -24,7 +24,7 @@ export default function List(params) {
     data: users,
     loading,
     error,
-  } = useFetchData("http://localhost:8383/operationtypes/list", deleteStatus);
+  } = useFetchData("http://localhost:8383/staff/list", deleteStatus);
 
   console.log("Hsu ", users);
   // axios
@@ -85,8 +85,14 @@ export default function List(params) {
   };
 
   const filteredStaffs = staffs.filter((staff) =>
-    ["user_name", "user_email"].some((key) =>
-      String(staff[key] || "")
+    [
+      staff.name,
+      staff.email,
+      staff.Team?.name,
+      staff.position,
+      staff.workingStatus,
+    ].some((value) =>
+      String(value || "")
         .toLowerCase()
         .includes(searchQuery.toLowerCase())
     )
@@ -150,7 +156,7 @@ export default function List(params) {
             <div>
               <p>Staff Name</p>
               <svg
-                onClick={() => sortStaffs("user_name")}
+                onClick={() => sortStaffs("name")}
                 xmlns="http://www.w3.org/2000/svg"
                 width="16"
                 viewBox="0 0 21 24"
@@ -168,7 +174,7 @@ export default function List(params) {
             <div>
               <p>Email</p>
               <svg
-                onClick={() => sortStaffs("user_email")}
+                onClick={() => sortStaffs("email")}
                 xmlns="http://www.w3.org/2000/svg"
                 width="16"
                 viewBox="0 0 21 24"
@@ -186,7 +192,7 @@ export default function List(params) {
             <div>
               <p>Team</p>
               <svg
-                onClick={() => sortStaffs("user_email")}
+                onClick={() => sortStaffs("Team.name")}
                 xmlns="http://www.w3.org/2000/svg"
                 width="16"
                 viewBox="0 0 21 24"
@@ -204,7 +210,7 @@ export default function List(params) {
             <div>
               <p>Staff Type</p>
               <svg
-                onClick={() => sortStaffs("user_email")}
+                onClick={() => sortStaffs("position")}
                 xmlns="http://www.w3.org/2000/svg"
                 width="16"
                 viewBox="0 0 21 24"
@@ -222,7 +228,7 @@ export default function List(params) {
             <div>
               <p>Status</p>
               <svg
-                onClick={() => sortStaffs("user_email")}
+                onClick={() => sortStaffs("workingStatus")}
                 xmlns="http://www.w3.org/2000/svg"
                 width="16"
                 viewBox="0 0 21 24"
