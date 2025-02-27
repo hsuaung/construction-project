@@ -1,5 +1,5 @@
 import React from "react";
-import BtnModelBox from "./HOC/buttons/BtnModelBox";
+// import BtnModelBox from "./HOC/buttons/BtnModelBox";
 import "../assets/styles/buttons/btnModalBox.scss";
 import Profile from '../assets/images/sampleProfile.jpg';
 import HomeDate from './HOC/buttons/HomeDate'

@@ -12,19 +12,74 @@ import "../../../assets/styles/list.scss"
 
 export default function List(params) {
   const { handleDelete, loading: crudLoading, error: crudError, deleteStatus } = useCRUD();
-  const { data: users, loading, error } = useFetchData("http://localhost:8383/user/list", deleteStatus);
+  const { data: businesspartners, loading, error } = useFetchData("http://localhost:8383/businesspartner/list", deleteStatus);
+  
   
   const [businessPartners, setBusinessPartners] = useState([]);
+  const [adminData, setAdminData] = useState({});
+  const [projectCounts,setProjectCounts] = useState({});
+
   const [searchQuery, setSearchQuery] = useState("");
   const [showCreateModelBox, setShowCreateModelBox] = useState(false);
   const [selectedTaskId, setSelectedTaskId] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (users) {
-      setBusinessPartners(users);
+    if (businesspartners) {
+      setBusinessPartners(businesspartners);
+      fetchAdminData();
+      fetchProjectCounts();
     }
-  }, [users]);
+  }, [businesspartners]);
+
+  
+
+  // fetch not in db datas
+  const fetchAdminData = async () => {
+    try {
+      const staffIds = [...new Set(businesspartners.map((bp) => bp.staffId))];
+  
+      if (staffIds.length === 0) return; // Avoid unnecessary requests
+  
+      const staffPromises = staffIds.map((id) =>
+        axios.get(`http://localhost:8383/staff/getbyid/${id}`)
+      );
+  
+      const staffResponses = await Promise.all(staffPromises);
+  
+      const staffDataMap = staffResponses.reduce((acc, response) => {
+        if (response.data && response.data.id) {
+          acc[response.data.id] = response.data.name;
+        }
+        return acc;
+      }, {});
+  
+      setAdminData(staffDataMap);
+    } catch (error) {
+      console.error("Error fetching staff data:", error);
+    }
+  };
+
+  const fetchProjectCounts = async () => {
+    try {
+      const countPromises = businesspartners.map((bp) =>
+        axios.get(`http://localhost:8383/site/getbybusinesspartnerid/${bp.id}`)
+      );
+  
+      const countResponses = await Promise.all(countPromises);
+  
+      const projectCountMap = countResponses.reduce((acc, response, index) => {
+        acc[businesspartners[index].id] = response.data.length || 0;
+        return acc;
+      }, {});
+  
+      setProjectCounts(projectCountMap);
+    } catch (error) {
+      console.error("Error fetching project counts:", error);
+    }
+  };
+  
+
 
   const handleDragEnd = async (event) => {
     const { active, over } = event;
@@ -38,7 +93,7 @@ export default function List(params) {
 
      // Persist the updated order to the backend
      try {
-      await axios.post("http://localhost:8383/user/update-order", { items: updatedBusinessPartners });
+      await axios.post("http://localhost:8383/businesspartner/update-order", { items: updatedBusinessPartners });
     } catch (error) {
       console.error("Error updating order:", error);
     }
@@ -54,11 +109,52 @@ export default function List(params) {
     });
   };
 
-  const filteredBusinessPartners = businessPartners.filter((businessPartner) =>
-    ["user_name", "user_email"].some((key) =>
-      String(businessPartner[key] || "").toLowerCase().includes(searchQuery.toLowerCase())
-    )
-  );
+  // sort not in db datas
+  const sortAdminName = () => {
+    if (Object.keys(adminData).length === 0) return; // Ensure adminData is populated
+  
+    setBusinessPartners((prevBusinessPartners) => {
+      return [...prevBusinessPartners].sort((a, b) => {
+        const staffNameA = adminData[a.staffId] || "";
+        const staffNameB = adminData[b.staffId] || "";
+        return staffNameA.localeCompare(staffNameB);
+      });
+    });
+  };
+
+  const sortNumberOfProjects = () => {
+    setBusinessPartners((prevBusinessPartners) => {
+      return [...prevBusinessPartners].sort((a, b) => {
+        const projectsA = projectCounts[a.id] || 0
+        const projectsB = projectCounts[b.id] || 0
+        return projectsA - projectsB
+      })
+    })
+  }
+
+  
+
+  // const filteredBusinessPartners = businessPartners.filter((businessPartner) =>
+  //   ["name", "email","phonenumber"].some((key) =>
+  //     String(businessPartner[key] || "").toLowerCase().includes(searchQuery.toLowerCase())||
+  // (adminData[businessPartner.StaffId] || "").toLowerCase().includes(searchQuery.toLowerCase())
+  //   )
+  // );
+  const filteredBusinessPartners = businessPartners.filter((businessPartner) => {
+    const query = searchQuery.toLowerCase();
+  
+    return ["name", "email", "phonenumber"].some((key) =>
+      String(businessPartner[key] || "").toLowerCase().includes(query)
+    ) ||
+      // Include adminData (Added By)
+      (adminData[businessPartner.staffId] || "").toLowerCase().includes(query) ||
+      // Include projectCounts (Number of Projects)
+      String(projectCounts[businessPartner.id] || 0).includes(query);
+  });
+
+  
+  
+  
 
   const handleCreateModelBox = () => {
     setShowCreateModelBox(true);
@@ -110,7 +206,7 @@ export default function List(params) {
             <div>
               <p>Partner Name</p>
               <svg
-                onClick={() => sortBusinessPartners("user_email")}
+                onClick={() => sortBusinessPartners("name")}
                 xmlns="http://www.w3.org/2000/svg"
                 width="16"
                 viewBox="0 0 21 24"
@@ -128,7 +224,7 @@ export default function List(params) {
             <div>
               <p>Email</p>
               <svg
-                onClick={() => sortBusinessPartners("user_email")}
+                onClick={() => sortBusinessPartners("email")}
                 xmlns="http://www.w3.org/2000/svg"
                 width="16"
                 viewBox="0 0 21 24"
@@ -146,7 +242,7 @@ export default function List(params) {
             <div>
               <p>Phone number</p>
               <svg
-                onClick={() => sortBusinessPartners("user_email")}
+                onClick={() => sortBusinessPartners("phonenumber")}
                 xmlns="http://www.w3.org/2000/svg"
                 width="16"
                 viewBox="0 0 21 24"
@@ -164,7 +260,7 @@ export default function List(params) {
             <div>
               <p>No. of Projects</p>
               <svg
-                onClick={() => sortBusinessPartners("user_email")}
+                onClick={sortNumberOfProjects}
                 xmlns="http://www.w3.org/2000/svg"
                 width="16"
                 viewBox="0 0 21 24"
@@ -182,7 +278,7 @@ export default function List(params) {
             <div>
               <p>Added By</p>
               <svg
-                onClick={() => sortBusinessPartners("user_email")}
+                onClick={sortAdminName}
                 xmlns="http://www.w3.org/2000/svg"
                 width="16"
                 viewBox="0 0 21 24"
@@ -200,8 +296,12 @@ export default function List(params) {
             <div></div>
           </div>
           <DndContext onDragEnd={handleDragEnd} collisionDetection={closestCorners}>
-          <SortableContext items={filteredBusinessPartners} strategy={verticalListSortingStrategy}>
+          <SortableContext items={filteredBusinessPartners.map((bp) => bp.id)} strategy={verticalListSortingStrategy}>
+          {filteredBusinessPartners.length === 0 ? (
+            <p>No business partners found.</p>
+          ) : (
             <Column tasks={filteredBusinessPartners} />
+          )}
           </SortableContext>
           </DndContext>
         </section>
@@ -211,3 +311,6 @@ export default function List(params) {
     </>
   );
 }
+
+
+
