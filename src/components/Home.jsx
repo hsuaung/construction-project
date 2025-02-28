@@ -5,6 +5,7 @@ import Profile from '../assets/images/sampleProfile.jpg';
 import HomeDate from './HOC/buttons/HomeDate'
 import "./Home.scss"
 export default function Home() {
+  console.log("Reach here...");
   return (
     <div>
       {/* <BtnModelBox cancel="Return" save="Add" /> */}

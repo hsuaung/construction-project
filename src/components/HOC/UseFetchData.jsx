@@ -1,16 +1,42 @@
-import { useState, useEffect } from "react";
-import axios from "axios";
+// import { useState, useEffect } from "react";
+// import axios from "axios";
 
-export function useFetchData(url, deleteStatus = false) {
-  const [data, setData] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
-  const token = localStorage.getItem("token");
-  console.log("FETCH", token);
-  useEffect(() => {
-    if (!url) return; // Stop execution if URL is null
+// export function useFetchData(url, deleteStatus=false) {
+//   const [data, setData] = useState([]);
+//   const [loading, setLoading] = useState(false);
+//   const [error, setError] = useState(null);
 
-    setLoading(true);
+//   useEffect(() => {
+//     setLoading(true);
+//     axios
+//       .get(url)
+//       .then((response) => {
+//         setData(response.data);
+//         setLoading(false);
+//       })
+//       .catch((error) => {
+//         console.error("Error fetching data:", error.message);
+//         setError(error);
+//         setLoading(false);
+//       });
+//   }, [url, deleteStatus]); // Re-fetch data when deleteStatus changes
+
+//   return { data, loading, error };
+// }
+
+import { useState, useEffect, useCallback } from "react"
+import axios from "axios"
+
+export function useFetchData(url) {
+  const [data, setData] = useState([])
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState(null)
+  const token = localStorage.getItem("token")
+
+  const fetchData = useCallback(() => {
+    if (!url) return
+
+    setLoading(true)
     axios
       .get(url, {
         headers: {
@@ -18,18 +44,23 @@ export function useFetchData(url, deleteStatus = false) {
         },
       })
       .then((response) => {
-        setData(response.data);
-        setLoading(false);
+        setData(response.data)
+        setLoading(false)
       })
       .catch((error) => {
-        console.error(
-          "Error fetching data:",
-          error.response?.data || error.message
-        );
-        setError(error);
-        setLoading(false);
-      });
-  }, [url, deleteStatus]);
+        console.error("Error fetching data:", error.response?.data || error.message)
+        setError(error)
+        setLoading(false)
+      })
+  }, [url, token])
 
-  return { data, loading, error };
+  useEffect(() => {
+    fetchData()
+  }, [fetchData])
+
+  const refetch = useCallback(() => {
+    fetchData()
+  }, [fetchData])
+
+  return { data, loading, error, refetch }
 }

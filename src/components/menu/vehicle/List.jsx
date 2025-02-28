@@ -31,21 +31,11 @@ export default function List(params) {
   const [selectedTaskId, setSelectedTaskId] = useState(null)
   const navigate = useNavigate()
 
-// refresh data func
-  // const refreshData = useCallback(async () => {
-  //   try {
-  //     await refetchVehicles()
-  //   } catch (error) {
-  //     console.error("Error refreshing data:", error)
-  //   }
-  // }, [refetchVehicles])
-
   useEffect(() => {
     if (Vehicles) {
-      console.log(Vehicles)
+      // console.log(Vehicles)
       setVehicles(Vehicles)
-      // setFilteredVehicles(Vehicles)
-      console.log(vehicles)
+      // console.log(vehicles)
       fetchGroupData(Vehicles)
     }
   },[Vehicles])
@@ -67,13 +57,23 @@ export default function List(params) {
   }, [vehicles, searchQuery, groupData])
 
   
+  console.log(localStorage.getItem("token"));
 
   const fetchGroupData = async (vehicleList) => {
     try {
       const groupIds = [...new Set(vehicleList.map((v) => v.groupId))]
       if (groupIds.length === 0) return
 
-      const groupPromises = groupIds.map((id) => axios.get(`http://localhost:8383/group/getbyid/${id}`))
+      const token = localStorage.getItem("token"); 
+
+      const groupPromises = groupIds.map((id) =>
+        axios.get(`http://localhost:8383/group/getbyid/${id}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        })
+      );
 
       const groupResponses = await Promise.all(groupPromises)
       const groupDataMap = groupResponses.reduce((acc, response) => {
@@ -127,8 +127,8 @@ export default function List(params) {
   //search
   const handleCreateModelBox = () => {
     setShowCreateModelBox(true)
-    console.log("Testing CreateModelBox")
-    setSelectedTaskId(null)
+    // console.log("Testing CreateModelBox")
+    // setSelectedTaskId(null)
     navigate('/vehicle/entry')
   }
 
@@ -288,13 +288,13 @@ export default function List(params) {
           </div>
           <DndContext onDragEnd={handleDragEnd} collisionDetection={closestCorners}>
             <SortableContext items={filteredVehicles} strategy={verticalListSortingStrategy}>
-              <Column tasks={filteredVehicles} />
+              <Column tasks={filteredVehicles} refetchVehicles={refetchVehicles}/>
             </SortableContext>
           </DndContext>
         </section>
       </div>
       {showCreateModelBox && (
-        <Entry showCreateModelBox={showCreateModelBox} setShowCreateModelBox={setShowCreateModelBox} />
+        <Entry showCreateModelBox={showCreateModelBox} setShowCreateModelBox={setShowCreateModelBox} onSuccess={refetchVehicles}/>
       )}
     </>
   )

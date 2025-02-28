@@ -5,27 +5,21 @@ import "./group.scss"
 
 export default function Group({ createGroup, setCreateGroup ,groupOptions,setGroupOptions,loading,error, showCreateModelBox, setShowCreateModelBox}) {
   const { handleCreate, handleEdit, handleDelete} = useCRUD()
-  // const { handleCreate, handleEdit, handleDelete, loading: crudLoading, error: crudError, deleteStatus } = useCRUD()
-  // const { data: initialGroups = [], loading, error } = useFetchData("http://localhost:8383/group/list", deleteStatus)
-
-  // const [groups, setGroups] = useState([])
   const [hasAddedNewGroup, setHasAddedNewGroup] = useState(false)
   const [changes, setChanges] = useState({ created: [], updated: [], deleted: [] })
+  const [originalGroups,setOriginalGroups] = useState([])
 
   const colors = ["red", "blue", "green", "orange", "lightblue", "lightgreen", "gray", "whitesmoke"]
+
+
+
+  useEffect(() => {
+    setOriginalGroups([...groupOptions])
+  }, [groupOptions])
 
   const getRandomColor = () => {
     return colors[Math.floor(Math.random() * colors.length)]
   }
-  console.log(
-    groupOptions
-  );
-
-  // useEffect(() => {
-  //   if (Array.isArray(groupOptions)) {
-  //     setGroups(initialGroups)
-  //   }
-  // }, [initialGroups])
 
   const handleCreateNew = () => {
     if (hasAddedNewGroup) {
@@ -82,14 +76,21 @@ export default function Group({ createGroup, setCreateGroup ,groupOptions,setGro
       }
     })
     setHasAddedNewGroup(false)
-    // if (id.startsWith("temp-")) {
-    //   setHasAddedNewGroup(false)
-    // }
     
   }
 
   const handleCancel = () => {
+    const filteredGroups = originalGroups.filter(
+      (group) => typeof group.id !== "string" || !String(group.id).startsWith("temp-")
+    );
+    setChanges({ created: [], updated: [], deleted: [] })
+    setHasAddedNewGroup(false)
+    setGroupOptions([...filteredGroups])
+    console.log(groupOptions)
     setCreateGroup(false)
+    if (showCreateModelBox) {
+      setShowCreateModelBox(true)
+    }
   }
 
   const handleSubmit = async (e) => {
@@ -111,8 +112,13 @@ export default function Group({ createGroup, setCreateGroup ,groupOptions,setGro
         await handleDelete(`http://localhost:8383/group/delete`, deletedId)
       }
 
+      setOriginalGroups([...groupOptions])
+      setChanges({ created: [], updated: [], deleted: [] })
       alert("All changes have been saved successfully.")
       setCreateGroup(false)
+      if (showCreateModelBox) {
+        setShowCreateModelBox(true)
+      }
       // setShowCreateModelBox(true)
     } catch (error) {
       console.error("Error saving changes:", error)
