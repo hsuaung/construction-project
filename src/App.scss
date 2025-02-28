@@ -117,7 +117,7 @@ button {
 //Layout
 
 .loginContainer {
-  background-color: $whiteColor;
+  // background-color: $whiteColor;
   width: 400px;
   height: 500px;
   margin: auto;
@@ -350,13 +350,12 @@ input[type="date"] {
 
   // If you want to use a custom icon
   &::-webkit-calendar-picker-indicator {
-    background: url('./assets/images/schedule.png') no-repeat center;
+    background: url("./assets/images/schedule.png") no-repeat center;
     margin-right: px-to-rem(10);
     background-size: contain;
     opacity: 1;
   }
 }
-
 
 .modelTwoColumn {
   @include grid(1fr 1fr, 1fr, px-to-rem(30));
