@@ -25,7 +25,7 @@ export default function List(params) {
     data: users,
     loading,
     error,
-  } = useFetchData("http://localhost:8383/user/list", deleteStatus);
+  } = useFetchData("http://localhost:8383/site/list", deleteStatus);
 
   const [businessPartners, setBusinessPartners] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
