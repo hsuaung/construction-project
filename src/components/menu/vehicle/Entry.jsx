@@ -1,13 +1,13 @@
-import dayjs from 'dayjs';
-import axios from 'axios';
-import React, { useState, useEffect } from "react"
-import { useNavigate, useParams } from "react-router-dom"
-import { useCRUD } from "../../HOC/UseCRUD"
-import { useFetchData } from "../../HOC/UseFetchData"
-import "../../../assets/styles/entry.scss"
-import "./entry.scss"
-import ImageUpload from '../../HOC/inputBoxes/ImageUpload'
-import Group from "./Group"
+import dayjs from "dayjs";
+import axios from "axios";
+import React, { useState, useEffect } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import { useCRUD } from "../../HOC/UseCRUD";
+import { useFetchData } from "../../HOC/UseFetchData";
+import "../../../assets/styles/entry.scss";
+import "./entry.scss";
+import ImageUpload from "../../HOC/inputBoxes/ImageUpload";
+import Group from "./Group";
 
 export default function Entry(
   { id,
@@ -45,7 +45,7 @@ export default function Entry(
 
   useEffect(() => {
     if (vehicleData) {
-      setFormData(vehicleData)
+      setFormData(vehicleData);
       // console.log(formData)
     }
   }, [vehicleData]);
@@ -78,9 +78,11 @@ export default function Entry(
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault()
-    
-    const url = id? `http://localhost:8383/vehicle/edit/${id}` : "http://localhost:8383/vehicle/add";
+    e.preventDefault();
+
+    const url = id
+      ? `http://localhost:8383/vehicle/edit/${id}`
+      : "http://localhost:8383/vehicle/add";
     const method = id ? "PUT" : "POST";
     try {
       const response = await axios({
@@ -93,8 +95,8 @@ export default function Entry(
            
         },
       });
-  
-      console.log("Response:", response.data); 
+
+      console.log("Response:", response.data);
       console.log(formData);
       // console.log(onSuccessEdit);
       if (onSuccess) {
@@ -102,9 +104,9 @@ export default function Entry(
         onSuccess()
       }
 
-      if(id){
+      if (id) {
         setShowEditModelBox(false);
-      }else{
+      } else {
         setShowCreateModelBox(false);
       }
       navigate("/vehicle")
@@ -121,7 +123,7 @@ export default function Entry(
       onSuccess()
     }
     setShowEditModelBox(false);
-    navigate("/vehicle")
+    navigate("/vehicle");
   };
 
   // Handle form clear/reset
@@ -144,8 +146,8 @@ export default function Entry(
       setShowEditModelBox(false);
       handleClear();
     }
-    navigate('/vehicle');
-  }
+    navigate("/vehicle");
+  };
 
   const handleCreateGroup = () => {
     setCreateGroup(true);
@@ -177,10 +179,15 @@ export default function Entry(
                       <small>Please enter displayed name( max 20 chars )</small>
                     </div>
                   </label>
-                  <input type="text" name="name" value={formData.name}
-                  onChange={handleChange}
-                  
-                  className="input" id="name" placeholder="Enter your car's display name" />
+                  <input
+                    type="text"
+                    name="name"
+                    value={formData.name}
+                    onChange={handleChange}
+                    className="input"
+                    id="name"
+                    placeholder="Enter your car's display name"
+                  />
                 </div>
 
                 {/* group selection */}
@@ -194,14 +201,20 @@ export default function Entry(
                       <small>Please select group</small>
                     </div>
                   </label>
-                  <div className="flexRow" style={{flexWrap:"nowrap"}}>
-                    <select name="groupId" id="groupId" onChange={handleChange} value={formData.groupId} className="input">
+                  <div className="flexRow" style={{ flexWrap: "nowrap" }}>
+                    <select
+                      name="groupId"
+                      id="groupId"
+                      onChange={handleChange}
+                      value={formData.groupId}
+                      className="input"
+                    >
                       <option value="">--- Select Group ---</option>
-                      {
-                        groupOptions.map((option, index) => (
-                          <option key={option.id} value={option.id}>{option.name}</option>
-                        ))
-                      }
+                      {groupOptions.map((option, index) => (
+                        <option key={option.id} value={option.id}>
+                          {option.name}
+                        </option>
+                      ))}
                     </select>
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -259,46 +272,82 @@ export default function Entry(
                       <small>Please select vehicle's status</small>
                     </div>
                   </label>
-                  <select name="status" id="" onChange={handleChange} value={formData.status} className="input" required>
-                      <option value="">--- Select Status ---</option>
-                      <option value="Deployed">Deployed</option>
-                      <option value="Scrapped">Scrapped</option>
-                    </select>
+                  <select
+                    name="status"
+                    id=""
+                    onChange={handleChange}
+                    value={formData.status}
+                    className="input"
+                    required
+                  >
+                    <option value="">--- Select Status ---</option>
+                    <option value="Deployed">Deployed</option>
+                    <option value="Scrapped">Scrapped</option>
+                  </select>
                 </div>
                 <div className="vehicleInformation">
                   <h4>Vehicle Information</h4>
 
-                    <div className="inputContainer">
-                      <label htmlFor="name" className="inputLabel">
-                        <div className="flexRow">
-                          <small>[Required]</small>
-                          <p>Inspection Expiry</p>
-                        </div>
-                        <div className="instruction">
-                          <small>Please select date</small>
-                        </div>
-                      </label>
-                      <input type="date" name="inspectionExpiry" id="" value={formData.inspectionExpiry ? dayjs(formData.inspectionExpiry).format('YYYY-MM-DD') : ''}  onChange={handleChange} required className="input" />
-                    </div>
-                    <div className="inputContainer">
-                      <label htmlFor="name" className="inputLabel">
-                        <div className="flexRow">
-                          <small>[Required]</small>
-                          <p>Insurance Expiry</p>
-                        </div>
-                        <div className="instruction">
-                          <small>Please select date</small>
-                        </div>
-                      </label>
-                      <input type="date" name="insuranceExpiry" id="" value={formData.insuranceExpiry ? dayjs(formData.insuranceExpiry).format('YYYY-MM-DD') : ''} onChange={handleChange} required className="input" />
-                    </div>
+                  <div className="inputContainer">
+                    <label htmlFor="name" className="inputLabel">
+                      <div className="flexRow">
+                        <small>[Required]</small>
+                        <p>Inspection Expiry</p>
+                      </div>
+                      <div className="instruction">
+                        <small>Please select date</small>
+                      </div>
+                    </label>
+                    <input
+                      type="date"
+                      name="inspectionExpiry"
+                      id=""
+                      value={
+                        formData.inspectionExpiry
+                          ? dayjs(formData.inspectionExpiry).format(
+                              "YYYY-MM-DD"
+                            )
+                          : ""
+                      }
+                      onChange={handleChange}
+                      required
+                      className="input"
+                    />
+                  </div>
+                  <div className="inputContainer">
+                    <label htmlFor="name" className="inputLabel">
+                      <div className="flexRow">
+                        <small>[Required]</small>
+                        <p>Insurance Expiry</p>
+                      </div>
+                      <div className="instruction">
+                        <small>Please select date</small>
+                      </div>
+                    </label>
+                    <input
+                      type="date"
+                      name="insuranceExpiry"
+                      id=""
+                      value={
+                        formData.insuranceExpiry
+                          ? dayjs(formData.insuranceExpiry).format("YYYY-MM-DD")
+                          : ""
+                      }
+                      onChange={handleChange}
+                      required
+                      className="input"
+                    />
+                  </div>
                 </div>
               </div>
               <div>
                 <div>
                   <p>Vehicle Photo</p>
-                  <div className="imageUploadContainer" >
-                    <ImageUpload handleFileChange={handleFileChange} value={formData.image} />
+                  <div className="imageUploadContainer">
+                    <ImageUpload
+                      handleFileChange={handleFileChange}
+                      value={formData.image}
+                    />
                   </div>
                 </div>
               </div>

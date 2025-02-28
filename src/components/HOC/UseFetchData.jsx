@@ -1,66 +1,77 @@
-// import { useState, useEffect } from "react";
-// import axios from "axios";
-
-// export function useFetchData(url, deleteStatus=false) {
-//   const [data, setData] = useState([]);
-//   const [loading, setLoading] = useState(false);
-//   const [error, setError] = useState(null);
-
-//   useEffect(() => {
-//     setLoading(true);
-//     axios
-//       .get(url)
-//       .then((response) => {
-//         setData(response.data);
-//         setLoading(false);
-//       })
-//       .catch((error) => {
-//         console.error("Error fetching data:", error.message);
-//         setError(error);
-//         setLoading(false);
-//       });
-//   }, [url, deleteStatus]); // Re-fetch data when deleteStatus changes
-
-//   return { data, loading, error };
-// }
-
-import { useState, useEffect, useCallback } from "react"
-import axios from "axios"
+import { useState, useEffect, useCallback } from "react";
+import axios from "axios";
 
 export function useFetchData(url) {
-  const [data, setData] = useState([])
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState(null)
-  const token = localStorage.getItem("token")
+  const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
-  const fetchData = useCallback(() => {
-    if (!url) return
+  const token = localStorage.getItem("accessToken");
+  const refreshToken = localStorage.getItem("refreshToken");
 
-    setLoading(true)
-    axios
-      .get(url, {
+  const fetchData = useCallback(async () => {
+    if (!url) return;
+
+    setLoading(true);
+    try {
+      const response = await axios.get(url, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
-      })
-      .then((response) => {
-        setData(response.data)
-        setLoading(false)
-      })
-      .catch((error) => {
-        console.error("Error fetching data:", error.response?.data || error.message)
-        setError(error)
-        setLoading(false)
-      })
-  }, [url, token])
+      });
+      setData(response.data);
+    } catch (err) {
+      if (err.response?.status === 401) {
+        console.warn("Access token expired. Attempting refresh...");
+
+        if (!refreshToken) {
+          console.error("No refresh token available.");
+          setError(new Error("Authentication required"));
+          return;
+        }
+
+        try {
+          const refreshResponse = await axios.post(
+            "http://localhost:8383/auth/refresh-token",
+            { refreshToken }
+          );
+
+          const newAccessToken = refreshResponse.data.accessToken;
+          const newRefreshToken = refreshResponse.data.refreshToken;
+
+          localStorage.setItem("accessToken", newAccessToken);
+          localStorage.setItem("refreshToken", newRefreshToken);
+
+          console.log("Token refreshed successfully.");
+
+          // Retry fetching data with the new token
+          const retryResponse = await axios.get(url, {
+            headers: {
+              Authorization: `Bearer ${newAccessToken}`,
+            },
+          });
+
+          setData(retryResponse.data);
+        } catch (refreshError) {
+          console.error("Token refresh failed:", refreshError);
+          setError(refreshError);
+        }
+      } else {
+        console.error("Error fetching data:", err.response?.data || err.message);
+        setError(err);
+      }
+    } finally {
+      setLoading(false);
+    }
+  }, [url, token, refreshToken]);
 
   useEffect(() => {
-    fetchData()
-  }, [fetchData])
+    fetchData();
+  }, [fetchData]);
 
   const refetch = useCallback(() => {
-    fetchData()
-  }, [fetchData])
+    fetchData();
+  }, [fetchData]);
 
-  return { data, loading, error, refetch }
+  return { data, loading, error, refetch };
 }
