@@ -1,10 +1,28 @@
-import { useState } from "react";
+import { useState,useCallback } from "react";
 import axios from "axios";
 
 export function useCRUD() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [data, setData] = useState(null)
   const [deleteStatus, setDeleteStatus] = useState(false); // State to track delete status
+
+// Refetch function to get fresh data
+const refetch = useCallback(async (url) => {
+  setLoading(true)
+  setError(null)
+  try {
+    const response = await axios.get(url)
+    setData(response.data)
+    return response.data
+  } catch (err) {
+    console.error("Error fetching:", err)
+    setError(err)
+    throw err
+  } finally {
+    setLoading(false)
+  }
+}, [])
 
   // Create new record
   const handleCreate = async (url, newData) => {
@@ -59,6 +77,8 @@ export function useCRUD() {
     handleCreate,
     handleEdit,
     handleDelete,
+    refetch,
+    data,
     loading,
     error,
     deleteStatus,

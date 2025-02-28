@@ -24,7 +24,6 @@ export default function Entry({ id, showCreateModelBox, setShowCreateModelBox,se
   // Fetch data if id is provided
   const { data: businesspartnerData } = useFetchData(id ? `http://localhost:8383/businesspartner/getbyid/${id}` : null);
   // const { data: operationTypeData } = id ? useFetchData(`http://localhost:8383/user/getByUserId/${id}`) : null;
-  
   useEffect(() => {
     if (businesspartnerData) {
       setFormData(businesspartnerData)

@@ -29,7 +29,12 @@ function App() {
           <Route path="/schedule" element={<Schedule />} />
           <Route path="/site" element={<SiteList />} />
           <Route path="/staff" element={<StaffList />} />
+          
+          {/* vehicle */}
           <Route path="/vehicle" element={<VehicleList />} />
+          <Route path="/vehicle/entry" element={<VehicleList />} />
+          <Route path="/vehicle/edit/:id" element={<VehicleList />} />
+
           <Route path="/business-partner" element={<BusinessPartnerList />} />
           <Route path="/operation-type" element={<OperationTypeList />} />
         </Route>

@@ -2,15 +2,20 @@ import React, { useState } from "react";
 import { Task } from "../Task/Task";
 import Entry from "../Entry"; // Import modal component
 import "./column.scss";
+import { useNavigate } from "react-router-dom";
 
 export default function Column({ tasks }) {
     const [showEditModelBox, setShowEditModelBox] = useState(false);
   const [selectedTaskId, setSelectedTaskId] = useState(null);
+  const navigate = useNavigate();
 
-  const handleEditModelBox = (id) => {
-    console.log("Editing task:", id);
+  const handleEditModelBox = async(id) => {
+    
     setShowEditModelBox(true); // Show modal when editing task
-    setSelectedTaskId(tasks.find(task => task.id === id)); // Store selected task details
+    // const taskId = await tasks.find(task => task.id === id); // Store selected task details
+    console.log("Editing task:", id);
+    setSelectedTaskId(id); 
+    navigate(`/vehicle/edit/${id}`)
   };
 
   const closeModal = () => {

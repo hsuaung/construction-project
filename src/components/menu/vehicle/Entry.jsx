@@ -1,5 +1,5 @@
-
-
+import dayjs from 'dayjs';
+import axios from 'axios';
 import React, { useState, useEffect } from "react"
 import { useNavigate, useParams } from "react-router-dom"
 import { useCRUD } from "../../HOC/UseCRUD"
@@ -8,15 +8,23 @@ import "../../../assets/styles/entry.scss"
 import "./entry.scss"
 import ImageUpload from '../../HOC/inputBoxes/ImageUpload'
 import Group from "./Group"
-export default function Entry({ id, showCreateModelBox, setShowCreateModelBox,setShowEditModelBox,showEditModelBox}) {
-  const { handleDelete,handleCreate, handleEdit, loading: crudLoading, error: crudError, deleteStatus } = useCRUD();
+
+export default function Entry(
+  { id,
+    showCreateModelBox,
+    setShowCreateModelBox,
+    setShowEditModelBox,
+    showEditModelBox
+  }
+) {
+  const { handleDelete,handleCreate, handleEdit, loading: crudLoading, error: crudError, deleteStatus ,refetch} = useCRUD();
   const { data: initialGroups,loading,error} = useFetchData("http://localhost:8383/group/list", deleteStatus);
  // Fetch data if id is provided
  const { data: vehicleData } = useFetchData(id ? `http://localhost:8383/vehicle/getbyid/${id}` : null);
 
   const [formData, setFormData] = useState({
     name: "",
-    image: null,
+    image: "",
     groupId: "",
     status:"Deployed",
     inspectionExpiry: "",
@@ -35,6 +43,7 @@ export default function Entry({ id, showCreateModelBox, setShowCreateModelBox,se
   useEffect(() => {
     if (vehicleData) {
       setFormData(vehicleData)
+      // console.log(formData)
     }
   }, [vehicleData])
 
@@ -49,70 +58,59 @@ export default function Entry({ id, showCreateModelBox, setShowCreateModelBox,se
     });
   };
 
-  const handleImageChange = (e) => {
+  const handleFileChange = (e) => {
     const file = e.target.files[0];
-    if (file) {
-      setFormData((prev) => ({
-        ...prev,
-        image: file, // Store file instead of base64
-      }));
+    if (!file.type.startsWith("image/")) {
+      alert("Please upload an image file.");
+      return;
     }
+    const reader = new FileReader();
+    reader.onload = () => {
+      setFormData({ ...formData, image: reader.result });
+    };
+    reader.readAsDataURL(file);
   };
 
   const handleGroupCreated = (newGroup) => {
     setGroupOptions(prevGroups => [...prevGroups, newGroup]);
   };
 
-  // Handle form submission
-  // const handleSubmit = (e) => {
-  //   e.preventDefault();  
-  //   console.log("Form Submitted:", formData)
-
-  //   const url = id ? `http://localhost:8383/vehicle/edit` : "http://localhost:8383/vehicle/add"
-
-  //   if (id) {
-  //     handleEdit(url, id, formData).then(() => navigate("/vehicle"))
-  //   } else {
-  //     handleCreate(url, formData).then(() => navigate("/vehicle"))
-  //   }
-  // }
-
   const handleSubmit = async (e) => {
     e.preventDefault()
-
-    const formDataToSend = new FormData()
-    formDataToSend.append("name", formData.name)
-    formDataToSend.append("groupId", formData.groupId)
-    formDataToSend.append("status", formData.status)
-    formDataToSend.append("inspectionExpiry", formData.inspectionExpiry)
-    formDataToSend.append("insuranceExpiry", formData.insuranceExpiry)
-
-    // Append image file if it exists
-    if (formData.image instanceof File) {
-      formDataToSend.append("image", formData.image)
-    }
-
-    const url = id ? `http://localhost:8383/vehicle/edit` : "http://localhost:8383/vehicle/add"
-
+    
+    const url = id? `http://localhost:8383/vehicle/edit/${id}` : "http://localhost:8383/vehicle/add";
+    const method = id ? "PUT" : "POST";
     try {
-      const response = await fetch(url, {
-        method: id ? "PUT" : "POST",
-        body: formDataToSend,
-      })
+      const response = await axios({
+        method,
+        url,
+        data: formData,
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+  
+      console.log("Response:", response.data); 
+      console.log(formData);
 
-      if (!response.ok) {
-        throw new Error("Network response was not ok")
+      if(id){
+        setShowEditModelBox(false);
+      }else{
+        setShowCreateModelBox(false);
       }
-
-      navigate("/vehicle")
+      
+      navigate(-1)
     } catch (error) {
-      console.error("Error submitting form:", error)
+      console.error("Error submitting form:", error.message);
     }
   }
 
   const handleDeleteData = async (id) => {
-    const url = `http://localhost:1818/vehicle/delete`;
+    const url = `http://localhost:8383/vehicle/delete`;
     await handleDelete(url, id); // Trigger the delete action
+
+    setShowEditModelBox(false);
+    navigate("/vehicle")
   };
 
   // Handle form clear/reset
@@ -135,6 +133,7 @@ export default function Entry({ id, showCreateModelBox, setShowCreateModelBox,se
       setShowEditModelBox(false);
       handleClear();
     }
+    navigate('/vehicle');
   }
 
   const handleCreateGroup = () => {
@@ -169,8 +168,8 @@ export default function Entry({ id, showCreateModelBox, setShowCreateModelBox,se
                   </label>
                   <input type="text" name="name" value={formData.name}
                   onChange={handleChange}
-                  required
-                  className="input" id="" placeholder="Enter your car's display name" />
+                  
+                  className="input" id="name" placeholder="Enter your car's display name" />
                 </div>
 
                 {/* group selection */}
@@ -186,7 +185,7 @@ export default function Entry({ id, showCreateModelBox, setShowCreateModelBox,se
                   </label>
                   <div className="flexRow" style={{flexWrap:"nowrap"}}>
                     <select name="groupId" id="groupId" onChange={handleChange} value={formData.groupId} className="input">
-                      <option >--- Select Group ---</option>
+                      <option value="">--- Select Group ---</option>
                       {
                         groupOptions.map((option, index) => (
                           <option key={option.id} value={option.id}>{option.name}</option>
@@ -216,8 +215,8 @@ export default function Entry({ id, showCreateModelBox, setShowCreateModelBox,se
                       <small>Please select vehicle's status</small>
                     </div>
                   </label>
-                  <select name="status" id="" onChange={handleChange} value={formData.status} className="input">
-                      <option value="Deployed">--- Select Status ---</option>
+                  <select name="status" id="" onChange={handleChange} value={formData.status} className="input" required>
+                      <option value="">--- Select Status ---</option>
                       <option value="Deployed">Deployed</option>
                       <option value="Scrapped">Scrapped</option>
                     </select>
@@ -235,7 +234,7 @@ export default function Entry({ id, showCreateModelBox, setShowCreateModelBox,se
                           <small>Please select date</small>
                         </div>
                       </label>
-                      <input type="date" name="inspectionExpiry" id="" value={formData.inspectionExpiry} onChange={handleChange} required className="input" />
+                      <input type="date" name="inspectionExpiry" id="" value={formData.inspectionExpiry ? dayjs(formData.inspectionExpiry).format('YYYY-MM-DD') : ''}  onChange={handleChange} required className="input" />
                     </div>
                     <div className="inputContainer">
                       <label htmlFor="name" className="inputLabel">
@@ -247,7 +246,7 @@ export default function Entry({ id, showCreateModelBox, setShowCreateModelBox,se
                           <small>Please select date</small>
                         </div>
                       </label>
-                      <input type="date" name="insuranceExpiry" id="" value={formData.insuranceExpiry} onChange={handleChange} required className="input" />
+                      <input type="date" name="insuranceExpiry" id="" value={formData.insuranceExpiry ? dayjs(formData.insuranceExpiry).format('YYYY-MM-DD') : ''} onChange={handleChange} required className="input" />
                     </div>
                 </div>
 
@@ -256,7 +255,7 @@ export default function Entry({ id, showCreateModelBox, setShowCreateModelBox,se
                 <div>
                   <p>Vehicle Photo</p>
                   <div className="imageUploadContainer" >
-                    <ImageUpload onChange={handleImageChange} value={formData.image} />
+                    <ImageUpload handleFileChange={handleFileChange} value={formData.image} />
                   </div>
                 </div>
               </div>
