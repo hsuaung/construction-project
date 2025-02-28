@@ -50,14 +50,14 @@ const Login = () => {
         password,
       });
 
-      const { token, user } = response.data;
+      const { accessToken, refreshToken, user } = response.data;
 
       if (!user || !user.role) {
         console.error("User role is undefined or missing!");
         return;
       }
-
-      localStorage.setItem("token", token);
+      localStorage.setItem("accessToken", accessToken);
+      localStorage.setItem("refreshToken", refreshToken);
       localStorage.setItem("role", user.role);
       localStorage.setItem("id", user.id);
 

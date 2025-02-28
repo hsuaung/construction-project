@@ -2,7 +2,7 @@ import React from "react";
 import { Route, Navigate } from "react-router-dom"; // Import Navigate here
 
 const ProtectedRoute = ({ component: Component, requiredRole, ...rest }) => {
-  const token = localStorage.getItem("token");
+  const token = localStorage.getItem("accessToken");
   const role = localStorage.getItem("role");
 
   const isAuthenticated = token && role;
