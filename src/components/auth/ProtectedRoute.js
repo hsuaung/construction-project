@@ -9,7 +9,7 @@ const ProtectedRoute = ({ component: Component, requiredRole, ...rest }) => {
   const hasAccess = requiredRole === role;
 
   if (!isAuthenticated || !hasAccess) {
-    return <Navigate to="/no-access" replace />; // Use Navigate for redirection
+    return <Navigate to="/login" replace />; // Use Navigate for redirection
   }
 
   return <Component {...rest} />;

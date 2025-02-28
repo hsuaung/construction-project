@@ -152,10 +152,6 @@ export default function List(params) {
       String(projectCounts[businessPartner.id] || 0).includes(query);
   });
 
-  
-  
-  
-
   const handleCreateModelBox = () => {
     setShowCreateModelBox(true);
     console.log("Testing CreateModelBox");

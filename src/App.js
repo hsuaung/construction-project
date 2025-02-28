@@ -26,10 +26,14 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/" element={<BaseLayout />}>
           <Route path="/ui" element={<Ui />} />
-          <Route index element={<Home />} />
+          {/* <Route index element={<Home />} /> */}
           <Route path="/userprofile" element={<UserProfile />} />
 
           {/* Admin Route Start */}
+          <Route
+            index
+            element={<ProtectedRoute requiredRole="admin" component={Home} />}
+          />
           <Route
             path="/business-partner"
             element={
@@ -50,6 +54,18 @@ function App() {
           />
           <Route
             path="/vehicle"
+            element={
+              <ProtectedRoute requiredRole="admin" component={VehicleList} />
+            }
+          />
+          <Route
+            path="/vehicle/entry"
+            element={
+              <ProtectedRoute requiredRole="admin" component={VehicleList} />
+            }
+          />
+          <Route
+            path="/vehicle/edit/:id"
             element={
               <ProtectedRoute requiredRole="admin" component={VehicleList} />
             }
