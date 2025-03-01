@@ -3,7 +3,7 @@ import { CSS } from "@dnd-kit/utilities";
 import { useEffect, useState } from "react";
 import {useFetchData} from '../../../HOC/UseFetchData';
 
-export const Task = ({ id, name, image,groupId,insuranceExpiry, inspectionExpiry, status, onClick }) => {
+export const Task = ({ id, name, image,groupId,insuranceExpiry, inspectionExpiry, status, onClick,onSuccess }) => {
   const { attributes, listeners, setNodeRef, transition, transform } = useSortable({ id });
 
   const [groupName, setGroupName] = useState("Loading ...");
