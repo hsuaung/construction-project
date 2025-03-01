@@ -46,7 +46,7 @@ export function useFetchData(url, deleteStatus = false) {
   console.log("FETCH", token);
 
   useEffect(() => {
-    if (!url) return; 
+    if (!url) return;
 
     const fetchData = async () => {
       setLoading(true);
@@ -54,6 +54,7 @@ export function useFetchData(url, deleteStatus = false) {
       try {
         const response = await axios.get(url, {
           headers: {
+            "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
         });
@@ -62,7 +63,6 @@ export function useFetchData(url, deleteStatus = false) {
         setLoading(false);
       } catch (err) {
         if (err.response?.status === 401) {
-     
           try {
             if (!refreshToken) {
               throw new Error("No refresh token available.");
@@ -73,7 +73,6 @@ export function useFetchData(url, deleteStatus = false) {
               { refreshToken }
             );
 
-           
             localStorage.setItem(
               "accessToken",
               refreshResponse.data.accessToken
@@ -83,7 +82,6 @@ export function useFetchData(url, deleteStatus = false) {
               refreshResponse.data.refreshToken
             );
 
-           
             const retryResponse = await axios.get(url, {
               headers: {
                 Authorization: `Bearer ${refreshResponse.data.accessToken}`,

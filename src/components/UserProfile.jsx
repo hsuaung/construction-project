@@ -3,7 +3,15 @@ import "../assets/styles/accInfo.scss";
 
 import ImageUpload from "./HOC/inputBoxes/ImageUpload";
 import BtnModelBox from "./HOC/buttons/BtnModelBox";
+import { useFetchData } from "./HOC/UseFetchData";
 export default function UserProfile() {
+  const id = localStorage.getItem("id");
+  console.log("ID ", id);
+  const { data: userData } = useFetchData(
+    `http://localhost:8383/staff/getbyid/${id}`
+  );
+
+  console.log("UserData ", userData);
   return (
     <div className="infoContainer">
       <div className="coverDiv">
@@ -23,7 +31,7 @@ export default function UserProfile() {
 
                 <span>Please Enter Staff Name</span>
               </label>
-              <input type="text" value="July" />
+              <input type="text" value={userData.name} />
             </div>
             <div className="inputGp">
               <label htmlFor="staffName">
@@ -33,7 +41,7 @@ export default function UserProfile() {
               </label>
               <input
                 type="text"
-                value="July"
+                value={userData.name}
                 className="disabledInput"
                 disabled
               />
