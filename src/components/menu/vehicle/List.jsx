@@ -32,6 +32,16 @@ export default function List(params) {
   const navigate = useNavigate()
 
   useEffect(() => {
+    const token = localStorage.getItem("accessToken")
+    if(!token){
+      navigate("/login")
+    }
+    else{
+      refetchVehicles()
+    }
+  },[navigate])
+  
+  useEffect(() => {
     if (Vehicles) {
       // console.log(Vehicles)
       setVehicles(Vehicles)
@@ -57,19 +67,19 @@ export default function List(params) {
   }, [vehicles, searchQuery, groupData])
 
   
-  console.log(localStorage.getItem("token"));
+  console.log(localStorage.getItem("accessToken"));
 
   const fetchGroupData = async (vehicleList) => {
     try {
       const groupIds = [...new Set(vehicleList.map((v) => v.groupId))]
       if (groupIds.length === 0) return
 
-      const token = localStorage.getItem("token"); 
+      const accessToken = localStorage.getItem("accessToken"); 
 
       const groupPromises = groupIds.map((id) =>
         axios.get(`http://localhost:8383/group/getbyid/${id}`, {
           headers: {
-            Authorization: `Bearer ${token}`,
+            Authorization: `Bearer ${accessToken}`,
             "Content-Type": "application/json",
           },
         })

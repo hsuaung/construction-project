@@ -6,7 +6,7 @@ export function useFetchData(url) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  const token = localStorage.getItem("accessToken");
+  const accessToken = localStorage.getItem("accessToken");
   const refreshToken = localStorage.getItem("refreshToken");
 
   const fetchData = useCallback(async () => {
@@ -16,7 +16,7 @@ export function useFetchData(url) {
     try {
       const response = await axios.get(url, {
         headers: {
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${accessToken}`,
         },
       });
       setData(response.data);
@@ -48,6 +48,7 @@ export function useFetchData(url) {
           const retryResponse = await axios.get(url, {
             headers: {
               Authorization: `Bearer ${newAccessToken}`,
+              "Content-Type": "application/json",
             },
           });
 
@@ -63,7 +64,7 @@ export function useFetchData(url) {
     } finally {
       setLoading(false);
     }
-  }, [url, token, refreshToken]);
+  }, [url]);
 
   useEffect(() => {
     fetchData();
