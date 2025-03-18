@@ -1,5 +1,5 @@
 import axios from "axios";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Search from "../../HOC/searchAndFilter/Search";
 import { useFetchData } from "../../HOC/UseFetchData";
@@ -11,42 +11,94 @@ import Column from "./Column/Column";
 import "../../../assets/styles/list.scss"
 
 export default function List(params) {
-  const { handleDelete, loading: crudLoading, error: crudError, deleteStatus } = useCRUD();
-  const { data: businesspartners, loading, error } = useFetchData("http://localhost:8383/businesspartner/list", deleteStatus);
+  const { handleDelete, 
+    loading: crudLoading, 
+    error: crudError, 
+    refetch,
+     deleteStatus } = useCRUD();
+  const { data: Businesspartners, loading, error, refetch:refetchBusinessPartners } = useFetchData("http://localhost:8383/businesspartner/list", deleteStatus);
   
   
   const [businessPartners, setBusinessPartners] = useState([]);
+  const [filteredbusinessPartners, setFilteredBusinessPartners] = useState([]);
   const [adminData, setAdminData] = useState({});
   const [projectCounts,setProjectCounts] = useState({});
 
   const [searchQuery, setSearchQuery] = useState("");
+
   const [showCreateModelBox, setShowCreateModelBox] = useState(false);
   const [selectedTaskId, setSelectedTaskId] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (businesspartners) {
-      setBusinessPartners(businesspartners);
-      fetchAdminData();
-      fetchProjectCounts();
+    const token = localStorage.getItem("accessToken")
+    if(!token){
+      navigate("/login")
     }
-  }, [businesspartners]);
+    else{
+      refetchBusinessPartners();
+    }
+  },[navigate])
+
+  useEffect(() => {
+    if (Businesspartners) {
+      setBusinessPartners(Businesspartners);
+      setFilteredBusinessPartners(Businesspartners);
+      fetchAdminData(Businesspartners);
+      fetchProjectCounts(Businesspartners);
+    }
+  }, [Businesspartners]);
 
   
-
+  const accessToken = localStorage.getItem("accessToken"); 
+  console.log(accessToken);
   // fetch not in db datas
-  const fetchAdminData = async () => {
+  // const fetchAdminData = async () => {
+  //   try {
+  //     const staffIds = [...new Set(businessPartners.map((bp) => bp.staffId))];
+  
+  //     if (staffIds.length === 0) return; // Avoid unnecessary requests
+  //     const staffPromises = staffIds.map((id) =>
+  //       axios.get(`http://localhost:8383/staff/getbyid/${id}`),{
+  //         headers: {
+  //           Authorization: `Bearer ${accessToken}`,
+  //           "Content-Type": "application/json",
+  //         },
+  //       }
+  //     );
+  
+  //     const staffResponses = await Promise.all(staffPromises);
+  
+  //     const staffDataMap = staffResponses.reduce((acc, response) => {
+  //       if (response.data && response.data.id) {
+  //         acc[response.data.id] = response.data.name;
+  //       }
+  //       return acc;
+  //     }, {});
+  
+  //     setAdminData(staffDataMap);
+  //   } catch (error) {
+  //     console.error("Error fetching staff data:", error);
+  //   }
+  // };
+  const fetchAdminData = async (partners) => { 
+    if (!partners || partners.length === 0) return; // Ensure we have partners
+    
     try {
-      const staffIds = [...new Set(businesspartners.map((bp) => bp.staffId))];
-  
-      if (staffIds.length === 0) return; // Avoid unnecessary requests
-  
+      const staffIds = [...new Set(partners.map((bp) => bp.staffId))];
+      if (staffIds.length === 0) return;
+      
       const staffPromises = staffIds.map((id) =>
-        axios.get(`http://localhost:8383/staff/getbyid/${id}`)
+        axios.get(`http://localhost:8383/staff/getbyid/${id}`, {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+            "Content-Type": "application/json",
+          },
+        })
       );
   
       const staffResponses = await Promise.all(staffPromises);
-  
+      
       const staffDataMap = staffResponses.reduce((acc, response) => {
         if (response.data && response.data.id) {
           acc[response.data.id] = response.data.name;
@@ -59,17 +111,24 @@ export default function List(params) {
       console.error("Error fetching staff data:", error);
     }
   };
+  console.log(adminData);
+  
 
   const fetchProjectCounts = async () => {
-    try {
-      const countPromises = businesspartners.map((bp) =>
-        axios.get(`http://localhost:8383/site/getbybusinesspartnerid/${bp.id}`)
+    try { 
+      const countPromises = businessPartners.map((bp) =>
+        axios.get(`http://localhost:8383/site/getbybusinesspartnerid/${bp.id}`),{
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+            "Content-Type": "application/json",
+          },
+        }
       );
   
       const countResponses = await Promise.all(countPromises);
   
       const projectCountMap = countResponses.reduce((acc, response, index) => {
-        acc[businesspartners[index].id] = response.data.length || 0;
+        acc[businessPartners[index].id] = response.data.length || 0;
         return acc;
       }, {});
   
@@ -90,13 +149,6 @@ export default function List(params) {
 
     const updatedBusinessPartners = arrayMove(businessPartners, oldIndex, newIndex);
     setBusinessPartners(updatedBusinessPartners);
-
-     // Persist the updated order to the backend
-     try {
-      await axios.post("http://localhost:8383/businesspartner/update-order", { items: updatedBusinessPartners });
-    } catch (error) {
-      console.error("Error updating order:", error);
-    }
   };
 
   const sortBusinessPartners = (key, isDate = false) => {
@@ -123,6 +175,10 @@ export default function List(params) {
   };
 
   const sortNumberOfProjects = () => {
+    if (!projectCounts || Object.keys(projectCounts).length === 0) {
+      console.warn("Project count data not available yet.");
+      return;
+    }
     setBusinessPartners((prevBusinessPartners) => {
       return [...prevBusinessPartners].sort((a, b) => {
         const projectsA = projectCounts[a.id] || 0
@@ -131,31 +187,31 @@ export default function List(params) {
       })
     })
   }
-
+  // -----------------
   
-
-  // const filteredBusinessPartners = businessPartners.filter((businessPartner) =>
-  //   ["name", "email","phonenumber"].some((key) =>
-  //     String(businessPartner[key] || "").toLowerCase().includes(searchQuery.toLowerCase())||
-  // (adminData[businessPartner.StaffId] || "").toLowerCase().includes(searchQuery.toLowerCase())
-  //   )
-  // );
-  const filteredBusinessPartners = businessPartners.filter((businessPartner) => {
+  //search
+  useEffect(() => {
     const query = searchQuery.toLowerCase();
   
-    return ["name", "email", "phonenumber"].some((key) =>
-      String(businessPartner[key] || "").toLowerCase().includes(query)
-    ) ||
-      // Include adminData (Added By)
-      (adminData[businessPartner.staffId] || "").toLowerCase().includes(query) ||
-      // Include projectCounts (Number of Projects)
-      String(projectCounts[businessPartner.id] || 0).includes(query);
-  });
+    const filtered = businessPartners.filter((bp) => {
+      return (
+        ["name", "email", "phonenumber"].some((key) =>
+          bp[key]?.toString().toLowerCase().includes(query)
+        ) ||
+        (adminData[bp.staffId] || "").toLowerCase().includes(query) ||
+        String(projectCounts[bp.id] || 0).includes(query)
+      );
+    });
+  
+    setFilteredBusinessPartners(filtered);
+  }, [businessPartners, searchQuery, adminData, projectCounts]);
+  
 
   const handleCreateModelBox = () => {
     setShowCreateModelBox(true);
     console.log("Testing CreateModelBox");
-    setSelectedTaskId(null);
+    // setSelectedTaskId(null);
+    navigate('/business-partner/entry')
   }
 
   if (loading) return <div>Loading...</div>;
@@ -183,21 +239,7 @@ export default function List(params) {
             <div></div>
             <div>
               {/* image */}
-              {/* <svg
-                onClick={() => sortBusinessPartners("user_name")}
-                xmlns="http://www.w3.org/2000/svg"
-                width="16"
-                viewBox="0 0 21 24"
-                fill="currentColor"
-              >
-                <path
-                  d="M10.4587 21L14.3809 14.5H6.5365L10.4587 21ZM10.4587 3L14.3809 9.5H6.5365L10.4587 3Z"
-                  fill="white"
-                  stroke="white"
-                  strokeWidth="2"
-                  strokeLinejoin="round"
-                />
-              </svg> */}
+              
             </div>
             <div>
               <p>Partner Name</p>
@@ -292,18 +334,18 @@ export default function List(params) {
             <div></div>
           </div>
           <DndContext onDragEnd={handleDragEnd} collisionDetection={closestCorners}>
-          <SortableContext items={filteredBusinessPartners.map((bp) => bp.id)} strategy={verticalListSortingStrategy}>
-          {filteredBusinessPartners.length === 0 ? (
+          <SortableContext items={filteredbusinessPartners.map((bp) => bp.id)} strategy={verticalListSortingStrategy}>
+          {filteredbusinessPartners.length === 0 ? (
             <p>No business partners found.</p>
           ) : (
-            <Column tasks={filteredBusinessPartners} />
+            <Column tasks={filteredbusinessPartners}  refetchBusinessPartners={refetchBusinessPartners}/>
           )}
           </SortableContext>
           </DndContext>
         </section>
       </div>
       {/* {showCreateModelBox && <Entry />} */}
-      {showCreateModelBox && <Entry showCreateModelBox={showCreateModelBox} setShowCreateModelBox={setShowCreateModelBox} />}
+      {showCreateModelBox && <Entry showCreateModelBox={showCreateModelBox} setShowCreateModelBox={setShowCreateModelBox} onSuccess={refetchBusinessPartners}/>}
     </>
   );
 }

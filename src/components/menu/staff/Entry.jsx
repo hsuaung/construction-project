@@ -8,53 +8,67 @@ import "../../../assets/styles/entry.scss";
 import ImageUpload from "../../HOC/inputBoxes/ImageUpload";
 import Checkbox from "../../HOC/inputBoxes/Checkbox";
 import MapComponent from "../../HOC/inputBoxes/MapComponent";
+import axios from "axios";
+import Team from "./Team"
+import dayjs, { Dayjs } from "dayjs";
 export default function Entry({
   id,
   showCreateModelBox,
   setShowCreateModelBox,
   setShowEditModelBox,
-  showEditModelBox,
+  showEditModelBox,onSuccess
 }) {
-  const [formData, setFormData] = useState({
-    name: "",
-    color: "#FF4400", // Default color
-  });
-  // const [errors, setErrors] = useState({}); //for validaiton
-
-  const navigate = useNavigate();
-  const { handleDelete, handleCreate, handleEdit, loading, error } = useCRUD();
-
+  const { handleDelete, handleCreate, handleEdit, loading:crudLoading, error:crudError,deleteStatus, refetch } = useCRUD();
+  const { data: initialTeams, loading, error } = useFetchData(
+      "http://localhost:8383/team/list",
+      deleteStatus
+  );
+  const { data: usertypes } = useFetchData("http://localhost:8383/usertypes/list", deleteStatus);
+  const { data: skills } = useFetchData("http://localhost:8383/skill/list", deleteStatus);
+// console.log(usertypes);
+// console.log(skills);
   // Fetch data if id is provided
   const { data: staffData } = useFetchData(
-    id ? `http://localhost:8383/user/getByUserId/${id}` : null
+      id ? `http://localhost:8383/staff/getbyid/${id}` : null
   );
+
+  const [Address, setAddress] = useState("");
+
+  const handleAddressSelect = (address) => {
+    setAddress(address); // Update the address state when a user selects an address
+  };
+
+  const [formData, setFormData] = useState({
+    name: "",
+    image: "",
+    usertypesId: "",
+    teamId: "", 
+    email: "",
+    password: "",
+    address: Address,
+    phoneNumber: "",
+    employmentStatus: "Employed",
+    workingStatus: "Available",
+    position:"",
+    dob: "",
+    joinedDate: ""
+  });
+
+  const [teamOptions,setTeamOptions] = useState([]);
+  const [createTeam,setCreateTeam] = useState(false);
+  const navigate = useNavigate();
+
+  useEffect(()=>{
+    setTeamOptions(initialTeams || []);
+  },[initialTeams])
 
   useEffect(() => {
     if (staffData) {
       setFormData(staffData);
     }
   }, [staffData]);
-  const [address, setAddress] = useState("");
+  
 
-  const handleAddressSelect = (address) => {
-    setAddress(address); // Update the address state when a user selects an address
-  };
-  // const validateForm = () => {
-  //   const newErrors = {};
-
-  //   if (!formData.name.trim()) {
-  //     newErrors.name = "Operation type name is required.";
-  //   }
-
-  //   if (!/^#[0-9A-Fa-f]{6}$/.test(formData.color)) {
-  //     newErrors.color = "Invalid color code.";
-  //   }
-
-  //   setErrors(newErrors);
-
-  //   // Return true if no errors
-  //   return Object.keys(newErrors).length === 0;
-  // };
 
   // Handle input changes
   const handleChange = (e) => {
@@ -65,36 +79,89 @@ export default function Entry({
     });
   };
 
-  // Handle form submission
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    // if (!validateForm()) {
-    //   return; // Do not submit if there are validation errors
-    // }
+  
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (!file.type.startsWith("image/")) {
+      alert("Please upload an image file.");
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = () => {
+      setFormData({ ...formData, image: reader.result });
+    };
+    reader.readAsDataURL(file);
+  };
 
-    console.log("Form Submitted:", formData);
+  const handleTeamCreated = (newTeam) => {
+    setTeamOptions((prevTeams) => [...prevTeams, newTeam]);
+  };
+  // Handle form submission
+  const handleSubmit = async(e) => {
+    e.preventDefault();
 
     const url = id
-      ? `http://localhost:8383/user/update`
-      : "http://localhost:8383/user/create";
+      ? `http://localhost:8383/staff/edit/${id}`
+      : "http://localhost:8383/staff/add";
 
-    if (id) {
-      handleEdit(url, id, formData).then(() => navigate("/operation-type"));
-    } else {
-      handleCreate(url, formData).then(() => navigate("/operation-type"));
-    }
+      const method = id ? "PUT" : "POST";
+      try {
+        const response = await axios({
+          method,
+          url,
+          data: formData,
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+            "Content-Type": "application/json",
+             
+          },
+        });
+  
+        console.log("Response:", response.data);
+        console.log(formData);
+        // console.log(onSuccessEdit);
+        if (onSuccess) {
+          onSuccess()
+        }
+  
+        if (id) {
+          setShowEditModelBox(false);
+        } else {
+          setShowCreateModelBox(false);
+        }
+        navigate("/staff")
+      } catch (error) {
+        console.error("Error submitting form:", error.message);
+      }
   };
 
   const handleDeleteData = async (id) => {
-    const url = `http://localhost:1818/user/delete`;
+    const url = `http://localhost:1818/staff/delete`;
     await handleDelete(url, id); // Trigger the delete action
+    if(onSuccess){
+      onSuccess()
+    }
+    setShowEditModelBox(false);
+    navigate("/staff");
+      
   };
 
   // Handle form clear/reset
   const handleClear = () => {
     setFormData({
       name: "",
-      color: "#FF4400",
+      image: "",
+      usertypesId: "",
+      teamId: "", 
+      email: "",
+      password: "",
+      address: "",
+      phoneNumber: "",
+      employmentStatus: "Employed",
+      workingStatus: "Available",
+      position:"",
+      dob: "",
+      joinedDate: ""
     });
   };
   const handleCancel = () => {
@@ -105,6 +172,11 @@ export default function Entry({
       setShowEditModelBox(false);
       handleClear();
     }
+    navigate("/staff");
+  };
+
+  const handleCreateTeam = () => {
+    setCreateTeam(true);
   };
 
   if (loading) return <div>Loading...</div>;
@@ -113,368 +185,338 @@ export default function Entry({
   return (
     <>
       <div className="bgBlur"></div>
-      <div className="modalForm staffModal ">
+      <div className="entryContainer StaffentryContainer">
         <div className="modelTitle">
           <h4>{id ? "Edit Staff Data" : "Create New Staff"}</h4>
         </div>
         <div className="modelContent">
           <form onSubmit={handleSubmit}>
-            <div className="formGroup">
-              <div className="formTwoCol">
-                <div>
+            <div className="scroll">
+              <div className="formGroup modelTwoColumn">
                   <div>
-                    <label htmlFor="team" className="inputLabel">
-                      <div className="flexRow">
-                        <small>[Required]</small>
-                        <p>Team</p>
-                      </div>
-                      <div className="instruction">
-                        <small>Please Select Team</small>
-                      </div>
-                    </label>
-                    <div className="flexRow inputRow">
-                      <select name="team" id="team" className="select">
-                        <option value="">Team One</option>
-                        <option value="">Team Two</option>
-                      </select>
-                      <button className="svgAddButton">
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          width="19"
-                          height="17"
-                          viewBox="0 0 19 17"
-                          fill="none"
-                        >
-                          <path
-                            d="M5.91699 8.25C7.2977 8.25 8.41699 7.13071 8.41699 5.75C8.41699 4.36929 7.2977 3.25 5.91699 3.25C4.53628 3.25 3.41699 4.36929 3.41699 5.75C3.41699 7.13071 4.53628 8.25 5.91699 8.25Z"
-                            stroke="#F27D14"
-                            stroke-linecap="round"
-                          />
-                          <path
-                            d="M9.68495 6.24977C9.81532 6.02048 9.98975 5.81924 10.1982 5.65764C10.4067 5.49603 10.645 5.37726 10.8996 5.30815C11.1541 5.23904 11.4198 5.22097 11.6814 5.25496C11.9429 5.28896 12.1952 5.37436 12.4236 5.50624C12.652 5.63813 12.8521 5.81389 13.0123 6.02341C13.1725 6.23293 13.2897 6.47208 13.3572 6.72708C13.4246 6.98208 13.4409 7.24789 13.4052 7.50922C13.3694 7.77055 13.2824 8.02223 13.149 8.24977C12.8819 8.70538 12.4454 9.03685 11.9348 9.17185C11.4242 9.30684 10.8809 9.23439 10.4236 8.97032C9.96619 8.70625 9.63183 8.27198 9.49346 7.7623C9.35508 7.25262 9.42392 6.70889 9.68495 6.24977Z"
-                            stroke="#F27D14"
-                          />
-                          <path
-                            d="M10.417 15.75H1.41705V16.75H10.417V15.75ZM1.00505 15.336C1.13505 14.522 1.44705 13.365 2.18105 12.421C2.89605 11.501 4.03605 10.75 5.91705 10.75V9.75C3.71805 9.75 2.29105 10.65 1.39105 11.807C0.511048 12.941 0.160049 14.287 0.0180485 15.178L1.00505 15.336ZM5.91705 10.75C7.79805 10.75 8.93705 11.5 9.65305 12.421C10.387 13.365 10.699 14.521 10.829 15.336L11.816 15.178C11.674 14.288 11.324 12.941 10.443 11.808C9.54305 10.65 8.11605 9.75 5.91705 9.75V10.75ZM1.41705 15.75C1.12505 15.75 0.974048 15.533 1.00505 15.336L0.0180485 15.178C-0.124951 16.072 0.604048 16.75 1.41705 16.75V15.75ZM10.417 16.75C11.23 16.75 11.958 16.072 11.816 15.178L10.829 15.336C10.86 15.533 10.709 15.75 10.417 15.75V16.75Z"
-                            fill="#F27D14"
-                          />
-                          <path
-                            d="M9.71708 11.731L9.44908 11.309L8.93408 11.636L9.35608 12.076L9.71708 11.731ZM14.3121 15.75H10.4171V16.75H14.3121V15.75ZM14.7291 15.288C14.7821 15.503 14.6251 15.75 14.3121 15.75V16.75C15.1821 16.75 15.9321 15.978 15.6991 15.045L14.7291 15.288ZM11.4171 11.75C12.4451 11.75 13.1671 12.253 13.6951 12.957C14.2351 13.675 14.5511 14.582 14.7291 15.288L15.6991 15.045C15.5071 14.281 15.1491 13.229 14.4951 12.356C13.8301 11.47 12.8371 10.75 11.4171 10.75V11.75ZM9.98508 12.153C10.3751 11.906 10.8431 11.75 11.4171 11.75V10.75C10.6491 10.75 9.99608 10.962 9.44908 11.309L9.98508 12.153ZM9.35608 12.076C10.3031 13.066 10.6821 14.415 10.8291 15.336L11.8161 15.178C11.6561 14.178 11.2331 12.592 10.0791 11.385L9.35608 12.076ZM10.8291 15.336C10.8601 15.533 10.7091 15.75 10.4171 15.75V16.75C11.2301 16.75 11.9581 16.072 11.8161 15.178L10.8291 15.336Z"
-                            fill="#F27D14"
-                          />
-                          <path
-                            d="M18.417 3H14.417C14.2789 3 14.167 3.11193 14.167 3.25C14.167 3.38807 14.2789 3.5 14.417 3.5H18.417C18.5551 3.5 18.667 3.38807 18.667 3.25C18.667 3.11193 18.5551 3 18.417 3Z"
-                            stroke="#F27D14"
-                            stroke-width="0.5"
-                            stroke-linecap="round"
-                          />
-                          <path
-                            d="M16.667 5.25V1.25C16.667 1.11193 16.5551 1 16.417 1C16.2789 1 16.167 1.11193 16.167 1.25V5.25C16.167 5.38807 16.2789 5.5 16.417 5.5C16.5551 5.5 16.667 5.38807 16.667 5.25Z"
-                            stroke="#F27D14"
-                            stroke-width="0.5"
-                            stroke-linecap="round"
-                          />
+                    <div className="inputContainer">
+                      <label htmlFor="team" className="inputLabel">
+                        <div className="flexRow">
+                          <small>[Required]</small>
+                          <p>Team</p>
+                        </div>
+                        <div className="instruction">
+                          <small>Please Select Team</small>
+                        </div>
+                      </label>
+                      <div className="flexRow" style={{ flexWrap: "nowrap" }}>
+                        <select name="teamId" id="teamId" onChange={handleChange} value={formData.teamId} className="input">
+                        <option value="">--- Select Team ---</option>
+                        {teamOptions.map((option, index) => (
+                          <option key={option.id} value={option.id}>
+                            {option.name}
+                          </option>
+                        ))}
+                        </select>
+                        <svg onClick={handleCreateTeam} xmlns="http://www.w3.org/2000/svg" width="41" height="36" viewBox="0 0 41 36" fill="none">
+                          <rect x="1.58217" y="0.543062" width="38.355" height="34" rx="6.5" transform="rotate(0.234996 1.58217 0.543062)" fill="#141314" stroke="#FF7B04"/>
+                          <path d="M16.917 16.25C18.2977 16.25 19.417 15.1307 19.417 13.75C19.417 12.3693 18.2977 11.25 16.917 11.25C15.5363 11.25 14.417 12.3693 14.417 13.75C14.417 15.1307 15.5363 16.25 16.917 16.25Z" stroke="#F27D14" stroke-linecap="round"/>
+                          <path d="M20.685 14.2498C20.8153 14.0205 20.9898 13.8192 21.1982 13.6576C21.4067 13.496 21.645 13.3773 21.8996 13.3082C22.1541 13.239 22.4198 13.221 22.6814 13.255C22.9429 13.289 23.1952 13.3744 23.4236 13.5062C23.652 13.6381 23.8521 13.8139 24.0123 14.0234C24.1725 14.2329 24.2897 14.4721 24.3572 14.7271C24.4246 14.9821 24.4409 15.2479 24.4052 15.5092C24.3694 15.7705 24.2824 16.0222 24.149 16.2498C23.8819 16.7054 23.4454 17.0369 22.9348 17.1718C22.4242 17.3068 21.8809 17.2344 21.4236 16.9703C20.9662 16.7062 20.6318 16.272 20.4935 15.7623C20.3551 15.2526 20.4239 14.7089 20.685 14.2498Z" stroke="#F27D14"/>
+                          <path d="M21.417 23.75H12.417V24.75H21.417V23.75ZM12.005 23.336C12.135 22.522 12.447 21.365 13.181 20.421C13.896 19.501 15.036 18.75 16.917 18.75V17.75C14.718 17.75 13.291 18.65 12.391 19.807C11.511 20.941 11.16 22.287 11.018 23.178L12.005 23.336ZM16.917 18.75C18.798 18.75 19.937 19.5 20.653 20.421C21.387 21.365 21.699 22.521 21.829 23.336L22.816 23.178C22.674 22.288 22.324 20.941 21.443 19.808C20.543 18.65 19.116 17.75 16.917 17.75V18.75ZM12.417 23.75C12.125 23.75 11.974 23.533 12.005 23.336L11.018 23.178C10.875 24.072 11.604 24.75 12.417 24.75V23.75ZM21.417 24.75C22.23 24.75 22.958 24.072 22.816 23.178L21.829 23.336C21.86 23.533 21.709 23.75 21.417 23.75V24.75Z" fill="#F27D14"/>
+                          <path d="M20.7171 19.731L20.4491 19.309L19.9341 19.636L20.3561 20.076L20.7171 19.731ZM25.3121 23.75H21.4171V24.75H25.3121V23.75ZM25.7291 23.288C25.7821 23.503 25.6251 23.75 25.3121 23.75V24.75C26.1821 24.75 26.9321 23.978 26.6991 23.045L25.7291 23.288ZM22.4171 19.75C23.4451 19.75 24.1671 20.253 24.6951 20.957C25.2351 21.675 25.5511 22.582 25.7291 23.288L26.6991 23.045C26.5071 22.281 26.1491 21.229 25.4951 20.356C24.8301 19.47 23.8371 18.75 22.4171 18.75V19.75ZM20.9851 20.153C21.3751 19.906 21.8431 19.75 22.4171 19.75V18.75C21.6491 18.75 20.9961 18.962 20.4491 19.309L20.9851 20.153ZM20.3561 20.076C21.3031 21.066 21.6821 22.415 21.8291 23.336L22.8161 23.178C22.6561 22.178 22.2331 20.592 21.0791 19.385L20.3561 20.076ZM21.8291 23.336C21.8601 23.533 21.7091 23.75 21.4171 23.75V24.75C22.2301 24.75 22.9581 24.072 22.8161 23.178L21.8291 23.336Z" fill="#F27D14"/>
+                          <path d="M29.417 11H25.417C25.2789 11 25.167 11.1119 25.167 11.25C25.167 11.3881 25.2789 11.5 25.417 11.5H29.417C29.5551 11.5 29.667 11.3881 29.667 11.25C29.667 11.1119 29.5551 11 29.417 11Z" stroke="#F27D14" stroke-width="0.5" stroke-linecap="round"/>
+                          <path d="M27.667 13.25V9.25C27.667 9.11193 27.5551 9 27.417 9C27.2789 9 27.167 9.11193 27.167 9.25V13.25C27.167 13.3881 27.2789 13.5 27.417 13.5C27.5551 13.5 27.667 13.3881 27.667 13.25Z" stroke="#F27D14" stroke-width="0.5" stroke-linecap="round"/>
                         </svg>
-                      </button>
+                        {createTeam && (
+                          <Team
+                              createTeam={createTeam}
+                              setCreateTeam={setCreateTeam}
+                              teamOptions={teamOptions}
+                              setTeamOptions={setTeamOptions}
+                              onTeamCreated={handleTeamCreated}
+                              showCreateModelBox={showCreateModelBox}
+                              setShowCreateModelBox={setShowCreateModelBox}
+                                              />
+                                            )}
+                      </div>
                     </div>
-                  </div>
 
-                  <div>
-                    <label htmlFor="name" className="inputLabel">
-                      <div className="flexRow">
-                        <small>[Required]</small>
-                        <p>Staff Name</p>
+                    <div>
+                      <label htmlFor="name" className="inputLabel">
+                        <div className="flexRow">
+                          <small>[Required]</small>
+                          <p>Staff Name</p>
+                        </div>
+                        <div className="instruction">
+                          <small>Please Enter Staff Name</small>
+                        </div>
+                      </label>
+                      <div className="flexRow inputRow">
+                        <input
+                          type="text"
+                          name="name"
+                          value={formData.name}
+                          onChange={handleChange}
+                          required
+                          className="input"
+                          placeholder="Enter Staff Name"
+                        />
                       </div>
-                      <div className="instruction">
-                        <small>Please Enter Staff Name</small>
-                      </div>
-                    </label>
-                    <div className="flexRow inputRow">
-                      <input
-                        type="text"
-                        name="name"
-                        value={formData.name}
-                        onChange={handleChange}
-                        required
-                        className="input"
-                        placeholder="Enter Staff Name"
-                      />
                     </div>
-                  </div>
-                  <div>
-                    <label htmlFor="employment" className="inputLabel">
-                      <div className="flexRow">
-                        <small>[Required]</small>
-                        <p>Employment Status</p>
-                      </div>
-                      <div className="instruction">
-                        <small>Please Select Status</small>
-                      </div>
-                    </label>
-                    <div className="flexRow inputRow">
-                      <select
-                        name="employment"
-                        id="employment"
-                        className="select"
-                      >
-                        <option value="">Currently Employed</option>
-                        <option value="">Retired</option>
+                    <div className="inputContainer">
+                      <label htmlFor="employmentStatus" className="inputLabel">
+                        <div className="flexRow">
+                          <small>[Required]</small>
+                          <p>Employment Status</p>
+                        </div>
+                        <div className="instruction">
+                          <small>Please Select Employment Status</small>
+                        </div>
+                      </label>
+                      <select name="employmentStatus" id="employment" onChange={handleChange} value={formData.employmentStatus} className="input" required>
+                      <option value="">--- Select Status ---</option>
+                      <option value="Employed">Currently Employed</option>
+                      <option value="Retired">Retired</option>
                       </select>
                     </div>
-                  </div>
-                  <div>
-                    <label htmlFor="working" className="inputLabel">
-                      <div className="flexRow">
-                        <small>[Required]</small>
-                        <p>Working Status</p>
-                      </div>
-                      <div className="instruction">
-                        <small>Please Select Status</small>
-                      </div>
-                    </label>
-                    <div className="flexRow inputRow">
-                      <select name="working" id="working" className="select">
-                        <option value="">Avaliable</option>
-                        <option value="">Busy</option>
-                      </select>
-                    </div>
-                  </div>
 
-                  <div>
-                    <label htmlFor="phonenumber" className="inputLabel">
-                      <div className="flexRow">
-                        <small>[Required]</small>
-                        <p>Phone</p>
+                    {/* <div>
+                      <label htmlFor="working" className="inputLabel">
+                        <div className="flexRow">
+                          <small>[Required]</small>
+                          <p>Working Status</p>
+                        </div>
+                        <div className="instruction">
+                          <small>Please Select Status</small>
+                        </div>
+                      </label>
+                      <div className="flexRow inputRow">
+                        <select name="working" id="working" className="select">
+                          <option value="">Avaliable</option>
+                          <option value="">Busy</option>
+                        </select>
                       </div>
-                      <div className="instruction">
-                        <small>Please Enter Staff Phone</small>
-                      </div>
-                    </label>
-                    <div className="flexRow inputRow">
-                      <input
-                        type="text"
-                        name="phonenumber"
-                        value={formData.phonenumber}
-                        onChange={handleChange}
-                        required
-                        className="input"
-                        placeholder="Enter Staff Phone"
-                      />
-                    </div>
-                  </div>
+                    </div> */}
 
-                  <div>
-                    <label htmlFor="address" className="inputLabel">
-                      <div className="flexRow">
-                        <small>[Required]</small>
-                        <p>Address</p>
-                      </div>
-                      <div className="instruction">
-                        <small>Please Enter Staff Address</small>
-                      </div>
-                    </label>
-
-                    <div className="flexRow inputRow">
-                      <textarea name="address" id="address"></textarea>
-                    </div>
-                  </div>
-                  {/* <div>
-                  <div>
-                    <label>Address</label>
-                    <MapComponent onAddressSelect={handleAddressSelect} />
-                  </div>
-
-                  <div>
-                    <label>Your Address:</label>
-                    <input type="text" value={address} readOnly />
-                  </div>
-                </div> */}
-                  <div>
-                    <label htmlFor="position" className="inputLabel">
-                      <div className="flexRow">
-                        <small>[Required]</small>
-                        <p>Position</p>
-                      </div>
-                      <div className="instruction">
-                        <small>Please Select Position</small>
-                      </div>
-                    </label>
-                    <div className="flexRow inputRow">
-                      <select name="position" id="position" className="select">
-                        <option value="">Manager</option>
-                        <option value="">Engineer</option>
-                        <option value="">Driver</option>
-                        <option value="">Craftman</option>
-                      </select>
-                    </div>
-                  </div>
-                  <div>
-                    <label htmlFor="dob" className="inputLabel">
-                      <div className="flexRow">
-                        <small>[Required]</small>
-                        <p>DOB</p>
-                      </div>
-                      <div className="instruction">
-                        <small>Please Select DOB</small>
-                      </div>
-                    </label>
-                    <div className="flexRow inputRow">
-                      <input
-                        type="date"
-                        name="dob"
-                        value={formData.dob}
-                        onChange={handleChange}
-                        required
-                        className="input"
-                        placeholder="Enter Staff DOB"
-                      />
-                    </div>
-                  </div>
-                  <div>
-                    <label htmlFor="joinedDate" className="inputLabel">
-                      <div className="flexRow">
-                        <small>[Required]</small>
-                        <p>Joined Date</p>
-                      </div>
-                      <div className="instruction">
-                        <small>Please Select Joined Date</small>
-                      </div>
-                    </label>
-                    <div className="flexRow inputRow">
-                      <input
-                        type="date"
-                        name="joinedDate"
-                        value={formData.joinedDate}
-                        onChange={handleChange}
-                        required
-                        className="input"
-                        placeholder="Enter Joined Date"
-                      />
-                    </div>
-                  </div>
-                </div>
-                <div>
-                  <div>
-                    <label htmlFor="address" className="inputLabel">
-                      <div className="flexRow">
-                        <small>[Required]</small>
-                        <p>Profile Photo</p>
-                      </div>
-                    </label>
-                    <div className=" inputRow">
-                      <ImageUpload />
-                    </div>
-                  </div>
-                  <div>
-                    <label htmlFor="email" className="inputLabel">
-                      <div className="flexRow">
-                        <small>[Required]</small>
-                        <p>Staff Email</p>
-                      </div>
-                      <div className="instruction">
-                        <small>Please Enter Staff Email</small>
-                      </div>
-                    </label>
-                    <div className="flexRow inputRow">
-                      <input
-                        type="email"
-                        name="email"
-                        value={formData.email}
-                        onChange={handleChange}
-                        required
-                        className="input"
-                        placeholder="example@gmail.com"
-                      />
-                    </div>
-                  </div>
-                  <div>
-                    <label htmlFor="password" className="inputLabel">
-                      <div className="flexRow">
-                        <small>[Required]</small>
-                        <p>Staff Password</p>
-                      </div>
-                      <div className="instruction">
-                        <small>Please Enter Staff Password</small>
-                      </div>
-                    </label>
-                    <div className="flexRow inputRow">
-                      <input
-                        type="password"
-                        name="password"
-                        value={formData.password}
-                        onChange={handleChange}
-                        required
-                        className="input"
-                        placeholder="Enter Staff Password"
-                      />
-                    </div>
-                  </div>
-                  <div>
-                    <label htmlFor="accType" className="inputLabel">
-                      <div className="flexRow">
-                        <small>[Required]</small>
-                        <p>Account Type</p>
-                      </div>
-                      <div className="instruction">
-                        <small>Please Account Type</small>
-                      </div>
-                    </label>
-                    <div className="flexRow inputRow">
-                      <select name="accType" id="accType" className="select">
-                        <option value="">Admin</option>
-                        <option value="">Staff</option>
-                      </select>
-                    </div>
-                  </div>
-
-                  <div className="checkBoxContaier">
-                    <label htmlFor="name" className="inputLabel">
-                      <div className="flexRow">
-                        <small>[Required]</small>
-                        <p>Skills</p>
-                      </div>
-                      <div className="instruction">
-                        <small>Choose Staff Skills</small>
-                      </div>
-                    </label>
-                    <div className=" formTwoCol ">
-                      <div className="skillContainer">
-                        <Checkbox
-                          label={"Certificate One"}
-                          id="certificateOne"
-                          value="Certificate One"
-                          name="certificateGp"
-                        />
-                        <Checkbox
-                          label={"Certificate One"}
-                          id="certificateOne"
-                          value="Certificate One"
-                          name="certificateGp"
-                        />
-                        <Checkbox
-                          label={"Certificate One"}
-                          id="certificateOne"
-                          value="Certificate One"
-                          name="certificateGp"
+                    <div>
+                      <label htmlFor="phonenumber" className="inputLabel">
+                        <div className="flexRow">
+                          <small>[Required]</small>
+                          <p>Phone</p>
+                        </div>
+                        <div className="instruction">
+                          <small>Please Enter Staff Phone</small>
+                        </div>
+                      </label>
+                      <div className="flexRow inputRow">
+                        <input
+                          type="text"
+                          name="phonenumber"
+                          value={formData.phonenumber}
+                          onChange={handleChange}
+                          required
+                          className="input"
+                          placeholder="Enter Staff Phone"
                         />
                       </div>
-                      <div className="skillContainer">
-                        <Checkbox
-                          label={"Certificate One"}
-                          id="certificateOne"
-                          value="Certificate One"
-                          name="certificateGp"
+                    </div>
+
+                      {/* address */}
+                    <div>
+                      <label htmlFor="address" className="inputLabel">
+                        <div className="flexRow">
+                          <small>[Required]</small>
+                          <p>Address</p>
+                        </div>
+                        <div className="instruction">
+                          <small>Please Enter Staff Address</small>
+                        </div>
+                      </label>
+
+                      <div className="flexRow inputRow">
+                        <textarea name="address" id="address" className="input"></textarea>
+                      </div>
+                    </div>
+                    {/* <div>
+                    <div>
+                      <label>Address</label>
+                      <MapComponent onAddressSelect={handleAddressSelect} />
+                    </div>
+
+                    <div>
+                      <label>Your Address:</label>
+                      <input type="text" value={address} readOnly />
+                    </div>
+                  </div> */}
+                    <div className="inputContainer">
+                      <label htmlFor="position" className="inputLabel">
+                        <div className="flexRow">
+                          <small>[Required]</small>
+                          <p>Position</p>
+                        </div>
+                        <div className="instruction">
+                          <small>Please Select Position</small>
+                        </div>
+                      </label>
+                      <div className="flexRow">
+                        <select name="position" id="position" className="input" onChange={handleChange} value={formData.position} required>
+                          <option value="">--- Select Staff's Position ---</option>
+                          <option value="manager">Manager</option>
+                          <option value="engineer">Engineer</option>
+                          <option value="driver">Driver</option>
+                          <option value="craftman">Craftman</option>
+                        </select>
+                      </div>
+                    </div>
+                    <div>
+                      <label htmlFor="dob" className="inputLabel">
+                        <div className="flexRow">
+                          <small>[Required]</small>
+                          <p>DOB</p>
+                        </div>
+                        <div className="instruction">
+                          <small>Please Select DOB</small>
+                        </div>
+                      </label>
+                      <div className="flexRow inputRow">
+                        <input
+                          type="date"
+                          name="dob"
+                          value={
+                            formData.dob
+                               ? dayjs(formData.dob).format("YYYY-MM-DD"): ""
+                          }
+                          onChange={handleChange}
+                          required
+                          className="input"
+                          placeholder="Enter Staff DOB"
                         />
-                        <Checkbox
-                          label={"Certificate One"}
-                          id="certificateOne"
-                          value="Certificate One"
-                          name="certificateGp"
+                      </div>
+                    </div>
+                    <div>
+                      <label htmlFor="joinedDate" className="inputLabel">
+                        <div className="flexRow">
+                          <small>[Required]</small>
+                          <p>Joined Date</p>
+                        </div>
+                        <div className="instruction">
+                          <small>Please Select Joined Date</small>
+                        </div>
+                      </label>
+                      <div className="flexRow">
+                        <input
+                          type="date"
+                          name="joinedDate"
+                          value={
+                            formData.joinedDate
+                               ? dayjs(formData.joinedDate).format("YYYY-MM-DD"): ""
+                          }
+                          onChange={handleChange}
+                          required
+                          className="input"
                         />
                       </div>
                     </div>
                   </div>
-                </div>
+                  <div>
+                    <div>
+                      <label htmlFor="address" className="inputLabel">
+                        <div className="flexRow">
+                          <small>[Required]</small>
+                          <p>Profile Photo</p>
+                        </div>
+                      </label>
+                      <div className=" inputRow">
+                        <ImageUpload handleFileChange={handleFileChange} value={formData.image}/>
+                      </div>
+                    </div>
+                    <div>
+                      <label htmlFor="email" className="inputLabel">
+                        <div className="flexRow">
+                          <small>[Required]</small>
+                          <p>Staff Email</p>
+                        </div>
+                        <div className="instruction">
+                          <small>Please Enter Staff Email</small>
+                        </div>
+                      </label>
+                      <div className="flexRow inputRow">
+                        <input
+                          type="email"
+                          name="email"
+                          value={formData.email}
+                          onChange={handleChange}
+                          required
+                          className="input"
+                          placeholder="example@gmail.com"
+                        />
+                      </div>
+                    </div>
+                    <div>
+                      <label htmlFor="password" className="inputLabel">
+                        <div className="flexRow">
+                          <small>[Required]</small>
+                          <p>Staff Password</p>
+                        </div>
+                        <div className="instruction">
+                          <small>Please Enter Staff Password</small>
+                        </div>
+                      </label>
+                      <div className="flexRow inputRow">
+                        <input
+                          type="password"
+                          name="password"
+                          value={formData.password}
+                          onChange={handleChange}
+                          required
+                          className="input"
+                          placeholder="Enter Staff Password"
+                        />
+                      </div>
+                    </div>
+                    <div>
+                      <label htmlFor="accType" className="inputLabel">
+                        <div className="flexRow">
+                          <small>[Required]</small>
+                          <p>Account Type</p>
+                        </div>
+                        <div className="instruction">
+                          <small>Please Account Type</small>
+                        </div>
+                      </label>
+                      <div className="flexRow inputRow">
+                        <select name="accType" id="accType" className="input" onChange={handleChange} value={formData.usertypesId}>
+                          {/* <option value="admin">Admin</option>
+                          <option value="staff">Staff</option> */}
+                          <option value="">--- Select Account type ---</option>
+                          {usertypes.map((option, index) => (
+                          <option key={option.id} value={option.id}>
+                            {option.name}
+                          </option>
+                          ))}
+                        </select>
+                      </div>
+                    </div>
+
+                    <div className="checkBoxContaier">
+                      <label htmlFor="name" className="inputLabel">
+                        <div className="flexRow">
+                          <small>[Required]</small>
+                          <p>Skills</p>
+                        </div>
+                        <div className="instruction">
+                          <small>Choose Staff Skills</small>
+                        </div>
+                      </label>
+                      {/* <div className=" formTwoCol ">
+                        <div className="skillContainer">
+                          <Checkbox
+                            label={"Certificate One"}
+                            id="certificateOne"
+                            value="Certificate One"
+                            name="certificateGp"
+                          />  
+                        </div> */}
+                        {skills.map((skill) => (
+                          <Checkbox label={skill.name} id={skill.id} value={skill.id} name={`skill-${skill.id}`}/>
+                        ))}
+                    </div>
+                  </div>
               </div>
             </div>
 

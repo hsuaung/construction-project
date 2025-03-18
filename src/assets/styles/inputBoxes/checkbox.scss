@@ -5,7 +5,6 @@
 @import "../components/mixins";
 
 .checkboxContainer {
-  @include flex(row, start, center, px-to-rem(10));
 
   input[type="checkbox"] {
     -webkit-appearance: none;
@@ -13,8 +12,9 @@
     appearance: none;
     background-color: transparent;
     border: px-to-rem(1) solid $secondaryColor;
-    border-radius: px-to-rem(7);
-    padding: px-to-rem(10);
+    border-radius: px-to-rem(2);
+
+    padding: px-to-rem(7);
     display: inline-block;
     position: relative;
   }
@@ -26,11 +26,11 @@
   input[type="checkbox"]:checked:after {
     content: "";
     position: absolute;
-    left: px-to-rem(6);
-    top: px-to-rem(2);
-    width: px-to-rem(6);
-    height: px-to-rem(12);
-    border: solid black;
+    left: px-to-rem(5);
+    top: px-to-rem(0);
+    width: px-to-rem(3);
+    height: px-to-rem(10);
+    border: inset #3f3f3f;
     border-width: 0 px-to-rem(2) px-to-rem(2) 0;
     transform: rotate(45deg);
     position: absolute;

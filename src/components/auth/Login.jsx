@@ -4,7 +4,7 @@ import axios from "axios";
 import "../../assets/styles/login.scss";
 import Logo from "../../assets/images/logo.png";
 const Login = () => {
-  localStorage.clear();
+  // localStorage.clear();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [emailError, setEmailError] = useState("");
@@ -14,6 +14,7 @@ const Login = () => {
   const navigate = useNavigate();
   const handleLogin = async (e) => {
     e.preventDefault();
+    localStorage.clear();
     setEmailError("");
     setPasswordError("");
     setApiEmailError("");
@@ -65,10 +66,10 @@ const Login = () => {
       console.log("ROLE", user.role);
 
       // Navigate based on role
-      if (localStorage.getItem("role") === "admin") {
+      if (user.role === "admin") {
         console.log("admin dash");
         navigate("/");
-      } else if (localStorage.getItem("role") === "staff") {
+      } else if (user.role === "staff") {
         console.log("staff dash");
         navigate("/staffDashboard");
       } else {

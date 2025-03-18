@@ -1,95 +1,56 @@
 //import function
-
 @use "../../../assets/styles/components/functions" as *;
 
 //import components
 @import "../../../assets/styles/components/variables";
 @import "../../../assets/styles/components/mixins";
-.modalForm {
-  background-color: $modelBoxBgColor;
-  position: absolute;
-  top: 20%;
+
+.StaffentryContainer {
+  top: 10%;
+  left: 20%;
   z-index: 20;
-  border-radius: px-to-rem(15);
-  @include flex(column, center, center, 0);
   width: 60vw;
-  box-shadow: rgba(244, 244, 244, 0.15) 1.95px 1.95px 2.6px;
-  .modelTitle {
-    background-color: $itemGrayColor;
-    width: 100%;
-    padding: px-to-rem(5) 0;
-    border-radius: px-to-rem(15) px-to-rem(15) px-to-rem(0) px-to-rem(0);
-    text-align: center;
-    h4 {
-      color: $secondaryColor;
-    }
-  }
-  .modelContent {
-    width: 100%;
+}
 
-    border-radius: px-to-rem(15) px-to-rem(15) px-to-rem(0) px-to-rem(0);
-    .formGroup {
-      padding: px-to-rem(20);
-      height: 55vh;
-      overflow: scroll;
-      scrollbar-width: none;
-      -ms-overflow-style: none;
-      .inputRow {
-        flex-wrap: nowrap;
-        padding: px-to-rem(20) 0;
-        text-align: center;
-        justify-items: center;
-      }
-    }
-    .btnGp {
-      hr {
-        border: none;
-        height: 1px;
-        background-color: #333; /* Adjust color to match */
-        width: 100%; /* Adjust width as needed */
-        opacity: 0.5; /* Adjust transparency */
-        margin-bottom: px-to-rem(10);
-      }
+.imageUploadContainer {
+  @include flex(row, center, center, 0);
+  width: 100%;
+  margin-top: px-to-rem(10);
+}
 
-      .hint {
-        display: flex;
-        color: $secondaryColor;
-      }
-      padding: px-to-rem(10);
-    }
-    .formTwoCol {
-      @include grid(1fr 1fr, 1fr, px-to-rem(20));
-      .skillContainer {
-        div {
-          margin-top: px-to-rem(10);
-        }
-      }
-    }
+.vehicleInformation {
+  background-color: #36363630;
+  border-radius: px-to-rem(8);
+  padding: px-to-rem(20);
+  margin-top: px-to-rem(20);
+
+  h4 {
+    margin-bottom: px-to-rem(10);
+    color: $itemOrangeColor;
   }
 }
 
-.staffModal {
-  top: 15%;
-  left: 25%;
-  .checkBoxContaier {
-    background-color: $itemGrayColor;
-    padding: px-to-rem(20);
+.noteInputContainer {
+  background-color: #36363630;
+  border-radius: px-to-rem(8);
+  padding: px-to-rem(20);
+  margin-top: px-to-rem(20);
+}
+
+.scroll {
+  height: 65vh;
+  overflow-y: scroll;
+
+  &::-webkit-scrollbar {
+    width: 5px; // Set scrollbar width
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: $primaryColor; // Style scrollbar thumb
     border-radius: px-to-rem(10);
   }
-}
 
-.svgAddButton {
-  background-color: transparent;
-  padding: px-to-rem(3);
-  border-radius: px-to-rem(5);
-  border: px-to-rem(1) solid $secondaryColor;
-  opacity: 0.8;
-  &:hover {
-    opacity: 1;
+  &::-webkit-scrollbar-track {
+    background: transparent; // Optional: Customize scrollbar track
   }
-}
-
-input[type="date"]::-webkit-calendar-picker-indicator {
-  filter: invert(44%) sepia(100%) saturate(426%) hue-rotate(347deg)
-    brightness(104%) contrast(102%);
 }

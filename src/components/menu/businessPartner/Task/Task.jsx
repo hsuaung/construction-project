@@ -2,25 +2,26 @@ import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { useFetchData } from "../../../HOC/UseFetchData";
 import { useEffect, useState } from "react";
-export const Task = ({ id,image, name, email,phonenumber,staffId, onClick }) => {
+export const Task = ({ id,image, name, email,phonenumber,staffId, onClick,onSuccess }) => {
   const { attributes, listeners, setNodeRef, transition, transform } = useSortable({ id });
 
   const [staffName,setStaffName] = useState("");
   const [site,setSite] = useState([]);
-    const { data: staffs } = useFetchData(id ? `http://localhost:8383/staff/getbyid/${id}` : null);
-    const { data: sites } = useFetchData(id ? `http://localhost:8383/site/getbybusinesspartnerid/${id}` : null);
+    const { data: staffs } = useFetchData(`http://localhost:8383/staff/getbyid/${staffId}`);
+    const { data: sites } = useFetchData(id ? `http://localhost:8383/siteoperation/getbybusinesspartnerid/${id}` : null);
     
 
     useEffect(() => {
-      if (staffs) {
+      if (staffs?.name) {
         setStaffName(staffs.name)
+        console.log(staffName);
       }
     }, [staffs])
 
     useEffect(() => {
       if (sites) {
-        // setSite(sites)
-        console.log(sites)
+        setSite(sites)
+        // console.log(sites)
       }
     }, [sites])
   
@@ -42,7 +43,7 @@ export const Task = ({ id,image, name, email,phonenumber,staffId, onClick }) => 
                      <path d="M12.5 16.25C13.1904 16.25 13.75 15.6904 13.75 15C13.75 14.3096 13.1904 13.75 12.5 13.75C11.8096 13.75 11.25 14.3096 11.25 15C11.25 15.6904 11.8096 16.25 12.5 16.25Z" fill="#F27D14"/>
                    </svg>
       </div>
-      <img src={image} alt="" />
+      <img src={image} width={30} height={30} alt={name || "Task"}/>
       <p>{name}</p>
       <p>{email}</p>
       <p>{phonenumber}</p>

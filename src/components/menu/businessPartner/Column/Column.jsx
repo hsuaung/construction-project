@@ -1,43 +1,26 @@
-// import React, { useState } from "react";
-// import { Task } from "../Task/Task";
-// import "./column.scss";
-// export default function Column({ tasks}) {
-//   const [showCreateModelBox, setShowCreateModelBox] = useState(false);
-//   const [selectedTaskId, setSelectedTaskId] = useState(null);
-
-//   const handleEditModelBox = (id) => {
-//     console.log("Editing task:", id);
-//     setShowCreateModelBox(true);
-//     setSelectedTaskId(id);
-//   };
-//   return (
-//     <div className="scrollable">
-//       <div className="operationTypeListData">
-//       {tasks.map((task) => (
-//         <Task key={task.id} id={task.id} name={task.user_name} group={task.user_email} onClick={handleEditModelBox}/>
-//       ))}
-//     </div>
-//     </div>
-//   );
-// }
-
 import React, { useState } from "react";
 import { Task } from "../Task/Task";
 import Entry from "../Entry"; // Import modal component
 import "./column.scss";
+import { useNavigate } from "react-router-dom";
 
-export default function Column({ tasks }) {
-    const [showEditModelBox, setShowEditModelBox] = useState(false);
+export default function Column({ tasks,refetchBusinessPartners }) {
+  const [showEditModelBox, setShowEditModelBox] = useState(false);
   const [selectedTaskId, setSelectedTaskId] = useState(null);
+  const navigate = useNavigate();
 
   const handleEditModelBox = (id) => {
     console.log("Editing task:", id);
     setShowEditModelBox(true); // Show modal when editing task
-    setSelectedTaskId(tasks.find(task => task.id === id)); // Store selected task details
+    setSelectedTaskId(id); // Store selected task details
+    navigate(`/business-partner/edit/${id}`) // Navigate to edit page with selected task id
   };
 
   const closeModal = () => {
     setSelectedTaskId(null); // Reset when closing modal
+    if(refetchBusinessPartners){
+      refetchBusinessPartners();
+    }
   };
 
   return (
@@ -52,6 +35,7 @@ export default function Column({ tasks }) {
             email={task.email}
             phonenumber={task.phonenumber}
             staffId={task.staffId}
+            onSuccess={refetchBusinessPartners}
             onClick={() => handleEditModelBox(task.id)} // Pass function correctly
           />
         ))}
@@ -59,7 +43,7 @@ export default function Column({ tasks }) {
 
       {/* Show Modal Only When a Task is Selected */}
       {showEditModelBox && (
-        <Entry showEditModelBox={showEditModelBox} setShowEditModelBox={setShowEditModelBox} id={selectedTaskId} />
+        <Entry showEditModelBox={showEditModelBox} setShowEditModelBox={setShowEditModelBox} id={selectedTaskId} onSuccess={refetchBusinessPartners}/>
       )}
     </div>
   );

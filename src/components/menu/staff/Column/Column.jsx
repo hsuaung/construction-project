@@ -2,18 +2,23 @@ import React, { useState } from "react";
 import { Task } from "../Task/Task";
 import Entry from "../Entry"; // Import modal component
 import "./column.scss";
-export default function Column({ tasks }) {
+import { useNavigate } from "react-router-dom";
+export default function Column({ tasks,refetchStaffs }) {
   const [showEditModelBox, setShowEditModelBox] = useState(false);
   const [selectedTaskId, setSelectedTaskId] = useState(null);
+  const navigate = useNavigate();
 
   const handleEditModelBox = (id) => {
     console.log("Editing task:", id);
     setShowEditModelBox(true); // Show modal when editing task
-    setSelectedTaskId(tasks.find((task) => task.id === id)); // Store selected task details
+    navigate(`/staff/edit/${id}`);
   };
 
   const closeModal = () => {
     setSelectedTaskId(null); // Reset when closing modal
+    if(refetchStaffs){
+      refetchStaffs(); 
+    }  
   };
 
   return (
@@ -29,6 +34,7 @@ export default function Column({ tasks }) {
             team={task.Team.name}
             staffType={task.position}
             status={task.workingStatus}
+            onSuccess= {refetchStaffs}
             onClick={() => handleEditModelBox(task.id)} // Pass function correctly
           />
         ))}
@@ -39,6 +45,7 @@ export default function Column({ tasks }) {
           showEditModelBox={showEditModelBox}
           setShowEditModelBox={setShowEditModelBox}
           id={selectedTaskId}
+          onSuccess={refetchStaffs}
         />
       )}
     </div>
