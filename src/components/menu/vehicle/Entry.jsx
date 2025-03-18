@@ -9,19 +9,32 @@ import "./entry.scss";
 import ImageUpload from "../../HOC/inputBoxes/ImageUpload";
 import Group from "./Group";
 
-export default function Entry(
-  { id,
-    showCreateModelBox,
-    setShowCreateModelBox,
-    setShowEditModelBox,
-    showEditModelBox,
-    onSuccess
-  }
-) {
-  const { handleDelete,handleCreate, handleEdit, loading: crudLoading, error: crudError, deleteStatus ,refetch} = useCRUD();
-  const { data: initialGroups,loading,error} = useFetchData("http://localhost:8383/group/list", deleteStatus);
- // Fetch data if id is provided
- const { data: vehicleData } = useFetchData(id ? `http://localhost:8383/vehicle/getbyid/${id}` : null);
+export default function Entry({
+  id,
+  showCreateModelBox,
+  setShowCreateModelBox,
+  setShowEditModelBox,
+  showEditModelBox,
+  onSuccess,
+}) {
+  const {
+    handleDelete,
+    handleCreate,
+    handleEdit,
+    loading: crudLoading,
+    error: crudError,
+    deleteStatus,
+    refetch,
+  } = useCRUD();
+  const {
+    data: initialGroups,
+    loading,
+    error,
+  } = useFetchData("http://localhost:8383/group/list", deleteStatus);
+  // Fetch data if id is provided
+  const { data: vehicleData } = useFetchData(
+    id ? `http://localhost:8383/vehicle/getbyid/${id}` : null
+  );
 
   const [formData, setFormData] = useState({
     name: "",
@@ -49,7 +62,6 @@ export default function Entry(
       // console.log(formData)
     }
   }, [vehicleData]);
-
 
   // Handle input changes
   const handleChange = (e) => {
@@ -92,7 +104,6 @@ export default function Entry(
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
           "Content-Type": "application/json",
-           
         },
       });
 
@@ -100,8 +111,8 @@ export default function Entry(
       console.log(formData);
       // console.log(onSuccessEdit);
       if (onSuccess) {
-        console.log('gdghdhd');
-        onSuccess()
+        console.log("gdghdhd");
+        onSuccess();
       }
 
       if (id) {
@@ -109,7 +120,7 @@ export default function Entry(
       } else {
         setShowCreateModelBox(false);
       }
-      navigate("/vehicle")
+      navigate("/vehicle");
     } catch (error) {
       console.error("Error submitting form:", error.message);
     }
@@ -119,8 +130,7 @@ export default function Entry(
     const url = `http://localhost:8383/vehicle/delete`;
     await handleDelete(url, id); // Trigger the delete action
     if (onSuccess) {
-      
-      onSuccess()
+      onSuccess();
     }
     setShowEditModelBox(false);
     navigate("/vehicle");
