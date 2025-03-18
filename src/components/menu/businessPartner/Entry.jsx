@@ -1,4 +1,4 @@
-
+import axios from "axios";
 import React, { useState, useEffect } from "react"
 import { useNavigate, useParams } from "react-router-dom"
 import { useCRUD } from "../../HOC/UseCRUD"
@@ -6,24 +6,40 @@ import { useFetchData } from "../../HOC/UseFetchData"
 import "../../../assets/styles/entry.scss"
 import "./entry.scss"
 import ImageUpload from '../../HOC/inputBoxes/ImageUpload'
-export default function Entry({ id, showCreateModelBox, setShowCreateModelBox,setShowEditModelBox,showEditModelBox}) {
+import {jwtDecode} from "jwt-decode"
+export default function Entry({ id, showCreateModelBox, setShowCreateModelBox,setShowEditModelBox,showEditModelBox,onSuccess}) {
+
+
+  const extractIdFromToken = (token) => {
+    try {
+      const decoded = jwtDecode(token);
+      return decoded.id || decoded.userId || null; // Adjust key based on your token
+    } catch (error) {
+      console.error("Invalid token:", error);
+      return null;
+    }
+  };
+  
+  // Usage
+  const userId = localStorage.getItem("id");
+  // const userId = token ?extractIdFromToken(token) : null;
+  console.log("Extracted User ID:", userId);
+
+  const navigate = useNavigate();
+  const { handleDelete,handleCreate, handleEdit, loading, error, refetch } = useCRUD();
+
+  // Fetch data if id is provided
+  const { data: businesspartnerData } = useFetchData(id ? `http://localhost:8383/businesspartner/getbyid/${id}` : null);
+
+  console.log(localStorage.getItem("id"));
   const [formData, setFormData] = useState({
     name: "",
     image:"",
     phonenumber: "",
     email:"",
     address:"",
-    staffId: "",
+    staffId: userId,
   })
-  // const [errors, setErrors] = useState({}); //for validaiton
-
-
-  const navigate = useNavigate();
-  const { handleDelete,handleCreate, handleEdit, loading, error } = useCRUD();
-
-  // Fetch data if id is provided
-  const { data: businesspartnerData } = useFetchData(id ? `http://localhost:8383/businesspartner/getbyid/${id}` : null);
-  // const { data: operationTypeData } = id ? useFetchData(`http://localhost:8383/user/getByUserId/${id}`) : null;
   useEffect(() => {
     if (businesspartnerData) {
       setFormData(businesspartnerData)
@@ -39,43 +55,66 @@ export default function Entry({ id, showCreateModelBox, setShowCreateModelBox,se
     });
   };
 
-  const handleImageChange = (file) => {
-    setFormData((prev) => ({
-      ...prev,
-      image: file, // Ensure file object is stored
-    }));
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (!file.type.startsWith("image/")) {
+      alert("Please upload an image file.");
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = () => {
+      setFormData({ ...formData, image: reader.result });
+    };
+    reader.readAsDataURL(file);
   };
   
-  
-  
-
-
   // Handle form submission
-  const handleSubmit = (e) => {
+  const handleSubmit = async(e) => {
     e.preventDefault();
-  
-    const formPayload = new FormData();
-    Object.entries(formData).forEach(([key, value]) => {
-      formPayload.append(key, value);
-    });
-  
     console.log("Form Submitted:", formData);
   
     const url = id
-      ? "http://localhost:8383/businesspartner/edit"
+      ? `http://localhost:8383/businesspartner/edit/${id}`
       : "http://localhost:8383/businesspartner/add";
-  
-    const action = id
-      ? handleEdit(url, id, formPayload) // Ensure backend expects multipart/form-data
-      : handleCreate(url, formPayload);
-  
-    action.then(() => navigate("/business-partner"));
+    const method = id ? "PUT" : "POST";
+    try {
+      const response = await axios({
+        method,
+        url,
+        data: formData,
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+          "Content-Type": "application/json",
+           
+        },
+      });
+
+      console.log("Response:", response.data);
+      console.log(formData);
+      // console.log(onSuccessEdit);
+      if (onSuccess) {
+        onSuccess()
+      }
+
+      if (id) {
+        setShowEditModelBox(false);
+      } else {
+        setShowCreateModelBox(false);
+      }
+      navigate("/business-partner")
+    } catch (error) {
+      console.error("Error submitting form:", error.message);
+    }
   };
   
 
   const handleDeleteData = async (id) => {
     const url = `http://localhost:8383/businesspartner/delete`;
     await handleDelete(url, id);
+    if (onSuccess) {
+      onSuccess()
+    }
+    setShowEditModelBox(false);
     navigate("/business-partner");
   };
 
@@ -87,7 +126,7 @@ export default function Entry({ id, showCreateModelBox, setShowCreateModelBox,se
       phonenumber: "",
       email:"",
       address:"",
-      staffId: "",
+      staffId: userId,
     })
   }
   const handleCancel = () => {
@@ -98,6 +137,7 @@ export default function Entry({ id, showCreateModelBox, setShowCreateModelBox,se
       setShowEditModelBox(false);
       handleClear();
     }
+    navigate("/business-partner");
   }
 
   if (loading) return <div>Loading...</div>
@@ -111,7 +151,7 @@ export default function Entry({ id, showCreateModelBox, setShowCreateModelBox,se
      <h4>{id ? "Edit Business Partner" : "Create Business Partner"}</h4>
    </div>
    <div className="modelContent">
-     <form onSubmit={handleSubmit} method="multipart/form-data">
+     <form onSubmit={handleSubmit}>
        
        <div className={`formGroup modelTwoColumn`}>
          <div>
@@ -131,7 +171,7 @@ export default function Entry({ id, showCreateModelBox, setShowCreateModelBox,se
              className="input" id="name" placeholder="Enter business partner name" />
            </div>
            <div className="inputContainer">
-             <label htmlFor="name" className="inputLabel">
+             <label htmlFor="phonenumber" className="inputLabel">
                <div className="flexRow">
                  <small>[Required]</small>
                  <p>Phone Number</p>
@@ -140,13 +180,13 @@ export default function Entry({ id, showCreateModelBox, setShowCreateModelBox,se
                  <small>Please enter phonenumber</small>
                </div>
              </label>
-             <input type="text" value={formData.phonenumber}
+             <input type="text" name="phonenumber" value={formData.phonenumber}
              onChange={handleChange}
              required
-             className="input" name="phonenumber" id="phonenumber" placeholder="Enter business partner's phone number" />
+             className="input" id="phonenumber" placeholder="Enter business partner's phone number" />
            </div>
            <div className="inputContainer">
-             <label htmlFor="name" className="inputLabel">
+             <label htmlFor="email" className="inputLabel">
                <div className="flexRow">
                  <small>[Required]</small>
                  <p>Email</p>
@@ -161,7 +201,7 @@ export default function Entry({ id, showCreateModelBox, setShowCreateModelBox,se
              className="input" id="email" placeholder="Enter business partner's mail" />
            </div>
            <div className="inputContainer">
-             <label htmlFor="name" className="inputLabel">
+             <label htmlFor="address" className="inputLabel">
                <div className="flexRow">
                  <small>[Optional]</small>
                  <p>Address</p>
@@ -179,9 +219,10 @@ export default function Entry({ id, showCreateModelBox, setShowCreateModelBox,se
          </div>
          <div>
            <p>Profile Photo</p>
-           <div className="imageUploadContainer"><ImageUpload value={formData.image} onChange={handleImageChange} />
+           <div className="imageUploadContainer"><ImageUpload value={formData.image} handleFileChange={handleFileChange} />
            </div>
          </div>
+         <input type="hidden" value={formData.staffId}/>
        </div>
        
        <div className="btnContainer">

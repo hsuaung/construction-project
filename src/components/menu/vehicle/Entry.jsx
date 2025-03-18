@@ -192,7 +192,7 @@ export default function Entry(
 
                 {/* group selection */}
                 <div className="inputContainer">
-                  <label htmlFor="name" className="inputLabel">
+                  <label htmlFor="group" className="inputLabel">
                     <div className="flexRow">
                       <small>[Required]</small>
                       <p>Group</p>
@@ -263,7 +263,7 @@ export default function Entry(
 
                 {/* status selection */}
                 <div className="inputContainer">
-                  <label htmlFor="name" className="inputLabel">
+                  <label htmlFor="status" className="inputLabel">
                     <div className="flexRow">
                       <small>[Required]</small>
                       <p>Status</p>

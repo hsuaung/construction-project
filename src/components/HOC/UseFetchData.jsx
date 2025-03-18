@@ -16,7 +16,7 @@ export function useFetchData(url) {
     try {
       const response = await axios.get(url, {
         headers: {
-          Authorization: `Bearer ${accessToken}`,
+          Authorization: `Bearer ${accessToken}`
         },
       });
       setData(response.data);

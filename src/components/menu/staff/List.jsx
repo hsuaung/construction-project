@@ -9,7 +9,8 @@ import {
   SortableContext,
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
-import { closestCorners, DndContext } from "@dnd-kit/core";
+import { closestCorners, DndContext, PointerSensor, rectIntersection, useSensor, useSensors } from "@dnd-kit/core";
+import {restrictToVerticalAxis} from "@dnd-kit/modifiers";
 import Entry from "./Entry";
 import Column from "./Column/Column";
 import "./list.scss";
@@ -26,7 +27,6 @@ export default function List(params) {
     error,
   } = useFetchData("http://localhost:8383/staff/list", deleteStatus);
 
-  console.log("Hsu ", users);
   // axios
   //   .get("http://localhost:8383/skill/list")
   //   .then((response) => {
@@ -52,6 +52,13 @@ export default function List(params) {
     navigate(`/operation-type/detail/edit/${id}`);
   };
 
+  // Restrict drag behavior
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: { distance: 5 }, // Prevent accidental drags
+    })
+  );
+
   const handleDragEnd = async (event) => {
     const { active, over } = event;
     if (!over || active.id === over.id) return;
@@ -59,17 +66,11 @@ export default function List(params) {
     const oldIndex = staffs.findIndex((item) => item.id === active.id);
     const newIndex = staffs.findIndex((item) => item.id === over.id);
 
+    // Restrict dropping outside visible area
+    if (newIndex < 0 || newIndex >= staffs.length) return;
+
     const updatedStaffs = arrayMove(staffs, oldIndex, newIndex);
     setStaffs(updatedStaffs);
-
-    // Persist the updated order to the backend
-    try {
-      await axios.post("http://localhost:8383/user/update-order", {
-        items: updatedStaffs,
-      });
-    } catch (error) {
-      console.error("Error updating order:", error);
-    }
   };
 
   const sortStaffs = (key, isDate = false) => {
@@ -246,17 +247,21 @@ export default function List(params) {
 
             <div></div>
           </div>
-          <DndContext
-            onDragEnd={handleDragEnd}
-            collisionDetection={closestCorners}
-          >
-            <SortableContext
-              items={filteredStaffs}
-              strategy={verticalListSortingStrategy}
+          <div className="droppable-area">
+            <DndContext
+              sensors={sensors}
+              onDragEnd={handleDragEnd}
+              collisionDetection={rectIntersection}
+              modifiers={[restrictToVerticalAxis]}
             >
-              <Column tasks={filteredStaffs} />
-            </SortableContext>
-          </DndContext>
+              <SortableContext
+                items={filteredStaffs}
+                strategy={verticalListSortingStrategy}
+              >
+                <Column tasks={filteredStaffs} />
+              </SortableContext>
+            </DndContext>
+          </div>
         </section>
       </div>
       {showCreateModelBox && (

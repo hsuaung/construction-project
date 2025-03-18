@@ -19,24 +19,89 @@ export default function List(params) {
     loading: crudLoading,
     error: crudError,
     deleteStatus,
+    refetch
   } = useCRUD();
   const {
     data: operationtypes,
     loading,
     error,
+    refetch: refetchOperationTypes,
   } = useFetchData("http://localhost:8383/operationtypes/list", deleteStatus);
 
   const [operationTypes, setOperationTypes] = useState([]);
+  const [filteredOperationTypes,setFilteredOperationTypes] = useState([])
+  const [siteCounts,setSiteCounts] = useState({});
+
   const [searchQuery, setSearchQuery] = useState("");
+
   const [showCreateModelBox, setShowCreateModelBox] = useState(false);
   const [selectedTaskId, setSelectedTaskId] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (operationtypes) {
+    console.log("Updated siteCounts:", siteCounts);
+  }, [siteCounts]);
+  
+  
+
+  useEffect(() => {
+    const token = localStorage.getItem("accessToken")
+    if(!token){
+      navigate("/login")
+    }
+    else{
+      refetchOperationTypes()
+    }
+  },[navigate])
+  
+  useEffect(() => {
+    if (operationtypes.length > 0) {  
       setOperationTypes(operationtypes);
     }
   }, [operationtypes]);
+  
+  useEffect(() => {
+    if (operationTypes.length > 0) {  
+      fetchSiteOperationsCount();
+    }
+  }, [operationTypes]); 
+  
+  
+  const fetchSiteOperationsCount = async () => {
+    try { 
+      const countPromises = operationTypes.map((o) =>
+        axios.get(`http://localhost:8383/siteoperation/getbyoperationtypeid/${o.id}`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+            "Content-Type": "application/json",
+          },
+        })
+      );
+  
+      const countResponses = await Promise.all(countPromises);
+  
+      const projectCountMap = countResponses.reduce((acc, response, index) => {
+        acc[operationTypes[index].id] = response.data.length || 0;
+        return acc;
+      }, {});
+  
+      setSiteCounts(projectCountMap);
+    } catch (error) {
+      console.error("Error fetching project counts:", error);
+    }
+  };
+  
+  // search
+  useEffect(() => {
+    const filtered = operationTypes.filter((o) => {
+      const query = searchQuery.toLowerCase()
+      return (
+        ["name"].some((key) => o[key]?.toString().toLowerCase().includes(query)) ||
+        String(siteCounts[o.id] || 0).includes(query)
+      )
+    })
+    setFilteredOperationTypes(filtered)
+  }, [operationTypes, searchQuery,siteCounts])
 
   const handleDragEnd = async (event) => {
     const { active, over } = event;
@@ -47,15 +112,6 @@ export default function List(params) {
 
     const updatedOperationTypes = arrayMove(operationTypes, oldIndex, newIndex);
     setOperationTypes(updatedOperationTypes);
-
-    // Persist the updated order to the backend
-    try {
-      await axios.post("http://localhost:8383/operationtypes/update-order", {
-        items: updatedOperationTypes,
-      });
-    } catch (error) {
-      console.error("Error updating order:", error);
-    }
   };
 
   const sortOperationTypes = (key, isDate = false) => {
@@ -70,29 +126,13 @@ export default function List(params) {
     });
   };
 
-  const filteredOperationTypes = operationTypes.filter((operationType) =>
-    ["name", "color"].some((key) =>
-      String(operationType[key] || "")
-        .toLowerCase()
-        .includes(searchQuery.toLowerCase())
-    )
-  );
+
 
   const handleCreateModelBox = () => {
     setShowCreateModelBox(true);
     console.log("Testing CreateModelBox");
     setSelectedTaskId(null);
   };
-  // const handleCloseEditModelBox = (id) => {
-  //   setShowCreateModelBox(false);
-  //   setSelectedTaskId(null);
-  // }
-  // const handleCloseCreateModelBox = () => {
-  //   setShowCreateModelBox(false);
-  //   setSelectedTaskId(null);
-  // }
-
-  // const toggleCreateModelBox = () => setShowCreateModelBox((prev) => !prev);
 
   if (loading) return <div>Loading...</div>;
   if (error) return <div>Error: {error.message}</div>;

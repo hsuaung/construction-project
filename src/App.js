@@ -34,9 +34,21 @@ function App() {
             index
             element={<ProtectedRoute requiredRole="admin" component={Home} />}
           />
-          <Route
-            path="/business-partner"
-            element={
+          <Route path="/business-partner" element={
+              <ProtectedRoute
+                requiredRole="admin"
+                component={BusinessPartnerList}
+              />
+            }
+          />
+          <Route path="/business-partner/entry" element={
+            <ProtectedRoute
+              requiredRole="admin"
+              component={BusinessPartnerList}
+            />
+          }
+          />
+          <Route path="/business-partner/edit/:id" element={
               <ProtectedRoute
                 requiredRole="admin"
                 component={BusinessPartnerList}
@@ -45,6 +57,24 @@ function App() {
           />
           <Route
             path="/operation-type"
+            element={
+              <ProtectedRoute
+                requiredRole="admin"
+                component={OperationTypeList}
+              />
+            }
+          />
+          <Route
+            path="/operation-type/entry"
+            element={
+              <ProtectedRoute
+                requiredRole="admin"
+                component={OperationTypeList}
+              />
+            }
+          />
+          <Route
+            path="/operation-type/edit/:id"
             element={
               <ProtectedRoute
                 requiredRole="admin"
@@ -109,3 +139,4 @@ function App() {
 }
 
 export default App;
+

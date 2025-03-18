@@ -50,11 +50,13 @@ export default function List(params) {
     }
   },[Vehicles])
 
+  // statuss
   useEffect(() => {
     const statuses = [...new Set(vehicles.map((v) => v.status))]
     setUniqueStatuses(statuses)
   }, [vehicles])
 
+  //search
   useEffect(() => {
     const filtered = vehicles.filter((v) => {
       const query = searchQuery.toLowerCase()
@@ -134,7 +136,7 @@ export default function List(params) {
     })
   }
 
-  //search
+
   const handleCreateModelBox = () => {
     setShowCreateModelBox(true)
     // console.log("Testing CreateModelBox")
@@ -298,7 +300,11 @@ export default function List(params) {
           </div>
           <DndContext onDragEnd={handleDragEnd} collisionDetection={closestCorners}>
             <SortableContext items={filteredVehicles} strategy={verticalListSortingStrategy}>
-              <Column tasks={filteredVehicles} refetchVehicles={refetchVehicles}/>
+              {filteredVehicles.length === 0 ? (
+                          <p>No Vehicles found.</p>
+                        ) : (
+                          <Column tasks={filteredVehicles}  refetchVehicles={refetchVehicles}/>
+                        )}
             </SortableContext>
           </DndContext>
         </section>

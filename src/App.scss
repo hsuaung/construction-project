@@ -60,6 +60,10 @@ button {
   @include flex(column, start, center, px-to-rem(5));
 }
 
+.flexBaseline {
+  @include flex(row, start, baseline, px-to-rem(5));
+}
+
 .input {
   padding: px-to-rem(6) 0;
   text-indent: px-to-rem(10);
@@ -87,11 +91,13 @@ button {
   // color: white;
   color: $secondaryColor;
   border: 1px solid $secondaryColor;
+
   &:hover,
   &:focus {
     outline: 1px solid $itemOrangeColor;
   }
 }
+
 .select {
   padding: px-to-rem(6) px-to-rem(10);
   border: 0;
@@ -100,6 +106,7 @@ button {
   width: 100%;
   color: $secondaryColor;
   border: 1px solid $secondaryColor;
+
   &:hover,
   &:focus {
     outline: 1px solid $itemOrangeColor;
@@ -108,6 +115,7 @@ button {
   option {
     background-color: $itemGrayColor;
     color: $secondaryColor;
+
     &::after {
       background-color: red;
     }
@@ -359,4 +367,12 @@ input[type="date"] {
 
 .modelTwoColumn {
   @include grid(1fr 1fr, 1fr, px-to-rem(30));
+}
+
+// dnd 
+.droppable-area {
+  max-height: 600px;
+  max-width: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
 }

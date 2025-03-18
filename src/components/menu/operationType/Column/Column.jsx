@@ -1,44 +1,26 @@
-// import React, { useState } from "react";
-// import { Task } from "../Task/Task";
-// import "./column.scss";
-// export default function Column({ tasks}) {
-//   const [showCreateModelBox, setShowCreateModelBox] = useState(false);
-//   const [selectedTaskId, setSelectedTaskId] = useState(null);
-
-//   const handleEditModelBox = (id) => {
-//     console.log("Editing task:", id);
-//     setShowCreateModelBox(true);
-//     setSelectedTaskId(id);
-//   };
-//   return (
-//     <div className="scrollable">
-//       <div className="operationTypeListData">
-//       {tasks.map((task) => (
-//         <Task key={task.id} id={task.id} name={task.user_name} group={task.user_email} onClick={handleEditModelBox}/>
-//       ))}
-//     </div>
-//     </div>
-//   );
-// }
-
 import React, { useState } from "react";
 import { Task } from "../Task/Task";
 import Entry from "../Entry"; // Import modal component
 import "./column.scss";
+import { useNavigate } from "react-router-dom";
 
-export default function Column({ tasks }) {
+export default function Column({ tasks, refreshOPTypes }) {
   const [showEditModelBox, setShowEditModelBox] = useState(false);
   const [selectedTaskId, setSelectedTaskId] = useState(null);
+  const navigate = useNavigate()
 
   const handleEditModelBox = (id) => {
     console.log("Editing task:", id);
     setShowEditModelBox(true); // Show modal when editing task
     setSelectedTaskId(id);
-    // setSelectedTaskId(tasks.find((task) => task.id === id)); // Store selected task details
+    navigate(`/operation-type/edit/${id}`) // Navigate to edit page with selected task id
   };
 
   const closeModal = () => {
     setSelectedTaskId(null); // Reset when closing modal
+    if(refreshOPTypes){
+      refreshOPTypes(); // Refresh the data when modal is closed
+    }
   };
 
   return (
@@ -49,7 +31,9 @@ export default function Column({ tasks }) {
             key={task.id}
             id={task.id}
             name={task.name}
-            group={task.color}
+            color={task.color}
+            // numberOfSites={task.numberOfSites}
+            onSuccess={refreshOPTypes}
             onClick={() => handleEditModelBox(task.id)} // Pass function correctly
           />
         ))}
@@ -60,7 +44,7 @@ export default function Column({ tasks }) {
         <Entry
           showEditModelBox={showEditModelBox}
           setShowEditModelBox={setShowEditModelBox}
-          id={selectedTaskId}
+          id={selectedTaskId} onSuccess= {refreshOPTypes}
         />
       )}
     </div>
