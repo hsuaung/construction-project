@@ -2,15 +2,16 @@ import { useEffect, useState } from "react"
 import { useFetchData } from "../../HOC/UseFetchData"
 import { useCRUD } from "../../HOC/UseCRUD"
 import "./team.scss"
+import { useNavigate } from "react-router-dom"
 
-export default function Team({ createTeam, setCreateTeam ,teamOptions,setTeamOptions,loading,error, showCreateModelBox, setShowCreateModelBox}) {
+export default function Team({ createTeam, setCreateTeam ,teamOptions,setTeamOptions,loading,error, showCreateModelBox,showEditModelBox, setShowCreateModelBox,setShowEditModelBox}) {
   const { handleCreate, handleEdit, handleDelete} = useCRUD()
   const [hasAddedNewTeam, setHasAddedNewTeam] = useState(false)
   const [changes, setChanges] = useState({ created: [], updated: [], deleted: [] })
   const [originalTeams,setOriginalTeams] = useState([])
 
   const colors = ["red", "blue", "green", "orange", "lightblue", "lightgreen", "gray", "whitesmoke"]
-
+  const navigate = useNavigate();
 
 
   useEffect(() => {
@@ -29,7 +30,7 @@ export default function Team({ createTeam, setCreateTeam ,teamOptions,setTeamOpt
 
     const newTeam = {
       id: `temp-${Date.now()}`, // Temporary ID
-      name: `New Group ${teamOptions.length + 1}`,
+      name: `New Team ${teamOptions.length + 1}`,
       color: getRandomColor(),
       createdAt: new Date(),
       updatedAt: new Date(),
@@ -91,10 +92,16 @@ export default function Team({ createTeam, setCreateTeam ,teamOptions,setTeamOpt
     if (showCreateModelBox) {
       setShowCreateModelBox(true)
     }
+    if (showEditModelBox) {
+      setShowEditModelBox(true)
+    }
+    navigate("/staff/entry")
+    
   }
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    // console.log("Form Submitted:", teamOptions);
     try {
       // Create new groups
       for (const newTeam of changes.created) {
@@ -115,9 +122,12 @@ export default function Team({ createTeam, setCreateTeam ,teamOptions,setTeamOpt
       setOriginalTeams([...teamOptions])
       setChanges({ created: [], updated: [], deleted: [] })
       alert("All changes have been saved successfully.")
+
+      
       setCreateTeam(false)
       if (showCreateModelBox) {
         setShowCreateModelBox(true)
+        navigate("/staff/entry")
       }
       // setShowCreateModelBox(true)
     } catch (error) {

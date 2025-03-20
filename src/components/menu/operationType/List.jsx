@@ -9,10 +9,11 @@ import {
   SortableContext,
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
-import { closestCorners, DndContext } from "@dnd-kit/core";
+import { closestCorners, DndContext, PointerSensor, rectIntersection, useSensor, useSensors } from "@dnd-kit/core";
 import Entry from "./Entry";
 import Column from "./Column/Column";
 import "../../../assets/styles/list.scss";
+import { restrictToVerticalAxis } from "@dnd-kit/modifiers";
 export default function List(params) {
   const {
     handleDelete,
@@ -55,7 +56,7 @@ export default function List(params) {
   },[navigate])
   
   useEffect(() => {
-    if (operationtypes.length > 0) {  
+    if (operationtypes) {  
       setOperationTypes(operationtypes);
     }
   }, [operationtypes]);
@@ -102,6 +103,13 @@ export default function List(params) {
     })
     setFilteredOperationTypes(filtered)
   }, [operationTypes, searchQuery,siteCounts])
+
+    // Restrict drag behavior
+    const sensors = useSensors(
+      useSensor(PointerSensor, {
+        activationConstraint: { distance: 5 }, // Prevent accidental drags
+      })
+    );
 
   const handleDragEnd = async (event) => {
     const { active, over } = event;
@@ -200,17 +208,25 @@ export default function List(params) {
             </div>
             <div></div>
           </div>
-          <DndContext
-            onDragEnd={handleDragEnd}
-            collisionDetection={closestCorners}
-          >
-            <SortableContext
-              items={filteredOperationTypes}
-              strategy={verticalListSortingStrategy}
+          <div className="droppable-area">
+            <DndContext
+            sensors={sensors}
+              onDragEnd={handleDragEnd}
+              collisionDetection={rectIntersection}
+              modifiers={[restrictToVerticalAxis]}
             >
-              <Column tasks={filteredOperationTypes} />
-            </SortableContext>
-          </DndContext>
+              <SortableContext
+                items={filteredOperationTypes}
+                strategy={verticalListSortingStrategy}
+              >
+                {filteredOperationTypes.length === 0 ? (
+                  <p>No Operation Types found.</p>
+                ):(
+                  <Column tasks={filteredOperationTypes} refetchOperationTypes={refetchOperationTypes}/>
+                )}
+              </SortableContext>
+            </DndContext>
+          </div>
         </section>
       </div>
       {/* {showCreateModelBox && <Entry />} */}
@@ -218,6 +234,7 @@ export default function List(params) {
         <Entry
           showCreateModelBox={showCreateModelBox}
           setShowCreateModelBox={setShowCreateModelBox}
+          onSuccess={refetchOperationTypes}
         />
       )}
     </>

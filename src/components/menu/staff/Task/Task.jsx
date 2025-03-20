@@ -1,18 +1,35 @@
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
+import { useEffect, useState } from "react";
+import { useFetchData } from "../../../HOC/UseFetchData";
 
 export const Task = ({
   id,
   image,
   name,
   email,
-  team,
-  staffType,
-  status,
-  onClick,
+  teamId,
+  usertypesId,
+  workingStatus,
+  onClick,onSuccess
 }) => {
   const { attributes, listeners, setNodeRef, transition, transform } =
     useSortable({ id });
+
+    const [teamName,setTeamName] = useState("Loading .....");
+    const { data: teamData } = useFetchData(`http://localhost:8383/team/getbyid/${teamId}`);
+
+    const [userTypes,setUserTypes] = useState("Loading ....");
+    const { data: userTypesData } = useFetchData(`http://localhost:8383/usertypes/getbyid/${usertypesId}`);
+
+    useEffect(() => {
+      if (teamData?.name) {
+        setTeamName(teamData.name);
+      }
+      if (userTypesData?.name) {
+        setUserTypes(userTypesData.name);
+      }
+    }, [teamData, userTypesData]);
 
   const style = {
     transform: CSS.Transform.toString(transform),
@@ -54,14 +71,12 @@ export const Task = ({
           />
         </svg>
       </div>
-      {/* <img src={} alt="" /> */}
-      {/* <p>{image}</p> */}
       <img src={image} alt="" width="30px" height="30px" />
       <p>{name}</p>
       <p>{email}</p>
-      <p>{team}</p>
-      <p>{staffType}</p>
-      <p>{status}</p>
+      <p>{teamName}</p>
+      <p>{userTypes}</p>
+      <p>{workingStatus}</p>
       <div className="detailBtn" onClick={onClick}>
         <svg
           xmlns="http://www.w3.org/2000/svg"
