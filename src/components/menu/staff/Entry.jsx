@@ -20,7 +20,7 @@ export default function Entry({
   onSuccess
 }) {
   const { handleDelete, handleCreate, handleEdit, loading:crudLoading, error:crudError,deleteStatus, refetch } = useCRUD();
-  const { data: initialTeams, loading, error } = useFetchData(
+  const { data: initialTeams, loading, error,refetch:refetchTeamList } = useFetchData(
       "http://localhost:8383/team/list",
       deleteStatus
   );
@@ -33,11 +33,7 @@ export default function Entry({
       id ? `http://localhost:8383/staff/getbyid/${id}` : null
   );
 
-  // const [Address, setAddress] = useState("");
 
-  // const handleAddressSelect = (address) => {
-  //   setAddress(address); // Update the address state when a user selects an address
-  // };
 
   const [formData, setFormData] = useState({
       name: "",
@@ -62,7 +58,7 @@ export default function Entry({
   useEffect(()=>{
     setTeamOptions(initialTeams || []);
   },[initialTeams])
-  console.log(teamOptions);
+  // console.log(teamOptions);
 
   useEffect(() => {
     if (staffData) {
@@ -180,7 +176,7 @@ export default function Entry({
   };
 
   const handleCreateTeam = () => {
-    navigate("/staff/team");
+    // navigate("/staff/team");
     setCreateTeam(true);
   };
 
@@ -239,6 +235,7 @@ export default function Entry({
                               showEditModelBox={showEditModelBox}
                               setShowCreateModelBox={setShowCreateModelBox}
                               setShowEditModelBox={setShowEditModelBox}
+                              onSuccess={refetchTeamList}
                                               />
                                             )}
                       </div>
@@ -306,7 +303,7 @@ export default function Entry({
                     </div>
 
                     <div>
-                      <label htmlFor="phonenumber" className="inputLabel">
+                      <label htmlFor="phoneNumber" className="inputLabel">
                         <div className="flexRow">
                           <small>[Required]</small>
                           <p>Phone</p>
@@ -318,8 +315,8 @@ export default function Entry({
                       <div className="flexRow inputRow">
                         <input
                           type="text"
-                          name="phonenumber"
-                          value={formData.phonenumber}
+                          name="phoneNumber"
+                          value={formData.phoneNumber}
                           onChange={handleChange}
                           required
                           className="input"
@@ -341,7 +338,7 @@ export default function Entry({
                       </label>
 
                       <div className="flexRow inputRow">
-                        <textarea name="address" id="address" className="input"></textarea>
+                        <textarea name="address" id="address" className="input" onChange={handleChange} value={formData.address}></textarea>
                       </div>
                     </div>
 

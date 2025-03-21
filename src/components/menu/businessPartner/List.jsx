@@ -18,6 +18,7 @@ export default function List(params) {
     refetch,
      deleteStatus } = useCRUD();
   const { data: Businesspartners, loading, error, refetch:refetchBusinessPartners } = useFetchData("http://localhost:8383/businesspartner/list", deleteStatus);
+  console.log(Businesspartners);
   
   
   const [businessPartners, setBusinessPartners] = useState([]);
@@ -52,7 +53,7 @@ export default function List(params) {
 
   
   const accessToken = localStorage.getItem("accessToken"); 
-  console.log(accessToken);
+  // console.log(accessToken);
 
   // fetch not in db datas
   const fetchAdminData = async (partners) => { 
@@ -85,7 +86,7 @@ export default function List(params) {
       console.error("Error fetching staff data:", error);
     }
   };
-  console.log(adminData);
+  // console.log(adminData);
   
 
   const fetchProjectCounts = async () => {

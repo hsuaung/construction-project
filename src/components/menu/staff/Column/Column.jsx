@@ -10,9 +10,9 @@ export default function Column({ tasks,refetchStaffs,handleCreateModelBox }) {
 
   const handleEditModelBox = async(id) => {
     console.log("Editing task:", id);
-    setShowEditModelBox(true); // Show modal when editing task
+    setShowEditModelBox(true); 
     setSelectedTaskId(id); 
-    navigate(`/staff/edit/${id}`);
+    // navigate(`/staff/edit/${id}`);
     
   };
 

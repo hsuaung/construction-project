@@ -4,7 +4,7 @@ import { useCRUD } from "../../HOC/UseCRUD"
 import "./team.scss"
 import { useNavigate } from "react-router-dom"
 
-export default function Team({ createTeam, setCreateTeam ,teamOptions,setTeamOptions,loading,error, showCreateModelBox,showEditModelBox, setShowCreateModelBox,setShowEditModelBox}) {
+export default function Team({ createTeam, setCreateTeam ,teamOptions,setTeamOptions,loading,error, showCreateModelBox,showEditModelBox, setShowCreateModelBox,setShowEditModelBox,onSuccess}) {
   const { handleCreate, handleEdit, handleDelete} = useCRUD()
   const [hasAddedNewTeam, setHasAddedNewTeam] = useState(false)
   const [changes, setChanges] = useState({ created: [], updated: [], deleted: [] })
@@ -95,7 +95,7 @@ export default function Team({ createTeam, setCreateTeam ,teamOptions,setTeamOpt
     if (showEditModelBox) {
       setShowEditModelBox(true)
     }
-    navigate("/staff/entry")
+    // navigate("/staff/entry")
     
   }
 
@@ -127,8 +127,14 @@ export default function Team({ createTeam, setCreateTeam ,teamOptions,setTeamOpt
       setCreateTeam(false)
       if (showCreateModelBox) {
         setShowCreateModelBox(true)
-        navigate("/staff/entry")
       }
+      if(showEditModelBox){
+        setShowEditModelBox(true)
+      }
+      if(onSuccess) {
+        onSuccess()
+      }
+      // navigate("/staff/entry")
       // setShowCreateModelBox(true)
     } catch (error) {
       console.error("Error saving changes:", error)

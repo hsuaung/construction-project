@@ -3,7 +3,7 @@ import { useFetchData } from "../../HOC/UseFetchData"
 import { useCRUD } from "../../HOC/UseCRUD"
 import "./group.scss"
 
-export default function Group({ createGroup, setCreateGroup ,groupOptions,setGroupOptions,loading,error, showCreateModelBox, setShowCreateModelBox}) {
+export default function Group({ createGroup, setCreateGroup ,groupOptions,setGroupOptions,loading,error, showCreateModelBox,showEditModelBox,setShowEditModelBox, setShowCreateModelBox,onSuccess}) {
   const { handleCreate, handleEdit, handleDelete} = useCRUD()
   const [hasAddedNewGroup, setHasAddedNewGroup] = useState(false)
   const [changes, setChanges] = useState({ created: [], updated: [], deleted: [] })
@@ -91,6 +91,9 @@ export default function Group({ createGroup, setCreateGroup ,groupOptions,setGro
     if (showCreateModelBox) {
       setShowCreateModelBox(true)
     }
+    if(showEditModelBox) {
+      setShowEditModelBox(false)
+    }
   }
 
   const handleSubmit = async (e) => {
@@ -118,6 +121,12 @@ export default function Group({ createGroup, setCreateGroup ,groupOptions,setGro
       setCreateGroup(false)
       if (showCreateModelBox) {
         setShowCreateModelBox(true)
+      }
+      if(showEditModelBox){
+        setShowEditModelBox(true)
+      }
+      if(onSuccess) {
+        onSuccess()
       }
       // setShowCreateModelBox(true)
     } catch (error) {

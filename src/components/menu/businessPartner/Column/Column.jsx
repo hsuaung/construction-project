@@ -13,7 +13,7 @@ export default function Column({ tasks,refetchBusinessPartners }) {
     console.log("Editing task:", id);
     setShowEditModelBox(true); // Show modal when editing task
     setSelectedTaskId(id); // Store selected task details
-    navigate(`/business-partner/edit/${id}`) // Navigate to edit page with selected task id
+    // navigate(`/business-partner/edit/${id}`) // Navigate to edit page with selected task id
   };
 
   const closeModal = () => {
@@ -48,4 +48,5 @@ export default function Column({ tasks,refetchBusinessPartners }) {
     </div>
   );
 }
+
 

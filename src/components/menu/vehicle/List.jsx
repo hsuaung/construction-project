@@ -149,7 +149,7 @@ export default function List(params) {
     setShowCreateModelBox(true)
     // console.log("Testing CreateModelBox")
     // setSelectedTaskId(null)
-    navigate('/vehicle/entry')
+    // navigate('/vehicle/entry')
   }
 
   const handleFilterModelBox = () => setShowFitlerBox((prev) => !prev)

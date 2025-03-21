@@ -21,9 +21,9 @@ export default function Entry({ id, showCreateModelBox, setShowCreateModelBox,se
   };
   
   // Usage
-  const userId = localStorage.getItem("id");
+  const adminId = localStorage.getItem("id");
   // const userId = token ?extractIdFromToken(token) : null;
-  console.log("Extracted User ID:", userId);
+  console.log("Extracted User ID:", adminId);
 
   const navigate = useNavigate();
   const { handleDelete,handleCreate, handleEdit, loading, error, refetch } = useCRUD();
@@ -38,13 +38,16 @@ export default function Entry({ id, showCreateModelBox, setShowCreateModelBox,se
     phonenumber: "",
     email:"",
     address:"",
-    staffId: userId,
+    staffId:"",
   })
+  
   useEffect(() => {
     if (businesspartnerData) {
       setFormData(businesspartnerData)
     }
   }, [businesspartnerData])
+
+  console.log(formData);
 
   // Handle input changes
   const handleChange = (e) => {
@@ -71,7 +74,8 @@ export default function Entry({ id, showCreateModelBox, setShowCreateModelBox,se
   // Handle form submission
   const handleSubmit = async(e) => {
     e.preventDefault();
-    console.log("Form Submitted:", formData);
+    const updatedFormdata = { ...formData,staffId:adminId}
+    console.log("Form Submitted:", updatedFormdata);
   
     const url = id
       ? `http://localhost:8383/businesspartner/edit/${id}`
@@ -81,7 +85,7 @@ export default function Entry({ id, showCreateModelBox, setShowCreateModelBox,se
       const response = await axios({
         method,
         url,
-        data: formData,
+        data: updatedFormdata,
         headers: {
           Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
           "Content-Type": "application/json",
@@ -126,7 +130,7 @@ export default function Entry({ id, showCreateModelBox, setShowCreateModelBox,se
       phonenumber: "",
       email:"",
       address:"",
-      staffId: userId,
+      staffId: localStorage.getItem("id"),
     })
   }
   const handleCancel = () => {
@@ -222,7 +226,6 @@ export default function Entry({ id, showCreateModelBox, setShowCreateModelBox,se
            <div className="imageUploadContainer"><ImageUpload value={formData.image} handleFileChange={handleFileChange} />
            </div>
          </div>
-         <input type="hidden" value={formData.staffId}/>
        </div>
        
        <div className="btnContainer">
@@ -246,4 +249,6 @@ export default function Entry({ id, showCreateModelBox, setShowCreateModelBox,se
     </>
   )
 }
+
+
 

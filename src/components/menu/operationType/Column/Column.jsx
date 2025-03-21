@@ -4,7 +4,7 @@ import Entry from "../Entry"; // Import modal component
 import "./column.scss";
 import { useNavigate } from "react-router-dom";
 
-export default function Column({ tasks, refreshOPTypes }) {
+export default function Column({ tasks, refetchOperationTypes }) {
   const [showEditModelBox, setShowEditModelBox] = useState(false);
   const [selectedTaskId, setSelectedTaskId] = useState(null);
   const navigate = useNavigate()
@@ -13,13 +13,12 @@ export default function Column({ tasks, refreshOPTypes }) {
     console.log("Editing task:", id);
     setShowEditModelBox(true); // Show modal when editing task
     setSelectedTaskId(id);
-    navigate(`/operation-type/edit/${id}`) // Navigate to edit page with selected task id
   };
 
   const closeModal = () => {
     setSelectedTaskId(null); // Reset when closing modal
-    if(refreshOPTypes){
-      refreshOPTypes(); // Refresh the data when modal is closed
+    if(refetchOperationTypes){
+      refetchOperationTypes(); // Refresh the data when modal is closed
     }
   };
 
@@ -33,7 +32,7 @@ export default function Column({ tasks, refreshOPTypes }) {
             name={task.name}
             color={task.color}
             // numberOfSites={task.numberOfSites}
-            onSuccess={refreshOPTypes}
+            onSuccess={refetchOperationTypes}
             onClick={() => handleEditModelBox(task.id)} // Pass function correctly
           />
         ))}
@@ -44,7 +43,7 @@ export default function Column({ tasks, refreshOPTypes }) {
         <Entry
           showEditModelBox={showEditModelBox}
           setShowEditModelBox={setShowEditModelBox}
-          id={selectedTaskId} onSuccess= {refreshOPTypes}
+          id={selectedTaskId} onSuccess= {refetchOperationTypes}
         />
       )}
     </div>
