@@ -22,10 +22,11 @@ export default function List(params) {
     deleteStatus,
   } = useCRUD();
   const {
-    data: users,
+    data: siteList,
     loading,
     error,
   } = useFetchData("http://localhost:8383/site/list", deleteStatus);
+  console.log(siteList);
 
   const [businessPartners, setBusinessPartners] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
@@ -33,11 +34,11 @@ export default function List(params) {
   const [selectedTaskId, setSelectedTaskId] = useState(null);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    if (users) {
-      setBusinessPartners(users);
-    }
-  }, [users]);
+  // useEffect(() => {
+  //   if (users) {
+  //     setBusinessPartners(users);
+  //   }
+  // }, [users]);
 
   const handleDragEnd = async (event) => {
     const { active, over } = event;
@@ -217,10 +218,10 @@ export default function List(params) {
             collisionDetection={closestCorners}
           >
             <SortableContext
-              items={filteredBusinessPartners}
+              items={siteList}
               strategy={verticalListSortingStrategy}
             >
-              <Column tasks={filteredBusinessPartners} />
+              <Column tasks={siteList} />
             </SortableContext>
           </DndContext>
         </section>

@@ -2,7 +2,16 @@ import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import React from "react";
 
-export const Task = ({ id, name, group, onClick }) => {
+export const Task = ({
+  id,
+  name,
+  businesspartner,
+  staff,
+  startDate,
+  endDate,
+  status,
+  onClick,
+}) => {
   const { attributes, listeners, setNodeRef, transition, transform } =
     useSortable({ id });
 
@@ -10,6 +19,8 @@ export const Task = ({ id, name, group, onClick }) => {
     transform: CSS.Transform.toString(transform),
     transition,
   };
+  const forStartDate = new Date(startDate);
+  const forEndDate = new Date(endDate);
 
   return (
     <div ref={setNodeRef} style={style} className="data">
@@ -46,14 +57,26 @@ export const Task = ({ id, name, group, onClick }) => {
           />
         </svg>
       </div>
-
-      <p>{name} SName</p>
-      <p>{name} BP Name</p>
-      <p>{group} Company </p>
-      <p>{group} Schedule</p>
+      <p>{name} </p>
+      <p>{businesspartner}</p>
+      <p>{staff} </p>
+      {/* <p>
+        {startDate} ~ {endDate}
+      </p> */}
       <p>
-        <div className="statusDiv underConstruction"></div>{" "}
+        {forStartDate.toLocaleDateString("en-US", {
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+        })}
+        ~
+        {forEndDate.toLocaleDateString("en-US", {
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+        })}
       </p>
+      <p dangerouslySetInnerHTML={{ __html: status }} />
       <div className="detailBtn" onClick={onClick}>
         <svg
           xmlns="http://www.w3.org/2000/svg"

@@ -315,13 +315,13 @@ function EditSchedule({ onCancel }) {
                 <path
                   d="M18.417 3H14.417C14.2789 3 14.167 3.11193 14.167 3.25C14.167 3.38807 14.2789 3.5 14.417 3.5H18.417C18.5551 3.5 18.667 3.38807 18.667 3.25C18.667 3.11193 18.5551 3 18.417 3Z"
                   stroke="#F27D14"
-                  stroke-width="0.5"
+                  strokeWidth="0.5"
                   stroke-linecap="round"
                 />
                 <path
                   d="M16.667 5.25V1.25C16.667 1.11193 16.5551 1 16.417 1C16.2789 1 16.167 1.11193 16.167 1.25V5.25C16.167 5.38807 16.2789 5.5 16.417 5.5C16.5551 5.5 16.667 5.38807 16.667 5.25Z"
                   stroke="#F27D14"
-                  stroke-width="0.5"
+                  strokeWidth="0.5"
                   stroke-linecap="round"
                 />
               </svg>
@@ -455,14 +455,14 @@ const tabs = [
           <path
             d="M17.7083 31.2503H32.2917M17.7083 37.5003H25M40.625 4.16699H11.4583C10.9058 4.16699 10.3759 4.38649 9.98519 4.77719C9.59449 5.16789 9.375 5.69779 9.375 6.25033V43.7503C9.375 44.3029 9.59449 44.8328 9.98519 45.2235C10.3759 45.6142 10.9058 45.8337 11.4583 45.8337H40.625C41.1775 45.8337 41.7074 45.6142 42.0981 45.2235C42.4888 44.8328 42.7083 44.3029 42.7083 43.7503V6.25033C42.7083 5.69779 42.4888 5.16789 42.0981 4.77719C41.7074 4.38649 41.1775 4.16699 40.625 4.16699Z"
             stroke="#FFA629"
-            stroke-width="2"
+            strokeWidth="2"
             stroke-linecap="round"
             stroke-linejoin="round"
           />
           <path
             d="M17.7083 12.5H32.2917V22.9167H17.7083V12.5Z"
             stroke="#FFA629"
-            stroke-width="2"
+            strokeWidth="2"
             stroke-linecap="round"
             stroke-linejoin="round"
           />
@@ -486,14 +486,14 @@ const tabs = [
           <path
             d="M16.0417 16.042H13.75C12.5344 16.042 11.3686 16.5249 10.5091 17.3844C9.64954 18.244 9.16666 19.4098 9.16666 20.6253V41.2503C9.16666 42.4659 9.64954 43.6317 10.5091 44.4912C11.3686 45.3508 12.5344 45.8337 13.75 45.8337H34.375C35.5906 45.8337 36.7564 45.3508 37.6159 44.4912C38.4754 43.6317 38.9583 42.4659 38.9583 41.2503V38.9587"
             stroke="#FFA629"
-            stroke-width="2"
+            strokeWidth="2"
             stroke-linecap="round"
             stroke-linejoin="round"
           />
           <path
             d="M36.6667 11.4586L43.5417 18.3336M46.7156 15.0909C47.6182 14.1883 48.1252 12.9642 48.1252 11.6877C48.1252 10.4113 47.6182 9.18719 46.7156 8.28462C45.8131 7.38206 44.5889 6.875 43.3125 6.875C42.0361 6.875 40.8119 7.38206 39.9094 8.28462L20.625 27.5002V34.3752H27.5L46.7156 15.0909Z"
             stroke="#FFA629"
-            stroke-width="2"
+            strokeWidth="2"
             stroke-linecap="round"
             stroke-linejoin="round"
           />
@@ -549,28 +549,30 @@ export default function Edit({
   const activeTabContent = tabs.find((tab) => tab.id === activeTab)?.content;
   return (
     <>
-      <div className="bgBlur"></div>
-      <div className="modalForm siteModal">
-        <div className="modelTitle">
-          <h4>Detail Modal Box</h4>
-        </div>
-        <div className="modalContent siteEditForm">
-          <div className="tabMenu">
-            {tabs.map((tab) => (
-              <Tab
-                key={tab.id}
-                label={tab.label}
-                isActive={activeTab === tab.id}
-                onClick={() => setActiveTab(tab.id)}
-              />
-            ))}
+      <div className="bgBlur">
+        {/* modalForm siteModal */}
+        <div className=" entryContainer  siteEdit ">
+          <div className="modelTitle">
+            <h4>Detail Modal Box</h4>
           </div>
-          <div className="tabContent">
-            <TabContent
-              content={React.cloneElement(activeTabContent, {
-                onCancel: closeModal,
-              })}
-            />
+          <div className="modalContent siteEditForm">
+            <div className="tabMenu">
+              {tabs.map((tab) => (
+                <Tab
+                  key={tab.id}
+                  label={tab.label}
+                  isActive={activeTab === tab.id}
+                  onClick={() => setActiveTab(tab.id)}
+                />
+              ))}
+            </div>
+            <div className="tabContent">
+              <TabContent
+                content={React.cloneElement(activeTabContent, {
+                  onCancel: closeModal,
+                })}
+              />
+            </div>
           </div>
         </div>
       </div>
