@@ -9,10 +9,11 @@ import {
   SortableContext,
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
-import { closestCorners, DndContext } from "@dnd-kit/core";
+import { closestCorners, DndContext, PointerSensor, rectIntersection, useSensor, useSensors } from "@dnd-kit/core";
 import Entry from "./Entry";
 import Column from "./Column/Column";
 import "../../../assets/styles/list.scss";
+import { restrictToVerticalAxis } from "@dnd-kit/modifiers";
 export default function List(params) {
   const {
     handleDelete,
@@ -38,9 +39,9 @@ export default function List(params) {
   const [selectedTaskId, setSelectedTaskId] = useState(null);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    console.log("Updated siteCounts:", siteCounts);
-  }, [siteCounts]);
+  // useEffect(() => {
+  //   console.log("Updated siteCounts:", siteCounts);
+  // }, [siteCounts]);
   
   
 
@@ -55,19 +56,26 @@ export default function List(params) {
   },[navigate])
   
   useEffect(() => {
-    if (operationtypes.length > 0) {  
+    if (operationtypes) {  
       setOperationTypes(operationtypes);
+      fetchSiteOperationsCount(operationtypes);
     }
   }, [operationtypes]);
+
+    // search
+    useEffect(() => {
+      const filtered = operationTypes.filter((o) => {
+        const query = searchQuery.toLowerCase()
+        return (
+          ["name"].some((key) => o[key]?.toString().toLowerCase().includes(query)) ||
+          // String(siteCounts[o.id] || 0).includes(query)
+          (siteCounts[o.id] !== undefined && siteCounts[o.id].toString().includes(query))
+        )
+      })
+      setFilteredOperationTypes(filtered)
+    }, [operationTypes, searchQuery,siteCounts])
   
-  useEffect(() => {
-    if (operationTypes.length > 0) {  
-      fetchSiteOperationsCount();
-    }
-  }, [operationTypes]); 
-  
-  
-  const fetchSiteOperationsCount = async () => {
+  const fetchSiteOperationsCount = async (operationTypes) => {
     try { 
       const countPromises = operationTypes.map((o) =>
         axios.get(`http://localhost:8383/siteoperation/getbyoperationtypeid/${o.id}`, {
@@ -86,22 +94,20 @@ export default function List(params) {
       }, {});
   
       setSiteCounts(projectCountMap);
+      console.log(siteCounts);
     } catch (error) {
       console.error("Error fetching project counts:", error);
     }
   };
   
-  // search
-  useEffect(() => {
-    const filtered = operationTypes.filter((o) => {
-      const query = searchQuery.toLowerCase()
-      return (
-        ["name"].some((key) => o[key]?.toString().toLowerCase().includes(query)) ||
-        String(siteCounts[o.id] || 0).includes(query)
-      )
-    })
-    setFilteredOperationTypes(filtered)
-  }, [operationTypes, searchQuery,siteCounts])
+
+
+    // Restrict drag behavior
+    const sensors = useSensors(
+      useSensor(PointerSensor, {
+        activationConstraint: { distance: 5 }, // Prevent accidental drags
+      })
+    );
 
   const handleDragEnd = async (event) => {
     const { active, over } = event;
@@ -114,24 +120,33 @@ export default function List(params) {
     setOperationTypes(updatedOperationTypes);
   };
 
-  const sortOperationTypes = (key, isDate = false) => {
-    setOperationTypes((prevOperationTypes) => {
-      return [...prevOperationTypes].sort((a, b) => {
-        const valA = a[key] || "";
-        const valB = b[key] || "";
-        return isDate
-          ? new Date(valA) - new Date(valB)
-          : valA.localeCompare(valB);
+  // const sortOperationTypes = (key, isDate = false) => {
+  //   setOperationTypes((prevOperationTypes) => {
+  //     return [...prevOperationTypes].sort((a, b) => {
+  //       const valA = a[key] || "";
+  //       const valB = b[key] || "";
+  //       return isDate
+  //         ? new Date(valA) - new Date(valB)
+  //         : valA.localeCompare(valB);
+  //     });
+  //   });
+  // };
+  const sortOperationTypes = (key, isNumeric = false) => {
+    setOperationTypes((prev) => {
+      return [...prev].sort((a, b) => {
+        if (isNumeric) {
+          return (Number(a[key]) || 0) - (Number(b[key]) || 0);
+        }
+        return a[key]?.toString().localeCompare(b[key]?.toString());
       });
     });
   };
-
-
+  
 
   const handleCreateModelBox = () => {
     setShowCreateModelBox(true);
-    console.log("Testing CreateModelBox");
-    setSelectedTaskId(null);
+    // console.log("Testing CreateModelBox");
+    // setSelectedTaskId(null);
   };
 
   if (loading) return <div>Loading...</div>;
@@ -200,17 +215,25 @@ export default function List(params) {
             </div>
             <div></div>
           </div>
-          <DndContext
-            onDragEnd={handleDragEnd}
-            collisionDetection={closestCorners}
-          >
-            <SortableContext
-              items={filteredOperationTypes}
-              strategy={verticalListSortingStrategy}
+          <div className="droppable-area">
+            <DndContext
+            sensors={sensors}
+              onDragEnd={handleDragEnd}
+              collisionDetection={rectIntersection}
+              modifiers={[restrictToVerticalAxis]}
             >
-              <Column tasks={filteredOperationTypes} />
-            </SortableContext>
-          </DndContext>
+              <SortableContext
+                items={filteredOperationTypes}
+                strategy={verticalListSortingStrategy}
+              >
+                {filteredOperationTypes.length === 0 ? (
+                  <p>No Operation Types found.</p>
+                ):(
+                  <Column tasks={filteredOperationTypes} refetchOperationTypes={refetchOperationTypes}/>
+                )}
+              </SortableContext>
+            </DndContext>
+          </div>
         </section>
       </div>
       {/* {showCreateModelBox && <Entry />} */}
@@ -218,6 +241,7 @@ export default function List(params) {
         <Entry
           showCreateModelBox={showCreateModelBox}
           setShowCreateModelBox={setShowCreateModelBox}
+          onSuccess={refetchOperationTypes}
         />
       )}
     </>

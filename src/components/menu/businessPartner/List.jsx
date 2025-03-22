@@ -5,10 +5,11 @@ import Search from "../../HOC/searchAndFilter/Search";
 import { useFetchData } from "../../HOC/UseFetchData";
 import { useCRUD } from "../../HOC/UseCRUD";
 import { arrayMove, SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
-import { closestCorners, DndContext } from "@dnd-kit/core";
+import { closestCorners, DndContext, PointerSensor, rectIntersection, useSensor, useSensors } from "@dnd-kit/core";
 import Entry from "./Entry";
 import Column from "./Column/Column";
 import "../../../assets/styles/list.scss"
+import { restrictToVerticalAxis } from "@dnd-kit/modifiers";
 
 export default function List(params) {
   const { handleDelete, 
@@ -17,6 +18,7 @@ export default function List(params) {
     refetch,
      deleteStatus } = useCRUD();
   const { data: Businesspartners, loading, error, refetch:refetchBusinessPartners } = useFetchData("http://localhost:8383/businesspartner/list", deleteStatus);
+  console.log(Businesspartners);
   
   
   const [businessPartners, setBusinessPartners] = useState([]);
@@ -51,36 +53,9 @@ export default function List(params) {
 
   
   const accessToken = localStorage.getItem("accessToken"); 
-  console.log(accessToken);
+  // console.log(accessToken);
+
   // fetch not in db datas
-  // const fetchAdminData = async () => {
-  //   try {
-  //     const staffIds = [...new Set(businessPartners.map((bp) => bp.staffId))];
-  
-  //     if (staffIds.length === 0) return; // Avoid unnecessary requests
-  //     const staffPromises = staffIds.map((id) =>
-  //       axios.get(`http://localhost:8383/staff/getbyid/${id}`),{
-  //         headers: {
-  //           Authorization: `Bearer ${accessToken}`,
-  //           "Content-Type": "application/json",
-  //         },
-  //       }
-  //     );
-  
-  //     const staffResponses = await Promise.all(staffPromises);
-  
-  //     const staffDataMap = staffResponses.reduce((acc, response) => {
-  //       if (response.data && response.data.id) {
-  //         acc[response.data.id] = response.data.name;
-  //       }
-  //       return acc;
-  //     }, {});
-  
-  //     setAdminData(staffDataMap);
-  //   } catch (error) {
-  //     console.error("Error fetching staff data:", error);
-  //   }
-  // };
   const fetchAdminData = async (partners) => { 
     if (!partners || partners.length === 0) return; // Ensure we have partners
     
@@ -111,7 +86,7 @@ export default function List(params) {
       console.error("Error fetching staff data:", error);
     }
   };
-  console.log(adminData);
+  // console.log(adminData);
   
 
   const fetchProjectCounts = async () => {
@@ -138,6 +113,11 @@ export default function List(params) {
     }
   };
   
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: { distance: 5 }, // Prevent accidental drags
+    })
+  )
 
 
   const handleDragEnd = async (event) => {
@@ -333,15 +313,17 @@ export default function List(params) {
             </div>
             <div></div>
           </div>
-          <DndContext onDragEnd={handleDragEnd} collisionDetection={closestCorners}>
-          <SortableContext items={filteredbusinessPartners.map((bp) => bp.id)} strategy={verticalListSortingStrategy}>
-          {filteredbusinessPartners.length === 0 ? (
-            <p>No business partners found.</p>
-          ) : (
-            <Column tasks={filteredbusinessPartners}  refetchBusinessPartners={refetchBusinessPartners}/>
-          )}
-          </SortableContext>
-          </DndContext>
+          <div className="droppable-area">
+            <DndContext sensors={sensors} onDragEnd={handleDragEnd} collisionDetection={rectIntersection} modifiers={[restrictToVerticalAxis]}>
+              <SortableContext items={filteredbusinessPartners.map((bp) => bp.id)} strategy={verticalListSortingStrategy}>
+              {filteredbusinessPartners.length === 0 ? (
+                <p>No business partners found.</p>
+              ) : (
+                <Column tasks={filteredbusinessPartners}  refetchBusinessPartners={refetchBusinessPartners}/>
+              )}
+              </SortableContext>
+            </DndContext>
+          </div>
         </section>
       </div>
       {/* {showCreateModelBox && <Entry />} */}

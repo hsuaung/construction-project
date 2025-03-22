@@ -1,7 +1,7 @@
 import axios from "axios"
 import { useCallback, useEffect, useState } from "react"
 import "../../../assets/styles/list.scss"
-import { closestCorners, DndContext } from "@dnd-kit/core"
+import { closestCorners, DndContext, PointerSensor, rectIntersection, useSensor, useSensors } from "@dnd-kit/core"
 import Column from "./Column/Column"
 import { arrayMove, SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable"
 import Entry from "./Entry"
@@ -10,6 +10,7 @@ import Filter from "../../HOC/searchAndFilter/Filter"
 import { useCRUD } from "../../HOC/UseCRUD"
 import { useFetchData } from "../../HOC/UseFetchData"
 import { useNavigate } from "react-router-dom"
+import { restrictToVerticalAxis } from "@dnd-kit/modifiers"
 
 export default function List(params) {
   const { 
@@ -69,7 +70,7 @@ export default function List(params) {
   }, [vehicles, searchQuery, groupData])
 
   
-  console.log(localStorage.getItem("accessToken"));
+  // console.log(localStorage.getItem("accessToken"));
 
   const fetchGroupData = async (vehicleList) => {
     try {
@@ -97,6 +98,13 @@ export default function List(params) {
       console.error("Error fetching Group data:", error)
     }
   }
+
+    // Restrict drag behavior
+    const sensors = useSensors(
+      useSensor(PointerSensor, {
+        activationConstraint: { distance: 5 }, // Prevent accidental drags
+      })
+    );
 
   const handleDragEnd = async (event) => {
     const { active, over } = event
@@ -141,7 +149,7 @@ export default function List(params) {
     setShowCreateModelBox(true)
     // console.log("Testing CreateModelBox")
     // setSelectedTaskId(null)
-    navigate('/vehicle/entry')
+    // navigate('/vehicle/entry')
   }
 
   const handleFilterModelBox = () => setShowFitlerBox((prev) => !prev)
@@ -298,15 +306,17 @@ export default function List(params) {
             </div>
             <div></div>
           </div>
-          <DndContext onDragEnd={handleDragEnd} collisionDetection={closestCorners}>
-            <SortableContext items={filteredVehicles} strategy={verticalListSortingStrategy}>
-              {filteredVehicles.length === 0 ? (
-                          <p>No Vehicles found.</p>
-                        ) : (
-                          <Column tasks={filteredVehicles}  refetchVehicles={refetchVehicles}/>
-                        )}
-            </SortableContext>
-          </DndContext>
+          <div className="droppable-area">
+            <DndContext sensors={sensors} onDragEnd={handleDragEnd} collisionDetection={rectIntersection} modifiers={[restrictToVerticalAxis]}>
+              <SortableContext items={filteredVehicles} strategy={verticalListSortingStrategy}>
+                {filteredVehicles.length === 0 ? (
+                            <p>No Vehicles found.</p>
+                          ) : (
+                            <Column tasks={filteredVehicles}  refetchVehicles={refetchVehicles}/>
+                          )}
+              </SortableContext>
+            </DndContext>
+          </div>
         </section>
       </div>
       {showCreateModelBox && (

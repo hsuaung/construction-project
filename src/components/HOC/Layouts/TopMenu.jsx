@@ -1,10 +1,11 @@
 import React from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import Profile from "../../../assets/images/sampleProfile.jpg";
 // import Profile from "../assets/images/sampleProfile.jpg";
 
 export default function TopMenu() {
   const { pathname } = useLocation();
+  const navigate = useNavigate();
   const titles = {
     "/": "Home",
     "/schedule": "Schedule",
@@ -19,7 +20,7 @@ export default function TopMenu() {
   return (
     <section className="topMenu">
       <div className="menuTitle">
-        <Link to="/">
+        <button onClick={()=> navigate(-1)} style={{backgroundColor:"transparent",border:"none"}}>
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="10"
@@ -34,7 +35,7 @@ export default function TopMenu() {
               fill="#F27D14"
             />
           </svg>
-        </Link>
+        </button>
         <h2>{menuTitle}</h2>
       </div>
       <div className="userProfile">

@@ -107,6 +107,24 @@ function App() {
             }
           />
           <Route
+            path="/staff/entry"
+            element={
+              <ProtectedRoute requiredRole="admin" component={StaffList} />
+            }
+          />
+          <Route
+            path="/staff/team"
+            element={
+              <ProtectedRoute requiredRole="admin" component={StaffList} />
+            }
+          />
+          <Route
+            path="/staff/edit/:id"
+            element={
+              <ProtectedRoute requiredRole="admin" component={StaffList} />
+            }
+          />
+          <Route
             path="/site"
             element={
               <ProtectedRoute requiredRole="admin" component={SiteList} />

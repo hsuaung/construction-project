@@ -1,3 +1,5 @@
+import dayjs from "dayjs";
+import axios from "axios";
 import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useCRUD } from "../../HOC/UseCRUD";
@@ -6,25 +8,24 @@ import "../../../assets/styles/list.scss";
 import "../../menu/staff/entry.scss";
 import "../../../assets/styles/entry.scss";
 import ImageUpload from "../../HOC/inputBoxes/ImageUpload";
-import Checkbox from "../../HOC/inputBoxes/Checkbox";
-import MapComponent from "../../HOC/inputBoxes/MapComponent";
-import axios from "axios";
+// import Checkbox from "../../HOC/inputBoxes/Checkbox";
+// import MapComponent from "../../HOC/inputBoxes/MapComponent";
 import Team from "./Team"
-import dayjs, { Dayjs } from "dayjs";
 export default function Entry({
   id,
   showCreateModelBox,
   setShowCreateModelBox,
   setShowEditModelBox,
-  showEditModelBox,onSuccess
+  showEditModelBox,
+  onSuccess
 }) {
   const { handleDelete, handleCreate, handleEdit, loading:crudLoading, error:crudError,deleteStatus, refetch } = useCRUD();
-  const { data: initialTeams, loading, error } = useFetchData(
+  const { data: initialTeams, loading, error,refetch:refetchTeamList } = useFetchData(
       "http://localhost:8383/team/list",
       deleteStatus
   );
   const { data: usertypes } = useFetchData("http://localhost:8383/usertypes/list", deleteStatus);
-  const { data: skills } = useFetchData("http://localhost:8383/skill/list", deleteStatus);
+  // const { data: skills } = useFetchData("http://localhost:8383/skill/list", deleteStatus);
 // console.log(usertypes);
 // console.log(skills);
   // Fetch data if id is provided
@@ -32,27 +33,23 @@ export default function Entry({
       id ? `http://localhost:8383/staff/getbyid/${id}` : null
   );
 
-  const [Address, setAddress] = useState("");
 
-  const handleAddressSelect = (address) => {
-    setAddress(address); // Update the address state when a user selects an address
-  };
 
   const [formData, setFormData] = useState({
-    name: "",
-    image: "",
-    usertypesId: "",
-    teamId: "", 
-    email: "",
-    password: "",
-    address: Address,
-    phoneNumber: "",
-    employmentStatus: "Employed",
-    workingStatus: "Available",
-    position:"",
-    dob: "",
-    joinedDate: ""
-  });
+      name: "",
+      image: "",
+      usertypesId: "",
+      teamId: "", 
+      email: "",
+      password: "",
+      address: "",
+      phoneNumber: "",
+      employmentStatus: "Employed",
+      workingStatus: "Available",
+      position:"",
+      dob: "",
+      joinedDate: ""
+    });
 
   const [teamOptions,setTeamOptions] = useState([]);
   const [createTeam,setCreateTeam] = useState(false);
@@ -61,6 +58,7 @@ export default function Entry({
   useEffect(()=>{
     setTeamOptions(initialTeams || []);
   },[initialTeams])
+  // console.log(teamOptions);
 
   useEffect(() => {
     if (staffData) {
@@ -96,9 +94,11 @@ export default function Entry({
   const handleTeamCreated = (newTeam) => {
     setTeamOptions((prevTeams) => [...prevTeams, newTeam]);
   };
+
   // Handle form submission
   const handleSubmit = async(e) => {
     e.preventDefault();
+    console.log("Form Submitted:", formData);
 
     const url = id
       ? `http://localhost:8383/staff/edit/${id}`
@@ -136,7 +136,7 @@ export default function Entry({
   };
 
   const handleDeleteData = async (id) => {
-    const url = `http://localhost:1818/staff/delete`;
+    const url = `http://localhost:8383/staff/delete`;
     await handleDelete(url, id); // Trigger the delete action
     if(onSuccess){
       onSuccess()
@@ -176,6 +176,7 @@ export default function Entry({
   };
 
   const handleCreateTeam = () => {
+    // navigate("/staff/team");
     setCreateTeam(true);
   };
 
@@ -194,8 +195,9 @@ export default function Entry({
             <div className="scroll">
               <div className="formGroup modelTwoColumn">
                   <div>
+                    {/* team */}
                     <div className="inputContainer">
-                      <label htmlFor="team" className="inputLabel">
+                      <label htmlFor="teamId" className="inputLabel">
                         <div className="flexRow">
                           <small>[Required]</small>
                           <p>Team</p>
@@ -230,12 +232,16 @@ export default function Entry({
                               setTeamOptions={setTeamOptions}
                               onTeamCreated={handleTeamCreated}
                               showCreateModelBox={showCreateModelBox}
+                              showEditModelBox={showEditModelBox}
                               setShowCreateModelBox={setShowCreateModelBox}
+                              setShowEditModelBox={setShowEditModelBox}
+                              onSuccess={refetchTeamList}
                                               />
                                             )}
                       </div>
                     </div>
 
+                    {/* name */}
                     <div>
                       <label htmlFor="name" className="inputLabel">
                         <div className="flexRow">
@@ -258,6 +264,8 @@ export default function Entry({
                         />
                       </div>
                     </div>
+
+                    {/* employmentStatus */}
                     <div className="inputContainer">
                       <label htmlFor="employmentStatus" className="inputLabel">
                         <div className="flexRow">
@@ -275,26 +283,27 @@ export default function Entry({
                       </select>
                     </div>
 
-                    {/* <div>
-                      <label htmlFor="working" className="inputLabel">
+                    {/* workingStatus */}
+                    <div className="inputContainer">
+                      <label htmlFor="workingStatus" className="inputLabel">
                         <div className="flexRow">
                           <small>[Required]</small>
                           <p>Working Status</p>
                         </div>
                         <div className="instruction">
-                          <small>Please Select Status</small>
+                          <small>Please Select Employment Status</small>
                         </div>
                       </label>
-                      <div className="flexRow inputRow">
-                        <select name="working" id="working" className="select">
-                          <option value="">Avaliable</option>
-                          <option value="">Busy</option>
-                        </select>
-                      </div>
-                    </div> */}
+                      <select name="workingStatus" id="workingStatus" onChange={handleChange} value={formData.workingStatus} className="input" required>
+                      <option value="">--- Select Status ---</option>
+                      <option value="Available">Available</option>
+                      <option value="onLeave">On Leave</option>
+                      <option value="Busy">Busy</option>
+                      </select>
+                    </div>
 
                     <div>
-                      <label htmlFor="phonenumber" className="inputLabel">
+                      <label htmlFor="phoneNumber" className="inputLabel">
                         <div className="flexRow">
                           <small>[Required]</small>
                           <p>Phone</p>
@@ -306,8 +315,8 @@ export default function Entry({
                       <div className="flexRow inputRow">
                         <input
                           type="text"
-                          name="phonenumber"
-                          value={formData.phonenumber}
+                          name="phoneNumber"
+                          value={formData.phoneNumber}
                           onChange={handleChange}
                           required
                           className="input"
@@ -329,20 +338,10 @@ export default function Entry({
                       </label>
 
                       <div className="flexRow inputRow">
-                        <textarea name="address" id="address" className="input"></textarea>
+                        <textarea name="address" id="address" className="input" onChange={handleChange} value={formData.address}></textarea>
                       </div>
                     </div>
-                    {/* <div>
-                    <div>
-                      <label>Address</label>
-                      <MapComponent onAddressSelect={handleAddressSelect} />
-                    </div>
 
-                    <div>
-                      <label>Your Address:</label>
-                      <input type="text" value={address} readOnly />
-                    </div>
-                  </div> */}
                     <div className="inputContainer">
                       <label htmlFor="position" className="inputLabel">
                         <div className="flexRow">
@@ -464,13 +463,14 @@ export default function Entry({
                           value={formData.password}
                           onChange={handleChange}
                           required
-                          className="input"
-                          placeholder="Enter Staff Password"
+                          className={`input ${formData.id ? "readOnlyInput" : ""}`}
+                          placeholder="Enter Staff Password" readOnly={!!id}
                         />
                       </div>
                     </div>
+                    <input type="hidden" name="workingStatus" value={formData.workingStatus}/>
                     <div>
-                      <label htmlFor="accType" className="inputLabel">
+                      <label htmlFor="usertypesId" className="inputLabel">
                         <div className="flexRow">
                           <small>[Required]</small>
                           <p>Account Type</p>
@@ -480,7 +480,7 @@ export default function Entry({
                         </div>
                       </label>
                       <div className="flexRow inputRow">
-                        <select name="accType" id="accType" className="input" onChange={handleChange} value={formData.usertypesId}>
+                        <select name="usertypesId" id="usertypesId" className="input" onChange={handleChange} value={formData.usertypesId}>
                           {/* <option value="admin">Admin</option>
                           <option value="staff">Staff</option> */}
                           <option value="">--- Select Account type ---</option>
@@ -493,7 +493,7 @@ export default function Entry({
                       </div>
                     </div>
 
-                    <div className="checkBoxContaier">
+                    {/* <div className="checkBoxContaier">
                       <label htmlFor="name" className="inputLabel">
                         <div className="flexRow">
                           <small>[Required]</small>
@@ -503,19 +503,10 @@ export default function Entry({
                           <small>Choose Staff Skills</small>
                         </div>
                       </label>
-                      {/* <div className=" formTwoCol ">
-                        <div className="skillContainer">
-                          <Checkbox
-                            label={"Certificate One"}
-                            id="certificateOne"
-                            value="Certificate One"
-                            name="certificateGp"
-                          />  
-                        </div> */}
                         {skills.map((skill) => (
                           <Checkbox label={skill.name} id={skill.id} value={skill.id} name={`skill-${skill.id}`}/>
                         ))}
-                    </div>
+                    </div> */}
                   </div>
               </div>
             </div>
@@ -533,12 +524,11 @@ export default function Entry({
                 <button
                   type="submit"
                   className="saveBtn"
-                  onClick={handleSubmit}
                 >
                   {id ? "Update" : "Register"}
                 </button>
                 {id && (
-                  <div onClick={() => handleDelete(id)} className="deleteBtn">
+                  <div onClick={() => handleDeleteData(id)} className="deleteBtn">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       width="30"

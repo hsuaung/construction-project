@@ -14,7 +14,7 @@ export default function Column({ tasks, refetchVehicles }) {
     setShowEditModelBox(true); 
     console.log("Editing task:", id);
     setSelectedTaskId(id); 
-    navigate(`/vehicle/edit/${id}`)
+    // navigate(`/vehicle/edit/${id}`)
   };
 
   const closeModal = () => {

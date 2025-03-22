@@ -80,6 +80,17 @@ button {
   }
 }
 
+.readOnlyInput {
+  background-color: #3f3f3f90; // Light gray to indicate read-only
+  border: 1px solid #aaa; // Slightly darker border
+  cursor: not-allowed; // Show "not allowed" cursor
+
+  &:hover,
+  &:focus {
+    outline: 1px solid #aaa;
+  }
+}
+
 .search {
   padding: px-to-rem(6) 0;
   text-indent: px-to-rem(10);

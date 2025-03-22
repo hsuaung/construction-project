@@ -30,6 +30,7 @@ export default function Entry({
     data: initialGroups,
     loading,
     error,
+    refetch:refetchGroupList
   } = useFetchData("http://localhost:8383/group/list", deleteStatus);
   // Fetch data if id is provided
   const { data: vehicleData } = useFetchData(
@@ -265,7 +266,10 @@ export default function Entry({
                         setGroupOptions={setGroupOptions}
                         onGroupCreated={handleGroupCreated}
                         showCreateModelBox={showCreateModelBox}
+                        showEditModelBox={showEditModelBox}
                         setShowCreateModelBox={setShowCreateModelBox}
+                        setShowEditModelBox={setShowEditModelBox}
+                        onSuccess={refetchGroupList}
                       />
                     )}
                   </div>
