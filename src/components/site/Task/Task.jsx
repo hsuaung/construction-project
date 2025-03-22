@@ -11,6 +11,7 @@ export const Task = ({
   endDate,
   status,
   onClick,
+  onSuccess,
 }) => {
   const { attributes, listeners, setNodeRef, transition, transform } =
     useSortable({ id });
@@ -21,7 +22,12 @@ export const Task = ({
   };
   const forStartDate = new Date(startDate);
   const forEndDate = new Date(endDate);
-
+  const statusIcons = {
+    "not schedule": "🟥",
+    "before construction": "🟦",
+    "under construction": "🟩",
+    "completed": "🟧",
+  };
   return (
     <div ref={setNodeRef} style={style} className="data">
       <div className="dragSortBtn" {...attributes} {...listeners}>
@@ -60,9 +66,7 @@ export const Task = ({
       <p>{name} </p>
       <p>{businesspartner}</p>
       <p>{staff} </p>
-      {/* <p>
-        {startDate} ~ {endDate}
-      </p> */}
+
       <p>
         {forStartDate.toLocaleDateString("en-US", {
           year: "numeric",
@@ -76,7 +80,10 @@ export const Task = ({
           day: "numeric",
         })}
       </p>
-      <p dangerouslySetInnerHTML={{ __html: status }} />
+      <p>{statusIcons[status] && <span>{statusIcons[status]}</span>}</p>
+     
+
+    
       <div className="detailBtn" onClick={onClick}>
         <svg
           xmlns="http://www.w3.org/2000/svg"

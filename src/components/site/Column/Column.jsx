@@ -3,7 +3,7 @@ import { Task } from "../Task/Task";
 import Edit from "../Edit"; // Import modal component
 import "./column.scss";
 
-export default function Column({ tasks }) {
+export default function Column({ tasks, refetchSiteList }) {
   const [showEditModelBox, setShowEditModelBox] = useState(false);
   const [selectedTaskId, setSelectedTaskId] = useState(null);
 
@@ -14,8 +14,11 @@ export default function Column({ tasks }) {
   };
 
   const closeModal = () => {
-    setShowEditModelBox(false); // Hide modal
+    // setShowEditModelBox(false); // Hide modal
     setSelectedTaskId(null);
+    if (refetchSiteList) {
+      refetchSiteList();
+    }
   };
 
   return (
@@ -31,6 +34,7 @@ export default function Column({ tasks }) {
             startDate={task.startDate}
             endDate={task.endDate}
             status={task.status}
+            onSuccess={refetchSiteList}
             onClick={() => handleEditModelBox(task.id)}
           />
         ))}
@@ -43,6 +47,7 @@ export default function Column({ tasks }) {
           setShowEditModelBox={setShowEditModelBox}
           id={selectedTaskId}
           closeModal={closeModal} // Ensure modal can close
+          onSuccess={refetchSiteList}
         />
       )}
     </div>

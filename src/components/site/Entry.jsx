@@ -78,6 +78,8 @@ export default function Entry({
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validate()) return;
+    console.log("HEE", formData);
+
     const url = "http://localhost:8383/site/add";
     const method = "POST";
     try {
@@ -92,16 +94,14 @@ export default function Entry({
       });
       console.log("Response:", response.data);
       console.log(formData);
-      // if (onSuccess) {
-      //   console.log("gdghdhd");
-      //   onSuccess();
-      // }
+      if (onSuccess) {
+        onSuccess();
+      }
       setShowCreateModelBox(false);
       navigate("/site");
     } catch (error) {
       console.error("Error submitting form:", error.message);
     }
-    // handleCreate(url, formData).then(() => navigate("/site"));
   };
 
   // Handle form clear/reset
@@ -116,7 +116,7 @@ export default function Entry({
     setShowCreateModelBox(false);
   };
 
-  // if (loading) return <div>Loading...</div>;
+  // if (loading) return <div>d...</div>;
   // if (error) return <div>Error occurred: {error.message}</div>;
 
   return (
@@ -141,7 +141,6 @@ export default function Entry({
                           {errors.name && (
                             <small className="error">{errors.name}</small>
                           )}
-                          {/* <small>Please Enter Site Name</small> */}
                         </div>
                       </label>
                       <div className="flexRow inputRow">
@@ -168,7 +167,6 @@ export default function Entry({
                               {errors.businesspartnerId}
                             </small>
                           )}
-                          {/* <small>Please Select Partner</small> */}
                         </div>
                       </label>
                       <div className="flexRow inputRow">
@@ -201,7 +199,6 @@ export default function Entry({
                           {errors.staffId && (
                             <small className="error">{errors.staffId}</small>
                           )}
-                          {/* <small>Please Select Manager</small> */}
                         </div>
                       </label>
                       <div className="flexRow inputRow">
@@ -234,7 +231,6 @@ export default function Entry({
                           {errors.address && (
                             <small className="error">{errors.address}</small>
                           )}
-                          {/* <small>Please Enter Staff Address</small> */}
                         </div>
                       </label>
 
@@ -260,9 +256,7 @@ export default function Entry({
                           <small>[Required]</small>
                           <p>Construction Status</p>
                         </div>
-                        <div className="instruction">
-                          {/* <small>Please Select Status</small> */}
-                        </div>
+                        <div className="instruction"></div>
                       </label>
                       <div className="flexRow inputRow">
                         <select
@@ -273,10 +267,28 @@ export default function Entry({
                           className="select"
                           required
                         >
-                          <option value={"&#x1F7E5;"}>&#x1F7E5; Red</option>
-                          <option value={"&#x1F7E7;"}>&#x1F7E7; orange</option>
-                          <option value={"&#x1F7E9;"}>&#x1F7E9; green</option>
-                          <option value={"&#x1F7E6;"}> &#x1F7E6; blue</option>
+                          <option value="not scheduled">
+                            &#x1F7E5; Not Scheduled (By Default)
+                          </option>
+                          <option value="before construction">
+                            &#x1F7E6; Before Construction
+                          </option>
+                          <option value="under construction">
+                            &#x1F7E9; Under Construction
+                          </option>
+                          <option value="completed">&#x1F7E7; Completed</option>
+                          {/* <option value={"&#x1F7E5;"}>
+                            &#x1F7E5; Not Scheduled (By Default)
+                          </option>
+                          <option value={"&#x1F7E6;"}>
+                            &#x1F7E6; Before Construction
+                          </option>
+                          <option value={"&#x1F7E9;"}>
+                            &#x1F7E9; Under Construction
+                          </option>
+                          <option value={"&#x1F7E7;"}>
+                            &#x1F7E7; Completed
+                          </option> */}
                         </select>
                       </div>
                     </div>
