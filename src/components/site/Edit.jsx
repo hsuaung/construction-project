@@ -1,11 +1,21 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useCRUD } from "../HOC/UseCRUD";
 import "./edit.scss";
 import "../../assets/styles/entry.scss";
 import GoogleMapComoponent from "../GoogleMapComponent";
 import ClickableMap from "../ClickableMap";
+import { useNavigate } from "react-router-dom";
+import { useFetchData } from "../HOC/UseFetchData";
+import dayjs from "dayjs";
+import axios from "axios";
 // import "../menu/staff/entry.scss";
-function Detail({ onCancel }) {
+function Detail({ onCancel, siteId }) {
+  const { data: siteData } = useFetchData(
+    `http://localhost:8383/site/getbyid/${siteId}`
+  );
+
+  const forStartDate = new Date(siteData.startDate);
+  const forEndDate = new Date(siteData.endDate);
   return (
     <div className="detailTab">
       <div className="detailTabContent">
@@ -23,7 +33,7 @@ function Detail({ onCancel }) {
               fill="#F27D14"
             />
           </svg>
-          <p>Yokohama site</p>
+          <p>{siteData.name}</p>
         </div>
 
         <div className="detailTabContentItem">
@@ -39,7 +49,11 @@ function Detail({ onCancel }) {
               fill="#F27D14"
             />
           </svg>
-          <small> Customer AAA</small>
+          {siteData.Businesspartner ? (
+            <p>{siteData.Businesspartner.name}</p>
+          ) : (
+            <p>Loading Business Partner...</p>
+          )}
         </div>
         <div className="detailTabContentItem">
           <svg
@@ -54,7 +68,11 @@ function Detail({ onCancel }) {
               fill="#F27D14"
             />
           </svg>
-          <small>Yamada Shun</small>
+          {siteData.Businesspartner ? (
+            <p>{siteData.Staff.name}</p>
+          ) : (
+            <p>Loading Site Manager ...</p>
+          )}
         </div>
         <div className="detailTabContentItem">
           <svg
@@ -74,8 +92,20 @@ function Detail({ onCancel }) {
               d="M2.5 15C2.5 13.9513 2.5 13.0188 2.51625 12.1875H27.4837C27.5 13.0188 27.5 13.9513 27.5 15V17.5C27.5 22.2137 27.5 24.5712 26.035 26.035C24.57 27.4987 22.2137 27.5 17.5 27.5H12.5C7.78625 27.5 5.42875 27.5 3.965 26.035C2.50125 24.57 2.5 22.2137 2.5 17.5V15ZM21.25 17.5C21.5815 17.5 21.8995 17.3683 22.1339 17.1339C22.3683 16.8995 22.5 16.5815 22.5 16.25C22.5 15.9185 22.3683 15.6005 22.1339 15.3661C21.8995 15.1317 21.5815 15 21.25 15C20.9185 15 20.6005 15.1317 20.3661 15.3661C20.1317 15.6005 20 15.9185 20 16.25C20 16.5815 20.1317 16.8995 20.3661 17.1339C20.6005 17.3683 20.9185 17.5 21.25 17.5ZM21.25 22.5C21.5815 22.5 21.8995 22.3683 22.1339 22.1339C22.3683 21.8995 22.5 21.5815 22.5 21.25C22.5 20.9185 22.3683 20.6005 22.1339 20.3661C21.8995 20.1317 21.5815 20 21.25 20C20.9185 20 20.6005 20.1317 20.3661 20.3661C20.1317 20.6005 20 20.9185 20 21.25C20 21.5815 20.1317 21.8995 20.3661 22.1339C20.6005 22.3683 20.9185 22.5 21.25 22.5ZM16.25 16.25C16.25 16.5815 16.1183 16.8995 15.8839 17.1339C15.6495 17.3683 15.3315 17.5 15 17.5C14.6685 17.5 14.3505 17.3683 14.1161 17.1339C13.8817 16.8995 13.75 16.5815 13.75 16.25C13.75 15.9185 13.8817 15.6005 14.1161 15.3661C14.3505 15.1317 14.6685 15 15 15C15.3315 15 15.6495 15.1317 15.8839 15.3661C16.1183 15.6005 16.25 15.9185 16.25 16.25ZM16.25 21.25C16.25 21.5815 16.1183 21.8995 15.8839 22.1339C15.6495 22.3683 15.3315 22.5 15 22.5C14.6685 22.5 14.3505 22.3683 14.1161 22.1339C13.8817 21.8995 13.75 21.5815 13.75 21.25C13.75 20.9185 13.8817 20.6005 14.1161 20.3661C14.3505 20.1317 14.6685 20 15 20C15.3315 20 15.6495 20.1317 15.8839 20.3661C16.1183 20.6005 16.25 20.9185 16.25 21.25ZM8.75 17.5C9.08152 17.5 9.39946 17.3683 9.63388 17.1339C9.8683 16.8995 10 16.5815 10 16.25C10 15.9185 9.8683 15.6005 9.63388 15.3661C9.39946 15.1317 9.08152 15 8.75 15C8.41848 15 8.10054 15.1317 7.86612 15.3661C7.6317 15.6005 7.5 15.9185 7.5 16.25C7.5 16.5815 7.6317 16.8995 7.86612 17.1339C8.10054 17.3683 8.41848 17.5 8.75 17.5ZM8.75 22.5C9.08152 22.5 9.39946 22.3683 9.63388 22.1339C9.8683 21.8995 10 21.5815 10 21.25C10 20.9185 9.8683 20.6005 9.63388 20.3661C9.39946 20.1317 9.08152 20 8.75 20C8.41848 20 8.10054 20.1317 7.86612 20.3661C7.6317 20.6005 7.5 20.9185 7.5 21.25C7.5 21.5815 7.6317 21.8995 7.86612 22.1339C8.10054 22.3683 8.41848 22.5 8.75 22.5Z"
               fill="#F27D14"
             />
-          </svg>
-          <small>20 Jan 2025 ~ 20 Mar 2025</small>
+          </svg>{" "}
+          <p>
+            {forStartDate.toLocaleDateString("en-US", {
+              year: "numeric",
+              month: "long",
+              day: "numeric",
+            })}
+            ~
+            {forEndDate.toLocaleDateString("en-US", {
+              year: "numeric",
+              month: "long",
+              day: "numeric",
+            })}
+          </p>
         </div>
         <div className="detailTabContentItem">
           <svg
@@ -90,7 +120,7 @@ function Detail({ onCancel }) {
               fill="#F27D14"
             />
           </svg>
-          <small>Tamwe, Yangon</small>
+          <p>{siteData.address}</p>
         </div>
       </div>
       <div className="detailTabMapContainer">
@@ -105,12 +135,89 @@ function Detail({ onCancel }) {
   );
 }
 
-function EditSite({ onCancel }) {
-  const { handleDelete, handleCreate, handleEdit, loading, error } = useCRUD();
+function EditSite({ onCancel, onSuccess, siteId }) {
+  console.log("SITE EDIT ID", siteId);
+  const [formData, setFormData] = useState({
+    name: "",
+    address: "",
+    status: "",
+    staffId: "",
+    businesspartnerId: "",
+    startDate: "",
+    endDate: "",
+  });
+  const { data: siteData } = useFetchData(
+    `http://localhost:8383/site/getbyid/${siteId}`
+  );
+
+  useEffect(() => {
+    if (siteData) {
+      setFormData(siteData);
+    }
+  }, [siteData]);
+  const { data: businesssPartnerList } = useFetchData(
+    "http://localhost:8383/businesspartner/list"
+  );
+  const { data: managerList } = useFetchData(
+    "http://localhost:8383/staff/list"
+  );
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
+  };
+
+  const navigate = useNavigate();
+  const {
+    handleDelete,
+    handleCreate,
+    handleEdit,
+    loading: crudLoading,
+    error: crudError,
+    deleteStatus,
+    refetch,
+  } = useCRUD();
+  const handleDeleteData = async (id) => {
+    const url = `http://localhost:8383/site/delete`;
+    await handleDelete(url, id);
+    if (onSuccess) {
+      onSuccess();
+    }
+    onCancel();
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    console.log("Edit Form Submitted:", formData);
+
+    const url = `http://localhost:8383/site/edit/${siteId}`;
+
+    const method = "PUT";
+    try {
+      const response = await axios({
+        method,
+        url,
+        data: formData,
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+          "Content-Type": "application/json",
+        },
+      });
+
+      console.log("Response:", response.data);
+      onCancel();
+    } catch (error) {
+      console.error("Error submitting form:", error.message);
+    }
+  };
+
   return (
-    <div className="editSiteTab">
+    <form onSubmit={handleSubmit} className="editSiteTab">
       <h1>Edit Site</h1>
-      <form className=" editSiteTabContent">
+      <div className="editSiteTabContent">
         <div>
           <div>
             <label htmlFor="name" className="inputLabel">
@@ -119,35 +226,48 @@ function EditSite({ onCancel }) {
                 <p>Site Name</p>
               </div>
               <div className="instruction">
-                <small>Please Enter Site Name</small>
+                {/* <small>Please Enter Site Name</small> */}
               </div>
             </label>
             <div className="flexRow inputRow">
               <input
                 type="text"
                 name="name"
-                // value={formData.name}
-                // onChange={handleChange}
                 required
                 className="input"
                 placeholder="Enter Site Name"
+                value={formData.name}
+                onChange={handleChange}
               />
             </div>
           </div>
+
           <div>
             <label htmlFor="partner" className="inputLabel">
               <div className="flexRow">
                 <small>[Required]</small>
                 <p>Business Partner</p>
               </div>
-              {/* <div className="instruction">
-                <small>Please Select partner</small>
-              </div> */}
             </label>
-            <select name="partner" id="partner" className="select">
-              <option value="">Customer AAA</option>
-              <option value="">Customer BBB</option>
-            </select>
+            <div className="flexRow inputRow">
+              <select
+                onChange={handleChange}
+                value={formData.businesspartnerId}
+                name="businesspartnerId"
+                id="businesspartnerId"
+                className="select"
+                required
+              >
+                <option value="" disabled>
+                  --- Select Partner ---
+                </option>
+                {businesssPartnerList.map((option, index) => (
+                  <option key={option.id} value={option.id}>
+                    {option.name}
+                  </option>
+                ))}
+              </select>
+            </div>
           </div>
           <div>
             <label htmlFor="manager" className="inputLabel">
@@ -156,9 +276,22 @@ function EditSite({ onCancel }) {
                 <p>Site Manager</p>
               </div>
             </label>
-            <select name="manager" id="manager" className="select">
-              <option value="">Manager One</option>
-              <option value="">Manager Two</option>
+            <select
+              onChange={handleChange}
+              value={formData.staffId}
+              name="staffId"
+              id="staffId"
+              className="select"
+              required
+            >
+              <option value="" disabled>
+                --- Select Manager ---
+              </option>
+              {managerList.map((option, index) => (
+                <option key={option.id} value={option.id}>
+                  {option.name}
+                </option>
+              ))}
             </select>
           </div>
           <div>
@@ -170,7 +303,15 @@ function EditSite({ onCancel }) {
             </label>
 
             <div className="flexRow inputRow">
-              <ClickableMap />
+              <textarea
+                name="address"
+                id="address"
+                value={formData.address}
+                onChange={handleChange}
+                required
+                className="input"
+              ></textarea>
+              {/* <ClickableMap /> */}
             </div>
           </div>
         </div>
@@ -181,19 +322,26 @@ function EditSite({ onCancel }) {
                 <small>[Required]</small>
                 <p>Construction Status</p>
               </div>
-              {/* <div className="instruction">
-                <small>Please Select Status</small>
-              </div> */}
             </label>
-            {/* <div className="flexRow0 inputRow0"> */}
-            <select name="construction" id="construction" className="select">
-              <option value="teamone">&#x1F7E5; Not Scheduled</option>
-              <option value="teamtwo">&#x1F7E6; Before Construction</option>
-              <option value="teamthree">&#x1F7E9; Under Construction</option>
-
-              <option value=""> &#x1F7E7; Completed</option>
+            <select
+              name="status"
+              id="status"
+              onChange={handleChange}
+              value={formData.status}
+              className="select"
+              required
+            >
+              <option value="not scheduled">
+                &#x1F7E5; Not Scheduled (By Default)
+              </option>
+              <option value="before construction">
+                &#x1F7E6; Before Construction
+              </option>
+              <option value="under construction">
+                &#x1F7E9; Under Construction
+              </option>
+              <option value="completed">&#x1F7E7; Completed</option>
             </select>
-            {/* </div> */}
           </div>
           <div className="scheduleDiv">
             <label htmlFor="name" className="inputLabel">
@@ -211,12 +359,16 @@ function EditSite({ onCancel }) {
               <div className="flexRow inputRow">
                 <input
                   type="date"
-                  name="joinedDate"
-                  // value={formData.joinedDate}
-                  // onChange={handleChange}
+                  name="startDate"
+                  id="startDate"
+                  value={
+                    formData.startDate
+                      ? dayjs(formData.startDate).format("YYYY-MM-DD")
+                      : ""
+                  }
+                  onChange={handleChange}
                   required
                   className="input"
-                  placeholder="Enter Joined Date"
                 />
               </div>
             </div>
@@ -230,21 +382,26 @@ function EditSite({ onCancel }) {
               <div className="flexRow inputRow">
                 <input
                   type="date"
-                  name="joinedDate"
-                  // value={formData.joinedDate}
-                  // onChange={handleChange}
+                  name="endDate"
+                  id="endDate"
+                  value={
+                    formData.endDate
+                      ? dayjs(formData.endDate).format("YYYY-MM-DD")
+                      : ""
+                  }
+                  onChange={handleChange}
                   required
                   className="input"
-                  placeholder="Enter Joined Date"
                 />
               </div>
             </div>
           </div>
         </div>
-      </form>
+      </div>
       <div className="editBtnContainer">
-        <div onClick={() => handleDelete(1)} className="deleteBtn">
+        <div className="deleteBtn">
           <svg
+            onClick={() => handleDeleteData(siteId)}
             xmlns="http://www.w3.org/2000/svg"
             width="30"
             viewBox="0 0 30 30"
@@ -260,14 +417,16 @@ function EditSite({ onCancel }) {
           <button onClick={onCancel} className="">
             Cancel
           </button>
-          <button className="saveBtn">Update</button>
+          <button type="submit" className="saveBtn">
+            Update
+          </button>
         </div>
       </div>
-    </div>
+    </form>
   );
 }
 
-function EditSchedule({ onCancel }) {
+function EditSchedule({ onCancel, onSuccess }) {
   return (
     <div className="editScheduleTab">
       <h1>Edit Schedule</h1>
@@ -540,17 +699,16 @@ export default function Edit({
   setShowEditModelBox,
   id,
   closeModal,
+  onSuccess,
 }) {
   const [activeTab, setActiveTab] = useState(tabs[0].id);
-  // const [isModalOpen, setIsModalOpen] = useState(true);
-  // const closeModal = () => setIsModalOpen(false);
 
-  // if (!isModalOpen) return null;
   const activeTabContent = tabs.find((tab) => tab.id === activeTab)?.content;
+  // const siteId = id;
+  // console.log("Site Id", siteId);
   return (
     <>
       <div className="bgBlur">
-        {/* modalForm siteModal */}
         <div className=" entryContainer  siteEdit ">
           <div className="modelTitle">
             <h4>Detail Modal Box</h4>
@@ -570,6 +728,7 @@ export default function Edit({
               <TabContent
                 content={React.cloneElement(activeTabContent, {
                   onCancel: closeModal,
+                  siteId: id,
                 })}
               />
             </div>

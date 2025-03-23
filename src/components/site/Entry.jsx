@@ -277,18 +277,6 @@ export default function Entry({
                             &#x1F7E9; Under Construction
                           </option>
                           <option value="completed">&#x1F7E7; Completed</option>
-                          {/* <option value={"&#x1F7E5;"}>
-                            &#x1F7E5; Not Scheduled (By Default)
-                          </option>
-                          <option value={"&#x1F7E6;"}>
-                            &#x1F7E6; Before Construction
-                          </option>
-                          <option value={"&#x1F7E9;"}>
-                            &#x1F7E9; Under Construction
-                          </option>
-                          <option value={"&#x1F7E7;"}>
-                            &#x1F7E7; Completed
-                          </option> */}
                         </select>
                       </div>
                     </div>

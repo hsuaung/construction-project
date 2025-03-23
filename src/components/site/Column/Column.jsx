@@ -39,17 +39,41 @@ export default function Column({ tasks, refetchSiteList }) {
           />
         ))}
       </div>
+      {/* {showEditModelBox &&
+        tasks.map((task) => (
+          <Edit
+            key={task.id} // Add a unique key
+            showEditModelBox={showEditModelBox}
+            setShowEditModelBox={setShowEditModelBox}
+            id={task.id} // Use each task's ID
+            closeModal={closeModal}
+            onSuccess={refetchSiteList}
+          />
+        ))} */}
 
-      {/* Show Modal Only When Needed */}
-      {showEditModelBox && (
+      {showEditModelBox && selectedTaskId && (
         <Edit
+          showEditModelBox={showEditModelBox}
+          setShowEditModelBox={setShowEditModelBox}
+          id={selectedTaskId} // Use the selected task ID
+          closeModal={closeModal} // Ensure modal can close
+          onSuccess={refetchSiteList}
+        />
+      )}
+
+      {/* {showEditModelBox && (
+        {tasks.map((task) => (
+          <Edit
           showEditModelBox={showEditModelBox}
           setShowEditModelBox={setShowEditModelBox}
           id={selectedTaskId}
           closeModal={closeModal} // Ensure modal can close
           onSuccess={refetchSiteList}
+          id={task.id}
         />
-      )}
+        ))}
+       
+      )} */}
     </div>
   );
 }
