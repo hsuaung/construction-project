@@ -3,7 +3,7 @@ import { Task } from "../Task/Task";
 import Edit from "../Edit"; // Import modal component
 import "./column.scss";
 
-export default function Column({ tasks }) {
+export default function Column({ tasks, refetchSiteList }) {
   const [showEditModelBox, setShowEditModelBox] = useState(false);
   const [selectedTaskId, setSelectedTaskId] = useState(null);
 
@@ -14,8 +14,11 @@ export default function Column({ tasks }) {
   };
 
   const closeModal = () => {
-    setShowEditModelBox(false); // Hide modal
+    // setShowEditModelBox(false); // Hide modal
     setSelectedTaskId(null);
+    if (refetchSiteList) {
+      refetchSiteList();
+    }
   };
 
   return (
@@ -25,22 +28,52 @@ export default function Column({ tasks }) {
           <Task
             key={task.id}
             id={task.id}
-            name={task.user_name}
-            group={task.user_email}
+            name={task.name}
+            businesspartner={task.Businesspartner.name}
+            staff={task.Staff.name}
+            startDate={task.startDate}
+            endDate={task.endDate}
+            status={task.status}
+            onSuccess={refetchSiteList}
             onClick={() => handleEditModelBox(task.id)}
           />
         ))}
       </div>
+      {/* {showEditModelBox &&
+        tasks.map((task) => (
+          <Edit
+            key={task.id} // Add a unique key
+            showEditModelBox={showEditModelBox}
+            setShowEditModelBox={setShowEditModelBox}
+            id={task.id} // Use each task's ID
+            closeModal={closeModal}
+            onSuccess={refetchSiteList}
+          />
+        ))} */}
 
-      {/* Show Modal Only When Needed */}
-      {showEditModelBox && (
+      {showEditModelBox && selectedTaskId && (
         <Edit
+          showEditModelBox={showEditModelBox}
+          setShowEditModelBox={setShowEditModelBox}
+          id={selectedTaskId} // Use the selected task ID
+          closeModal={closeModal} // Ensure modal can close
+          onSuccess={refetchSiteList}
+        />
+      )}
+
+      {/* {showEditModelBox && (
+        {tasks.map((task) => (
+          <Edit
           showEditModelBox={showEditModelBox}
           setShowEditModelBox={setShowEditModelBox}
           id={selectedTaskId}
           closeModal={closeModal} // Ensure modal can close
+          onSuccess={refetchSiteList}
+          id={task.id}
         />
-      )}
+        ))}
+       
+      )} */}
     </div>
   );
 }

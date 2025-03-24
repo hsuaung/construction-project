@@ -7,7 +7,15 @@
 
 .siteModal {
   left: 20%;
+  // background-color: red;
 }
+.siteEdit {
+  top: 20%;
+  left: 20%;
+  z-index: 20;
+  // width: 50vw;
+}
+
 .siteEditForm {
   width: 58vw;
   padding: px-to-rem(10);

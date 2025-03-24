@@ -2,7 +2,17 @@ import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import React from "react";
 
-export const Task = ({ id, name, group, onClick }) => {
+export const Task = ({
+  id,
+  name,
+  businesspartner,
+  staff,
+  startDate,
+  endDate,
+  status,
+  onClick,
+  onSuccess,
+}) => {
   const { attributes, listeners, setNodeRef, transition, transform } =
     useSortable({ id });
 
@@ -10,7 +20,14 @@ export const Task = ({ id, name, group, onClick }) => {
     transform: CSS.Transform.toString(transform),
     transition,
   };
-
+  const forStartDate = new Date(startDate);
+  const forEndDate = new Date(endDate);
+  const statusIcons = {
+    "not schedule": "🟥",
+    "before construction": "🟦",
+    "under construction": "🟩",
+    "completed": "🟧",
+  };
   return (
     <div ref={setNodeRef} style={style} className="data">
       <div className="dragSortBtn" {...attributes} {...listeners}>
@@ -46,14 +63,27 @@ export const Task = ({ id, name, group, onClick }) => {
           />
         </svg>
       </div>
+      <p>{name} </p>
+      <p>{businesspartner}</p>
+      <p>{staff} </p>
 
-      <p>{name} SName</p>
-      <p>{name} BP Name</p>
-      <p>{group} Company </p>
-      <p>{group} Schedule</p>
       <p>
-        <div className="statusDiv underConstruction"></div>{" "}
+        {forStartDate.toLocaleDateString("en-US", {
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+        })}
+        ~
+        {forEndDate.toLocaleDateString("en-US", {
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+        })}
       </p>
+      <p>{statusIcons[status] && <span>{statusIcons[status]}</span>}</p>
+     
+
+    
       <div className="detailBtn" onClick={onClick}>
         <svg
           xmlns="http://www.w3.org/2000/svg"

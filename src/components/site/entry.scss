@@ -5,7 +5,13 @@
 @import "../../assets/styles/components/variables";
 @import "../../assets/styles/components/mixins";
 
-// .hint {
-//   // background-color: red;
-//   // color: red;
-// }
+.hint {
+  @include flex(row, center, center, px-to-rem(1));
+}
+
+.checkBoxContaier {
+  background-color: $itemGrayColor;
+  padding: px-to-rem(40) px-to-rem(20);
+  margin-top: px-to-rem(10);
+  border-radius: px-to-rem(10);
+}
