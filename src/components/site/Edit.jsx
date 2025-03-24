@@ -8,6 +8,7 @@ import { useNavigate } from "react-router-dom";
 import { useFetchData } from "../HOC/UseFetchData";
 import dayjs from "dayjs";
 import axios from "axios";
+import OperationType from "../menu/operationType/OperationType";
 // import "../menu/staff/entry.scss";
 function Detail({ onCancel, siteId }) {
   const { data: siteData } = useFetchData(
@@ -426,27 +427,139 @@ function EditSite({ onCancel, onSuccess, siteId }) {
   );
 }
 
-function EditSchedule({ onCancel, onSuccess }) {
+function EditSchedule({
+  onCancel,
+  onSuccess,
+  siteId,
+  showCreateModelBox,
+  setShowCreateModelBox,
+  setShowEditModelBox,
+  showEditModelBox,
+}) {
+  console.log(siteId);
+  const {
+    handleDelete,
+    handleCreate,
+    handleEdit,
+    loading: crudLoading,
+    error: crudError,
+    deleteStatus,
+    refetch,
+  } = useCRUD();
+  const {
+    data: initialOperations,
+    loading,
+    error,
+    refetch: refetchOperationList,
+  } = useFetchData("http://localhost:8383/operationtypes/list", deleteStatus);
+  console.log("Operation", initialOperations);
+  const [formData, setFormData] = useState({
+    siteId: "",
+    operationtypesId: "",
+    startDate: "",
+    endDate: "",
+    workinghourStart: "",
+    workinghourEnd: "",
+    requiredStaff: "",
+    requiredVehicle: "",
+  });
+  const [operationOptions, setOperationOptions] = useState([]);
+  const [createOperation, setCreateOperation] = useState(false);
+  useEffect(() => {
+    setOperationOptions(initialOperations || []);
+  }, [initialOperations]);
+  console.log("Operation Option from Edit", operationOptions);
+
+  const handleOperationCreated = (newOperation) => {
+    setOperationOptions((prevOperations) => [...prevOperations, newOperation]);
+  };
+
+  const handleClear = () => {
+    setFormData({
+      siteId: "",
+      operationtypesId: "",
+      startDate: "",
+      endDate: "",
+      workinghourStart: "",
+      workinghourEnd: "",
+      requiredStaff: "",
+      requiredVehicle: "",
+    });
+  };
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
+  };
+  const handleCreateOperation = () => {
+    // navigate("/staff/team");
+    console.log("handle Create Operation");
+    setCreateOperation(true);
+  };
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    console.log("formdata0", formData);
+    // if (!validate()) return;
+    // console.log("HEE", formData);
+
+    // const url = "http://localhost:8383/site/add";
+    // const method = "POST";
+    // try {
+    //   const response = await axios({
+    //     method,
+    //     url,
+    //     data: formData,
+    //     headers: {
+    //       Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+    //       "Content-Type": "application/json",
+    //     },
+    //   });
+    //   console.log("Response:", response.data);
+    //   console.log(formData);
+    //   if (onSuccess) {
+    //     onSuccess();
+    //   }
+    //   setShowCreateModelBox(false);
+    //   navigate("/site");
+    // } catch (error) {
+    //   console.error("Error submitting form:", error.message);
+    // }
+  };
   return (
-    <div className="editScheduleTab">
+    <form onSubmit={handleSubmit} className="editScheduleTab">
       <h1>Edit Schedule</h1>
-      <form className=" editScheduleTabContent">
+      <div className=" editScheduleTabContent">
         <div>
-          <label htmlFor="team" className="inputLabel">
+          <label htmlFor="operationtypesId" className="inputLabel">
             <div className="flexRow">
               <small>[Required]</small>
-              <p>Team</p>
+              <p>Operation Type</p>
             </div>
             <div className="instruction">
-              <small>Please Select Team</small>
+              <small>Please Select Operation</small>
             </div>
           </label>
           <div className="flexRow operationRow">
-            <select name="team" id="team" className="select">
-              <option value="">Team One</option>
-              <option value="">Team Two</option>
+            <select
+              name="operationtypesId"
+              id="operationtypesId"
+              onChange={handleChange}
+              value={formData.operationtypesId}
+              className="input"
+              required
+            >
+              <option value="" disabled>
+                --- Select Operation ---
+              </option>
+              {operationOptions.map((option, index) => (
+                <option key={option.id} value={option.id}>
+                  {option.name}
+                </option>
+              ))}
             </select>
-            <button className="svgAddButton">
+            <button onClick={handleCreateOperation} className="svgAddButton">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="19"
@@ -485,9 +598,23 @@ function EditSchedule({ onCancel, onSuccess }) {
                 />
               </svg>
             </button>
+            {createOperation && (
+              <OperationType
+                createOperation={createOperation}
+                setCreateOperation={setCreateOperation}
+                operationOptions={operationOptions}
+                setOperationOptions={setOperationOptions}
+                onOperationCreated={handleOperationCreated}
+                showCreateModelBox={showCreateModelBox}
+                showEditModelBox={showEditModelBox}
+                setShowCreateModelBox={setShowCreateModelBox}
+                setShowEditModelBox={setShowEditModelBox}
+                onSuccess={refetchOperationList}
+              />
+            )}
           </div>
           <div>
-            <label htmlFor="joinedDate" className="inputLabel">
+            <label htmlFor="startDate" className="inputLabel">
               <div className="flexRow">
                 <small>[Required]</small>
                 <p>Schedule</p>
@@ -501,20 +628,31 @@ function EditSchedule({ onCancel, onSuccess }) {
                 <p>Start: </p>
                 <input
                   type="date"
-                  name="joinedDate"
+                  name="startDate"
+                  id="startDate"
                   required
                   className="input"
-                  placeholder="Enter Joined Date"
+                  value={
+                    formData.startDate
+                      ? dayjs(formData.startDate).format("YYYY-MM-DD")
+                      : ""
+                  }
+                  onChange={handleChange}
                 />
               </div>
               <div className="flexDiv">
                 <p>End:</p>
                 <input
                   type="date"
-                  name="joinedDate"
+                  name="endDate"
                   required
                   className="input"
-                  placeholder="Enter Joined Date"
+                  value={
+                    formData.endDate
+                      ? dayjs(formData.endDate).format("YYYY-MM-DD")
+                      : ""
+                  }
+                  onChange={handleChange}
                 />
               </div>
             </div>
@@ -533,23 +671,37 @@ function EditSchedule({ onCancel, onSuccess }) {
             <div className="  flexContainer">
               <div className=" flexDiv">
                 <p>Start: </p>
-                <input
-                  type="date"
-                  name="joinedDate"
-                  required
+                <select
+                  name="workinghourStart"
+                  id="workinghourStart"
+                  onChange={handleChange}
+                  value={formData.workinghourStart}
                   className="input"
-                  placeholder="Enter Joined Date"
-                />
+                  required
+                >
+                  <option value="6">6 AM</option>
+                  <option value="7">7 AM</option>
+                  <option value="8">8 AM</option>
+                  <option value="9">9 AM</option>
+                  <option value="10">10 AM</option>
+                </select>
               </div>
               <div className="flexRowm flexDiv ">
                 <p>End:</p>
-                <input
-                  type="date"
-                  name="joinedDate"
-                  required
+                <select
+                  name="workinghourEnd"
+                  id="workinghourEnd"
+                  onChange={handleChange}
+                  value={formData.workinghourEnd}
                   className="input"
-                  placeholder="Enter Joined Date"
-                />
+                  required
+                >
+                  <option value="3">3 PM</option>
+                  <option value="4">4 PM</option>
+                  <option value="5">5 PM</option>
+                  <option value="6">6 PM</option>
+                  <option value="7">7 PM</option>
+                </select>
               </div>
             </div>
           </div>
@@ -569,33 +721,43 @@ function EditSchedule({ onCancel, onSuccess }) {
               <p>Staffs: </p>
               <input
                 type="number"
-                name="joinedDate"
+                name="requiredVehicle"
+                id="requiredVehicle"
                 required
-                className="input "
+                class="input"
+                min="1"
+                step="1"
+                readonly
               />
             </div>
             <div className="flexDiv">
               <p>Vehicles:</p>
               <input
                 type="number"
-                name="joinedDate"
+                name="requiredVehicle"
+                id="requiredVehicle"
                 required
-                className="input "
+                class="input"
+                min="1"
+                step="1"
+                onkeydown="return false;"
               />
             </div>
           </div>
         </div>
-      </form>
+      </div>
       <div className="editBtnContainer">
         <div></div>
         <div className="btnWrapper">
           <button onClick={onCancel} className="">
             Cancel
           </button>
-          <button className="saveBtn">Update</button>
+          <button type="submit" className="saveBtn">
+            Update
+          </button>
         </div>
       </div>
-    </div>
+    </form>
   );
 }
 
@@ -704,8 +866,7 @@ export default function Edit({
   const [activeTab, setActiveTab] = useState(tabs[0].id);
 
   const activeTabContent = tabs.find((tab) => tab.id === activeTab)?.content;
-  // const siteId = id;
-  // console.log("Site Id", siteId);
+
   return (
     <>
       <div className="bgBlur">
