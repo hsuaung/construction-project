@@ -1,0 +1,39 @@
+//import function
+@use "./components/functions" as *;
+
+//import components
+@import "./components/variables";
+@import "./components/mixins";
+
+.scheduleListContainer {
+    display: grid;
+    grid-template-columns: 1fr auto;
+
+    .viewByContainer {
+        margin-top: 30px;
+        @include flex(column, start, start, 0);
+
+        .viewBy svg {
+            padding: 5px;
+            border: 1px solid $secondaryColor;
+            border-radius: 0px 5px 5px 0px;
+            margin: 5px 0;
+
+            & path {
+                color: $secondaryColor !important;
+            }
+
+            &:hover path,
+            &.active path {
+                color: white !important;
+            }
+
+            &:hover,
+            &.active {
+                background-color: $secondaryColor;
+            }
+        }
+
+
+    }
+}
