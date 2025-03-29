@@ -1,15 +1,71 @@
-import React from 'react'
+import React, { useMemo, useState } from 'react'
 import SchedularDate from '../HOC/buttons/SchedularDate'
 import "../../assets/styles/scheduleList.scss"
+import Site from './Site'
+import Staff from './Staff'
+import Vehicle from './Vehicle'
+import dayjs from 'dayjs'
 
 export default function List() {
+  const [siteview,setSiteView] = useState(true)
+  const [staffview,setStaffView] = useState(false)
+  const [vehicleview,setVehicleView] = useState(false)
+
+  // Add state for date range
+  const [dateRange, setDateRange] = useState({
+    startDate: dayjs().startOf("month"),
+    endDate: dayjs().endOf("month"),
+    view: "month",
+  })
+
+  const memoizedDateRange = useMemo(() => dateRange, [dateRange]);
+
+
+  const handleSiteView = () => {
+    setSiteView(true)
+    setStaffView(false)
+    setVehicleView(false)
+  }
+  const handleStaffView = () => {
+    setSiteView(false)
+    setStaffView(true)
+    setVehicleView(false)
+  }
+  const handleVehicleView = () => {
+    setSiteView(false)
+    setStaffView(false)
+    setVehicleView(true)
+  }
+
+  const handleDataRangeChange = (start, end, view) => {
+    // setDateRange({ startDate: start, endDate: end, view: view })
+    setDateRange((prev) => {
+      if (
+        prev.startDate.isSame(start) &&
+        prev.endDate.isSame(end) &&
+        prev.view === view
+      ) {
+        return prev; // Prevent unnecessary re-render
+      }
+      return { startDate: start, endDate: end, view };
+    });
+  }
+  // const handleDataRangeChange = (start, end, view) => {
+  //   console.log("Updating Date Range:", { start, end, view }); // Debugging log
+  //   setDateRange({ startDate: start, endDate: end, view });
+  // };
   return (
     <div className='scheduleListContainer'>
-        <SchedularDate/>
+        <SchedularDate onDateRangeChange={handleDataRangeChange}/>
         <div></div>
-        <div>Data</div>
+        <div className='data'>
+          {siteview && <Site dateRange={memoizedDateRange}/>}
+          {staffview && <Staff dateRange={memoizedDateRange}/>}
+          {vehicleview && <Vehicle dateRange={memoizedDateRange}/>}
+        </div>
         <div className='viewByContainer'>
-            <div className='viewBy'>
+            <div className={`viewBy ${siteview ? "activeView" : ""}`}
+ onClick={handleSiteView}>
               {/* site */}
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -23,7 +79,7 @@ export default function List() {
                 />
               </svg>
             </div>
-            <div className='viewBy'>
+            <div className={`viewBy ${staffview ? "activeView" : ""}`} onClick={handleStaffView}>
               {/* staff */}
               <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -37,7 +93,7 @@ export default function List() {
                       />
               </svg>
             </div>
-            <div className='viewBy'>
+            <div className={`viewBy ${vehicleview ? "activeView" : ""}`} onClick={handleVehicleView}>
               {/* vehicle */}
               <svg xmlns="http://www.w3.org/2000/svg" height="20" width={18} viewBox="0 0 20 15" fill="currentColor" >
                     <path d="M15.2746 0.224243H10.8396V8.12098H0.195557V11.6306H1.96956C1.96956 12.3589 2.23566 12.9731 2.75899 13.4995C3.30006 14.0172 3.91209 14.2629 4.63056 14.2629C5.34903 14.2629 5.96106 14.0172 6.50213 13.4995C7.02546 12.9731 7.29156 12.3589 7.29156 11.6306H12.1701C12.1701 12.3589 12.4184 12.9731 12.9506 13.4995C13.474 14.0172 14.0949 14.2629 14.8311 14.2629C15.5407 14.2629 16.1616 14.0172 16.6849 13.4995C17.2171 12.9731 17.4921 12.3589 17.4921 11.6306H19.7096V5.48873L15.2746 0.224243ZM5.58852 12.5695C5.34016 12.8327 5.02084 12.9468 4.63056 12.9468C4.24028 12.9468 3.92096 12.8327 3.6726 12.5695C3.42424 12.3062 3.30006 11.9991 3.30006 11.6306C3.30006 11.2884 3.42424 10.9813 3.6726 10.7181C3.92096 10.4549 4.24028 10.3145 4.63056 10.3145C5.02084 10.3145 5.34016 10.4549 5.58852 10.7181C5.83688 10.9813 5.96106 11.2884 5.96106 11.6306C5.96106 11.9991 5.83688 12.3062 5.58852 12.5695ZM15.7536 12.5695C15.4875 12.8327 15.177 12.9468 14.8311 12.9468C14.4585 12.9468 14.1481 12.8327 13.882 12.5695C13.6159 12.3062 13.5006 11.9991 13.5006 11.6306C13.5006 11.2884 13.6159 10.9813 13.882 10.7181C14.1481 10.4549 14.4585 10.3145 14.8311 10.3145C15.177 10.3145 15.4875 10.4549 15.7536 10.7181C16.0197 10.9813 16.1616 11.2884 16.1616 11.6306C16.1616 11.9991 16.0197 12.3062 15.7536 12.5695ZM12.6136 5.48873V1.97907H14.4408L17.3945 5.48873H12.6136Z" fill="currentColor"/>

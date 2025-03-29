@@ -47,6 +47,11 @@
       border: 1px solid $secondaryColor;
       padding: px-to-rem(5) px-to-rem(15);
       border-radius: px-to-rem(30);
+      &:hover{
+        background-color: $secondaryColor;
+        color: $whiteColor;
+        opacity: 1;
+      }
     }
   }
 
@@ -79,13 +84,16 @@
 }
 
 .calendarTimeline {
-  background-color: rgba(19, 18, 22, 0.637);
+  background-color: #141313;
   border-radius: px-to-rem(10) px-to-rem(10) 0 0;
-  padding: 5px 5px;
+  padding: 5px 0px;
   width: 100%;
+
   .calendar-days-container {
     display: grid;
     grid-template-columns: 15% 1fr;
+    padding-left: 15px;
+    padding-right: 5px;
   }
 
   .calendar-days {
@@ -93,16 +101,17 @@
 
     .days-header {
       display: grid;
-      grid-template-columns: repeat(31, 1fr);
+      grid-template-columns: repeat(32, 1fr);
       gap: 2px;
 
 
       .day-header {
         text-align: center;
         background-color: #9A4600;
+        // background: linear-gradient(45deg, #a3450f, #f27d14);
         padding: 6px 0px;
         border-radius: 3px 3px 0px 0px;
-        border-bottom: 2px double lightgray;
+        border-bottom: 2px solid black;
 
         &.today {
           background: #363636;
@@ -113,7 +122,7 @@
 
     .days-header-week {
       display: grid;
-      grid-template-columns: repeat(7, 1fr);
+      grid-template-columns: repeat(8, 1fr);
       gap: 5px;
 
 
@@ -134,13 +143,13 @@
 
     .days-grid {
       display: grid;
-      grid-template-columns: repeat(31, 1fr);
+      grid-template-columns: repeat(32, 1fr);
       gap: 2px;
     }
 
     .days-grid-week {
       display: grid;
-      grid-template-columns: repeat(7, 1fr);
+      grid-template-columns: repeat(8, 1fr);
       gap: 5px;
     }
 
