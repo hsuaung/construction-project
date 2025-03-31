@@ -175,7 +175,7 @@ export default function Entry({
                           value={formData.businesspartnerId}
                           name="businesspartnerId"
                           id="businesspartnerId"
-                          className="select"
+                          className="input"
                           required
                         >
                           <option value="" disabled>
