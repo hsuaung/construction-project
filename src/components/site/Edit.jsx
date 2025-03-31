@@ -8,7 +8,9 @@ import { useNavigate } from "react-router-dom";
 import { useFetchData } from "../HOC/UseFetchData";
 import dayjs from "dayjs";
 import axios from "axios";
-import OperationType from "../menu/operationType/OperationType";
+import OperationType from "./OperationType";
+import SchedularDate from "../HOC/buttons/SchedularDate";
+import OperationForm from "./OperationForm";
 // import "../menu/staff/entry.scss";
 function Detail({ onCancel, siteId }) {
   const { data: siteData } = useFetchData(
@@ -436,7 +438,16 @@ function EditSchedule({
   setShowEditModelBox,
   showEditModelBox,
 }) {
-  console.log(siteId);
+  const [operationForm, setOperationForm] = useState(false);
+  const handleOpenOperation = () => {
+    console.log("handle Create Operation");
+    setOperationForm(true);
+  };
+
+  const handleCloseOperation = () => {
+    setOperationForm(false);
+  };
+  console.log("EDIT SCHEDULE SITE ID", siteId);
   const {
     handleDelete,
     handleCreate,
@@ -500,7 +511,7 @@ function EditSchedule({
   };
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("formdata0", formData);
+    console.log("formdata", formData);
     // if (!validate()) return;
     // console.log("HEE", formData);
 
@@ -528,236 +539,50 @@ function EditSchedule({
     // }
   };
   return (
-    <form onSubmit={handleSubmit} className="editScheduleTab">
-      <h1>Edit Schedule</h1>
-      <div className=" editScheduleTabContent">
-        <div>
-          <label htmlFor="operationtypesId" className="inputLabel">
-            <div className="flexRow">
-              <small>[Required]</small>
-              <p>Operation Type</p>
-            </div>
-            <div className="instruction">
-              <small>Please Select Operation</small>
-            </div>
-          </label>
-          <div className="flexRow operationRow">
-            <select
-              name="operationtypesId"
-              id="operationtypesId"
-              onChange={handleChange}
-              value={formData.operationtypesId}
-              className="input"
-              required
-            >
-              <option value="" disabled>
-                --- Select Operation ---
-              </option>
-              {operationOptions.map((option, index) => (
-                <option key={option.id} value={option.id}>
-                  {option.name}
-                </option>
-              ))}
-            </select>
-            <button onClick={handleCreateOperation} className="svgAddButton">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="19"
-                height="17"
-                viewBox="0 0 19 17"
-                fill="none"
-              >
-                <path
-                  d="M5.91699 8.25C7.2977 8.25 8.41699 7.13071 8.41699 5.75C8.41699 4.36929 7.2977 3.25 5.91699 3.25C4.53628 3.25 3.41699 4.36929 3.41699 5.75C3.41699 7.13071 4.53628 8.25 5.91699 8.25Z"
-                  stroke="#F27D14"
-                  stroke-linecap="round"
-                />
-                <path
-                  d="M9.68495 6.24977C9.81532 6.02048 9.98975 5.81924 10.1982 5.65764C10.4067 5.49603 10.645 5.37726 10.8996 5.30815C11.1541 5.23904 11.4198 5.22097 11.6814 5.25496C11.9429 5.28896 12.1952 5.37436 12.4236 5.50624C12.652 5.63813 12.8521 5.81389 13.0123 6.02341C13.1725 6.23293 13.2897 6.47208 13.3572 6.72708C13.4246 6.98208 13.4409 7.24789 13.4052 7.50922C13.3694 7.77055 13.2824 8.02223 13.149 8.24977C12.8819 8.70538 12.4454 9.03685 11.9348 9.17185C11.4242 9.30684 10.8809 9.23439 10.4236 8.97032C9.96619 8.70625 9.63183 8.27198 9.49346 7.7623C9.35508 7.25262 9.42392 6.70889 9.68495 6.24977Z"
-                  stroke="#F27D14"
-                />
-                <path
-                  d="M10.417 15.75H1.41705V16.75H10.417V15.75ZM1.00505 15.336C1.13505 14.522 1.44705 13.365 2.18105 12.421C2.89605 11.501 4.03605 10.75 5.91705 10.75V9.75C3.71805 9.75 2.29105 10.65 1.39105 11.807C0.511048 12.941 0.160049 14.287 0.0180485 15.178L1.00505 15.336ZM5.91705 10.75C7.79805 10.75 8.93705 11.5 9.65305 12.421C10.387 13.365 10.699 14.521 10.829 15.336L11.816 15.178C11.674 14.288 11.324 12.941 10.443 11.808C9.54305 10.65 8.11605 9.75 5.91705 9.75V10.75ZM1.41705 15.75C1.12505 15.75 0.974048 15.533 1.00505 15.336L0.0180485 15.178C-0.124951 16.072 0.604048 16.75 1.41705 16.75V15.75ZM10.417 16.75C11.23 16.75 11.958 16.072 11.816 15.178L10.829 15.336C10.86 15.533 10.709 15.75 10.417 15.75V16.75Z"
-                  fill="#F27D14"
-                />
-                <path
-                  d="M9.71708 11.731L9.44908 11.309L8.93408 11.636L9.35608 12.076L9.71708 11.731ZM14.3121 15.75H10.4171V16.75H14.3121V15.75ZM14.7291 15.288C14.7821 15.503 14.6251 15.75 14.3121 15.75V16.75C15.1821 16.75 15.9321 15.978 15.6991 15.045L14.7291 15.288ZM11.4171 11.75C12.4451 11.75 13.1671 12.253 13.6951 12.957C14.2351 13.675 14.5511 14.582 14.7291 15.288L15.6991 15.045C15.5071 14.281 15.1491 13.229 14.4951 12.356C13.8301 11.47 12.8371 10.75 11.4171 10.75V11.75ZM9.98508 12.153C10.3751 11.906 10.8431 11.75 11.4171 11.75V10.75C10.6491 10.75 9.99608 10.962 9.44908 11.309L9.98508 12.153ZM9.35608 12.076C10.3031 13.066 10.6821 14.415 10.8291 15.336L11.8161 15.178C11.6561 14.178 11.2331 12.592 10.0791 11.385L9.35608 12.076ZM10.8291 15.336C10.8601 15.533 10.7091 15.75 10.4171 15.75V16.75C11.2301 16.75 11.9581 16.072 11.8161 15.178L10.8291 15.336Z"
-                  fill="#F27D14"
-                />
-                <path
-                  d="M18.417 3H14.417C14.2789 3 14.167 3.11193 14.167 3.25C14.167 3.38807 14.2789 3.5 14.417 3.5H18.417C18.5551 3.5 18.667 3.38807 18.667 3.25C18.667 3.11193 18.5551 3 18.417 3Z"
-                  stroke="#F27D14"
-                  strokeWidth="0.5"
-                  stroke-linecap="round"
-                />
-                <path
-                  d="M16.667 5.25V1.25C16.667 1.11193 16.5551 1 16.417 1C16.2789 1 16.167 1.11193 16.167 1.25V5.25C16.167 5.38807 16.2789 5.5 16.417 5.5C16.5551 5.5 16.667 5.38807 16.667 5.25Z"
-                  stroke="#F27D14"
-                  strokeWidth="0.5"
-                  stroke-linecap="round"
-                />
-              </svg>
-            </button>
-            {createOperation && (
-              <OperationType
-                createOperation={createOperation}
-                setCreateOperation={setCreateOperation}
-                operationOptions={operationOptions}
-                setOperationOptions={setOperationOptions}
-                onOperationCreated={handleOperationCreated}
-                showCreateModelBox={showCreateModelBox}
-                showEditModelBox={showEditModelBox}
-                setShowCreateModelBox={setShowCreateModelBox}
-                setShowEditModelBox={setShowEditModelBox}
-                onSuccess={refetchOperationList}
-              />
-            )}
-          </div>
-          <div>
-            <label htmlFor="startDate" className="inputLabel">
-              <div className="flexRow">
-                <small>[Required]</small>
-                <p>Schedule</p>
-              </div>
-              <div className="instruction">
-                <small>Please Select Schedule Date</small>
-              </div>
-            </label>
-            <div className="flexContainer">
-              <div className="flexDiv">
-                <p>Start: </p>
-                <input
-                  type="date"
-                  name="startDate"
-                  id="startDate"
-                  required
-                  className="input"
-                  value={
-                    formData.startDate
-                      ? dayjs(formData.startDate).format("YYYY-MM-DD")
-                      : ""
-                  }
-                  onChange={handleChange}
-                />
-              </div>
-              <div className="flexDiv">
-                <p>End:</p>
-                <input
-                  type="date"
-                  name="endDate"
-                  required
-                  className="input"
-                  value={
-                    formData.endDate
-                      ? dayjs(formData.endDate).format("YYYY-MM-DD")
-                      : ""
-                  }
-                  onChange={handleChange}
-                />
-              </div>
-            </div>
-          </div>
+    <div>
+      {/* <SchedularDate /> */}
+      <h1>{siteId}</h1>
+      <button onClick={handleOpenOperation} className="addOperationFormButton">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="25"
+          height="22"
+          viewBox="0 0 25 22"
+          fill="white"
+        >
+          <path
+            d="M24.6617 12.4777H14.4201V21.3447H11.0062V12.4777H0.764648V9.52203H11.0062V0.655029H14.4201V9.52203H24.6617V12.4777Z"
+            fill="white"
+          />
+        </svg>
 
-          <div>
-            <label htmlFor="joinedDate" className="inputLabel">
-              <div className="flexRow">
-                <small>[Required]</small>
-                <p>Working Hour</p>
-              </div>
-              <div className="instruction">
-                <small>Please Select Schedule Date</small>
-              </div>
-            </label>
-            <div className="  flexContainer">
-              <div className=" flexDiv">
-                <p>Start: </p>
-                <select
-                  name="workinghourStart"
-                  id="workinghourStart"
-                  onChange={handleChange}
-                  value={formData.workinghourStart}
-                  className="input"
-                  required
-                >
-                  <option value="6">6 AM</option>
-                  <option value="7">7 AM</option>
-                  <option value="8">8 AM</option>
-                  <option value="9">9 AM</option>
-                  <option value="10">10 AM</option>
-                </select>
-              </div>
-              <div className="flexRowm flexDiv ">
-                <p>End:</p>
-                <select
-                  name="workinghourEnd"
-                  id="workinghourEnd"
-                  onChange={handleChange}
-                  value={formData.workinghourEnd}
-                  className="input"
-                  required
-                >
-                  <option value="3">3 PM</option>
-                  <option value="4">4 PM</option>
-                  <option value="5">5 PM</option>
-                  <option value="6">6 PM</option>
-                  <option value="7">7 PM</option>
-                </select>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div>
-          <label htmlFor="schedule" className="inputLabel">
-            <div className="flexRow">
-              <small>[Required]</small>
-              <p>Requirements</p>
-            </div>
-            <div className="instruction">
-              <small>Please type Requirement</small>
-            </div>
-          </label>
-          <div className="flexContainer">
-            <div className="flexDiv">
-              <p>Staffs: </p>
-              <input
-                type="number"
-                name="requiredVehicle"
-                id="requiredVehicle"
-                required
-                class="input"
-                min="1"
-                step="1"
-                readonly
-              />
-            </div>
-            <div className="flexDiv">
-              <p>Vehicles:</p>
-              <input
-                type="number"
-                name="requiredVehicle"
-                id="requiredVehicle"
-                required
-                class="input"
-                min="1"
-                step="1"
-                onkeydown="return false;"
-              />
-            </div>
-          </div>
-        </div>
-      </div>
-      <div className="editBtnContainer">
-        <div></div>
-        <div className="btnWrapper">
-          <button onClick={onCancel} className="">
-            Cancel
-          </button>
-          <button type="submit" className="saveBtn">
-            Update
-          </button>
-        </div>
-      </div>
-    </form>
+        {/* <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="30"
+          height="30"
+          viewBox="0 0 30 30"
+          fill="none"
+        >
+          <path
+            d="M15 3.75H6.25C5.58696 3.75 4.95107 4.01339 4.48223 4.48223C4.01339 4.95107 3.75 5.58696 3.75 6.25V23.75C3.75 24.413 4.01339 25.0489 4.48223 25.5178C4.95107 25.9866 5.58696 26.25 6.25 26.25H23.75C24.413 26.25 25.0489 25.9866 25.5178 25.5178C25.9866 25.0489 26.25 24.413 26.25 23.75V15"
+            stroke="white"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+          <path
+            d="M22.9689 3.28104C23.4661 2.78376 24.1406 2.50439 24.8439 2.50439C25.5471 2.50439 26.2216 2.78376 26.7189 3.28104C27.2161 3.77833 27.4955 4.45278 27.4955 5.15604C27.4955 5.85931 27.2161 6.53376 26.7189 7.03104L15.4526 18.2985C15.1558 18.5951 14.7891 18.8122 14.3864 18.9298L10.7951 19.9798C10.6876 20.0112 10.5735 20.013 10.465 19.9852C10.3565 19.9574 10.2574 19.901 10.1782 19.8217C10.0989 19.7425 10.0425 19.6434 10.0147 19.5349C9.98686 19.4264 9.98875 19.3124 10.0201 19.2048L11.0701 15.6135C11.1883 15.2111 11.4058 14.8449 11.7026 14.5485L22.9689 3.28104Z"
+            stroke="white"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+        </svg> */}
+      </button>
+      {operationForm && (
+        <OperationForm onCancel={handleCloseOperation} siteId={siteId} />
+      )}
+    </div>
   );
 }
 

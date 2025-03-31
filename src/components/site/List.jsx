@@ -113,29 +113,6 @@ export default function List(params) {
     setSites(updatedStaffs);
   };
 
-  // const handleDragEnd = async (event) => {
-  //   const { active, over } = event;
-  //   if (!over || active.id === over.id) return;
-
-  //   const oldIndex = sites.findIndex((item) => item.id === active.id);
-  //   const newIndex = sites.findIndex((item) => item.id === over.id);
-
-  //   const updatedSites = arrayMove(sites, oldIndex, newIndex);
-  //   setSites(updatedSites);
-  // };
-
-  // const sortSites = (key, isDate = false) => {
-  //   setSites((prevSites) => {
-  //     return [...prevSites].sort((a, b) => {
-  //       const valA = a[key] || "";
-  //       const valB = b[key] || "";
-  //       return isDate
-  //         ? new Date(valA) - new Date(valB)
-  //         : valA.localeCompare(valB);
-  //     });
-  //   });
-  // };
-
   const sortSites = (key, isDate = false) => {
     setSites((prevSites) => {
       return [...prevSites].sort((a, b) => {
@@ -151,10 +128,6 @@ export default function List(params) {
       });
     });
   };
-
-
-
-
 
   const handleCreateModelBox = () => {
     setShowCreateModelBox(true);

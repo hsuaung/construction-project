@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
-import { useFetchData } from "../../HOC/UseFetchData";
-import { useCRUD } from "../../HOC/UseCRUD";
-import "./team.scss";
+import { useFetchData } from "../HOC/UseFetchData";
+import { useCRUD } from "../HOC/UseCRUD";
+import "./operationType.scss";
+
 import { useNavigate } from "react-router-dom";
 
 export default function OprationType({
@@ -193,7 +194,7 @@ export default function OprationType({
   return (
     <div>
       <div className="bgBlur"></div>
-      <div className="entryContainer teamContainer">
+      <div className="entryContainer  operationTypeContainer">
         <div className="modelTitle">
           <h4>Operation Management</h4>
         </div>
