@@ -610,7 +610,7 @@ export default function Entry({
             </div>
 
             <div className="btnGp">
-              <hr />
+              {/* <hr /> */}
               <div className="btnContainer">
                 <button
                   type="button"

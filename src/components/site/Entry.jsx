@@ -264,7 +264,7 @@ export default function Entry({
                           value={formData.staffId}
                           name="staffId"
                           id="staffId"
-                          className="select"
+                          className="input"
                           required
                         >
                           <option value="" disabled>
@@ -321,7 +321,7 @@ export default function Entry({
                           id="status"
                           onChange={handleChange}
                           value={formData.status}
-                          className="select"
+                          className="input"
                           required
                         >
                           {/* <option value="" disabled>
@@ -367,7 +367,7 @@ export default function Entry({
                     <div className="checkBoxContaier">
                       <label htmlFor="name" className="inputLabel">
                         <div className="flexRow">
-                          <p>Schedule</p>
+                          <p style={{color:"#f27d14"}}>Schedule</p>
                         </div>
                       </label>
                       <div>
@@ -434,8 +434,8 @@ export default function Entry({
               </div>
 
               <div className="btnGp">
-                <hr />
-                <div className="btnContainer">
+                {/* <hr /> */}
+                <div className="btnContainer2">
                   <div className="hint">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -449,23 +449,24 @@ export default function Entry({
                         fill="#FFA629"
                       />
                     </svg>
-                    Once you complete registration, you'll be redirected to your
-                    site details page..
+                    Once you complete registration, you can change details.
                   </div>
-                  <button
-                    type="button"
-                    onClick={handleCancel}
-                    className="cancelBtn"
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    type="submit"
-                    className="saveBtn"
-                    onClick={handleSubmit}
-                  >
-                    Register
-                  </button>
+                  <div className="flexRow">
+                    <button
+                      type="button"
+                      onClick={handleCancel}
+                      className="cancelBtn"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      type="submit"
+                      className="saveBtn"
+                      onClick={handleSubmit}
+                    >
+                      Register
+                    </button>
+                  </div>
                 </div>
               </div>
             </form>

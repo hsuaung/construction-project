@@ -75,15 +75,12 @@
       }
     }
     .btnContainer {
-      hr {
-        width: 90%;
-        margin: 0 auto;
-        border: 1px solid #36363691;
-        margin-bottom: px-to-rem(5);
-      }
-
+      background-color: #fff;
       .btnGp {
         text-align: center;
+        // border-top: 1px solid #333;
+        // padding: 20px 0;
+
 
         button {
           margin: px-to-rem(10);

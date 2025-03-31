@@ -67,6 +67,7 @@ button {
 .input {
   padding: px-to-rem(6) 0;
   text-indent: px-to-rem(10);
+  margin-bottom: px-to-rem(5);
   border: 0;
   background-color: $baseBgGrayColor;
   border: 1px solid $itemOrangeColor;
@@ -250,7 +251,9 @@ button {
 //button
 .btnContainer {
   @include flex(row, center, center, px-to-rem(20));
-  margin: px-to-rem(20) 0;
+  padding: 10px 0px;
+  // margin: px-to-rem(20) 0;
+  border-top: 1px solid #333;
 }
 
 .buttonOne {

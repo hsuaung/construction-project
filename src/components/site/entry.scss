@@ -10,8 +10,17 @@
 }
 
 .checkBoxContaier {
-  background-color: $itemGrayColor;
-  padding: px-to-rem(40) px-to-rem(20);
+  background-color: rgba(54, 54, 54, 0.1882352941);
+  padding: px-to-rem(10) px-to-rem(20) px-to-rem(20) px-to-rem(20);
   margin-top: px-to-rem(10);
   border-radius: px-to-rem(10);
+}
+
+.btnGp {
+  border-top: 1px solid #333;
+}
+
+.btnContainer2 {
+  @include flex (row, space-between, center, 0);
+  padding: 10px 20px;
 }
