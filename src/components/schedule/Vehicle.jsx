@@ -1,6 +1,4 @@
-"use client"
-
-import React, { useEffect, useState } from "react"
+import React, { useEffect, useRef, useState } from "react"
 import axios from "axios"
 import { useFetchData } from "../HOC/UseFetchData"
 import { useCRUD } from "../HOC/UseCRUD"
@@ -9,6 +7,37 @@ import dayjs from "dayjs"
 import "./staffschedule.scss"
 
 export default function Vehicle({ dateRange }) {
+  const [selectedVehicle,setSelectedVehicle] = useState(null)
+  const [clickDetails,setClickDetails] = useState(false)
+  const modalRef = useRef(null)
+
+  const handleClickDetails = (vehicleId) => {
+    setSelectedVehicle(vehicleId)
+    setClickDetails(true)
+  }
+
+  const closeModal = () => {
+    setClickDetails(false)
+    setSelectedVehicle(null)
+  }
+
+  
+    useEffect(() => {
+      const handleClickOutside = (event) => {
+        if (modalRef.current && !modalRef.current.contains(event.target)) {
+          closeModal()
+        }
+      }
+  
+      if (clickDetails) {
+        document.addEventListener("mousedown", handleClickOutside)
+      }
+  
+      return () => {
+        document.removeEventListener("mousedown", handleClickOutside)
+      }
+    }, [clickDetails])
+
   const [vehicleData, setVehicleData] = useState({})
   const [groupData, setGroupData] = useState({}) // New state for group data
   const [operationDetails, setOperationDetails] = useState({})
@@ -177,10 +206,12 @@ export default function Vehicle({ dateRange }) {
                 name: response.data.name,
                 groupId: response.data.groupId,
                 image: response.data.image || "fallback-image.jpg",
+                inspectionExpiry: response.data.inspectionExpiry,
+                insuranceExpiry: response.data.inspectionExpiry
               }
             } catch (error) {
               console.error(`Error fetching vehicle ${vehicleId}:`, error.response?.data || error)
-              return { vehicleId, name: "Unknown Vehicle", groupId: null, image: "fallback-image.jpg" }
+              return { vehicleId, name: "Unknown Vehicle", groupId: null, image: "fallback-image.jpg",insuranceExpiry:null,inspectionExpiry:null}
             }
           }),
         )
@@ -189,8 +220,8 @@ export default function Vehicle({ dateRange }) {
         const vehicleMap = {}
         const uniqueGroupIds = []
 
-        vehicleData.forEach(({ vehicleId, name, groupId, image }) => {
-          vehicleMap[vehicleId] = { name, groupId, image }
+        vehicleData.forEach(({ vehicleId, name, groupId, image,inspectionExpiry,insuranceExpiry }) => {
+          vehicleMap[vehicleId] = { name, groupId, image,inspectionExpiry,insuranceExpiry }
 
           // Collect unique group IDs for fetching group details
           if (groupId && !uniqueGroupIds.includes(groupId)) {
@@ -347,7 +378,7 @@ export default function Vehicle({ dateRange }) {
               if (staffOperations.length === 0) return null
 
               return (
-                <div key={vehicleId} className="staffRow">
+                <div key={vehicleId} className="staffRow" onClick={() => handleClickDetails(vehicleId)}>
                   <div className="staffInfo">
                     <div className="staffAvatar">
                       <img
@@ -364,7 +395,7 @@ export default function Vehicle({ dateRange }) {
                   <div
                     className="staffTimeline"
                     style={{
-                      gridTemplateColumns: `repeat(${calendarDays.length}, 1fr)`,
+                      gridTemplateColumns: `repeat(${calendarDays.length +1}, 1fr)`,
                     }}
                   >
                     {staffOperations.map((operation, opIndex) => {
@@ -455,7 +486,53 @@ export default function Vehicle({ dateRange }) {
             })
           : !loading && <p className="no-data-message">No staff schedule available.</p>}
       </div>
-    </div>
+      {/* MOdal Box */}
+      {clickDetails && selectedVehicle && (
+        <div className="modal-overlay">
+          <div className="modal-container" ref={modalRef}>
+                  <div className="modal-header">
+                    <h2>Vehicle Details</h2>
+                    <button className="close-button" onClick={closeModal}>
+                      ×
+                    </button>
+                  </div>
+                  <div className="modal-body">
+                    <div className="site-details flexRow" style={{gap:"20px",alignItems:"start"}}>
+                      <div className="site-image">
+                        <img
+                          src={vehicleData[selectedVehicle]?.image || "/fallback-site-image.jpg"}
+                          alt={vehicleData[selectedVehicle]?.name || "Vehicle"}
+                        />
+                      </div>
+                      <div className="site-info">
+                        <div className="info-row flexRow">
+                          <span className="info-label">Vehicle Display Name:</span>
+                          <span className="info-value">
+                            {vehicleData[selectedVehicle]?.name}
+                          </span>
+                        </div>
+                        <div className="info-row flexRow">
+                          <span className="info-label">Inspection Expiry Date:</span>
+                          <span className="info-value">{dayjs(vehicleData[selectedVehicle].startDate).format("DD/MM/YYYY")}</span>
+                        </div>
+                        <div className="info-row flexRow">
+                          <span className="info-label">Insurance Expiry Date:</span>
+                          <span className="info-value">{dayjs(vehicleData[selectedVehicle].startDate).format("DD/MM/YYYY")}</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="modal-footer">
+                    <button className="close-button-text" onClick={closeModal}>
+                      Close
+                    </button>
+                  </div>
+          </div>
+      
+        </div>
+  )
+}
+</div>
   )
 }
 

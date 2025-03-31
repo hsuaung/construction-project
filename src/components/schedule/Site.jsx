@@ -1,6 +1,4 @@
-"use client"
-
-import { useEffect, useState } from "react"
+import { useEffect, useState, useRef } from "react"
 import axios from "axios"
 import { useFetchData } from "../HOC/UseFetchData"
 import { useCRUD } from "../HOC/UseCRUD"
@@ -9,6 +7,37 @@ import dayjs from "dayjs"
 import "./staffschedule.scss"
 
 export default function Site({ dateRange }) {
+  const [selectedSite, setSelectedSite] = useState(null)
+  const [clickDetails, setClickDetails] = useState(false)
+  const modalRef = useRef(null)
+
+  const handleClickDetails = (siteId) => {
+    setSelectedSite(siteId)
+    setClickDetails(true)
+  }
+
+  const closeModal = () => {
+    setClickDetails(false)
+    setSelectedSite(null)
+  }
+
+  // Close modal when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (modalRef.current && !modalRef.current.contains(event.target)) {
+        closeModal()
+      }
+    }
+
+    if (clickDetails) {
+      document.addEventListener("mousedown", handleClickOutside)
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside)
+    }
+  }, [clickDetails])
+
   const [siteData, setSiteData] = useState({})
   const [siteNames, setSiteNames] = useState({})
   const [operationTypes, setOperationTypes] = useState({})
@@ -162,10 +191,20 @@ export default function Site({ dateRange }) {
                   startDate: response.data.startDate,
                   endDate: response.data.endDate,
                   image: response.data.image || "fallback-site-image.jpg",
+                  address: response.data.address || "No address available",
+                  description: response.data.description || "No description available",
+                  contact: response.data.contact || "No contact information",
                 }
               } catch (error) {
                 console.error(`Error fetching Site ${siteId}:`, error.response?.data || error)
-                return { siteId, name: "Unknown Site", image: "fallback-site-image.jpg" }
+                return {
+                  siteId,
+                  name: "Unknown Site",
+                  image: "fallback-site-image.jpg",
+                  address: "No address available",
+                  description: "No description available",
+                  contact: "No contact information",
+                }
               }
             }),
           )
@@ -174,9 +213,9 @@ export default function Site({ dateRange }) {
           const siteNamesMap = {}
           const siteDataMap = {}
 
-          siteDetails.forEach(({ siteId, name, startDate, endDate, image }) => {
+          siteDetails.forEach(({ siteId, name, startDate, endDate, image, address, description, contact }) => {
             siteNamesMap[siteId] = { name, startDate, endDate }
-            siteDataMap[siteId] = { name, startDate, endDate, image }
+            siteDataMap[siteId] = { name, startDate, endDate, image, address, description, contact }
           })
 
           setSiteNames(siteNamesMap)
@@ -349,74 +388,127 @@ export default function Site({ dateRange }) {
               })
 
               return (
-                <div key={siteId} className="staffRow">
-                  <div className="staffInfo">
-                    <div className="staffDetails">
-                      <p className="staff-name">{site.name || "Loading..."}</p>
-                      <small className="dateRange">
-                        {site.startDate && site.endDate
-                          ? `${dayjs(site.startDate).format("DD/MM/YYYY")} - ${dayjs(site.endDate).format("DD/MM/YYYY")}`
-                          : "No dates available"}
-                      </small>
+                <div key={siteId}>
+                  <div className="staffRow" onClick={() => handleClickDetails(siteId)}>
+                    <div className="staffInfo">
+                      <div className="staffDetails">
+                        <p className="staff-name">{site.name || "Loading..."}</p>
+                        <small className="dateRange">
+                          {site.startDate && site.endDate
+                            ? `${dayjs(site.startDate).format("DD/MM/YYYY")} - ${dayjs(site.endDate).format("DD/MM/YYYY")}`
+                            : "No dates available"}
+                        </small>
+                      </div>
                     </div>
-                  </div>
-                  <div
-                    className="staffTimeline"
-                    style={{
-                      gridTemplateColumns: `repeat(${calendarDays.length}, 1fr)`,
-                    }}
-                  >
-                    {/* Render one bar per operation type */}
-                    {Object.entries(operationsByType).map(([operationtypesId, typeData]) => {
-                      const {
-                        startDate: opStartDate,
-                        endDate: opEndDate,
-                        name: operationTypeName,
-                        color: operationtypesColor,
-                      } = typeData
+                    <div
+                      className="staffTimeline"
+                      style={{
+                        gridTemplateColumns: `repeat(${calendarDays.length +1}, 1fr)`,
+                      }}
+                    >
+                      
+                      {Object.entries(operationsByType).map(([operationtypesId, typeData]) => {
+                        const {
+                          startDate: opStartDate,
+                          endDate: opEndDate,
+                          name: operationTypeName,
+                          color: operationtypesColor,
+                        } = typeData
 
-                      // Skip if invalid dates
-                      if (!opStartDate || !opEndDate || !opStartDate.isValid() || !opEndDate.isValid()) {
-                        return null
-                      }
+                        // Skip if invalid dates
+                        if (!opStartDate || !opEndDate || !opStartDate.isValid() || !opEndDate.isValid()) {
+                          return null
+                        }
 
-                      // Adjust dates to be within the visible range
-                      const visibleOpStart = opStartDate.isBefore(startDate) ? startDate : opStartDate
-                      const visibleOpEnd = opEndDate.isAfter(endDate) ? endDate : opEndDate
+                        // Adjust dates to be within the visible range
+                        const visibleOpStart = opStartDate.isBefore(startDate) ? startDate : opStartDate
+                        const visibleOpEnd = opEndDate.isAfter(endDate) ? endDate : opEndDate
 
-                      // Calculate positions relative to the visible calendar days
-                      const opStartIndex = calendarDays.findIndex((day) => day.date.isSame(visibleOpStart, "day"))
-                      const opEndIndex = calendarDays.findIndex((day) => day.date.isSame(visibleOpEnd, "day"))
+                        // Calculate positions relative to the visible calendar days
+                        const opStartIndex = calendarDays.findIndex((day) => day.date.isSame(visibleOpStart, "day"))
+                        const opEndIndex = calendarDays.findIndex((day) => day.date.isSame(visibleOpEnd, "day"))
 
-                      // Skip if not visible in current range
-                      if (opStartIndex === -1 || opEndIndex === -1) return null
+                        // Skip if not visible in current range
+                        if (opStartIndex === -1 || opEndIndex === -1) return null
 
-                      // Calculate grid positions
-                      const opStartColumn = opStartIndex + 1 // 1-based for grid
-                      const opEndColumn = opEndIndex + 1
-                      const opColumnSpan = opEndColumn - opStartColumn + 1
+                        // Calculate grid positions
+                        const opStartColumn = opStartIndex + 1 // 1-based for grid
+                        const opEndColumn = opEndIndex + 1
+                        const opColumnSpan = opEndColumn - opStartColumn + 1
 
-                      return (
-                        <div
-                          key={`operation-type-${operationtypesId}`}
-                          className="Bar operationTypeBar"
-                          style={{
-                            gridColumn: `${opStartColumn} / span ${opColumnSpan}`,
-                            backgroundColor: operationtypesColor,
-                            height: "5px",
-                            marginBottom: "5px",
-                          }}
-                        >
-                          <span className="BarLabel operationLabel">{operationTypeName}</span>
-                        </div>
-                      )
-                    })}
+                        return (
+                          <div
+                            key={`operation-type-${operationtypesId}`}
+                            className="Bar operationTypeBar"
+                            style={{
+                              gridColumn: `${opStartColumn} / span ${opColumnSpan}`,
+                              backgroundColor: operationtypesColor,
+                              height: "5px",
+                              marginBottom: "5px",
+                            }}
+                          >
+                            <span className="BarLabel operationLabel">{operationTypeName}</span>
+                          </div>
+                        )
+                      })}
+                    </div>
                   </div>
                 </div>
               )
             })
           : !loading && <p className="no-data-message">No site schedule available.</p>}
       </div>
+
+      {/* Modal Box */}
+      {clickDetails && selectedSite && (
+        <div className="modal-overlay">
+          <div className="modal-container" ref={modalRef}>
+            <div className="modal-header">
+              <h2>Site Details</h2>
+              <button className="close-button" onClick={closeModal}>
+                ×
+              </button>
+            </div>
+            <div className="modal-body">
+              <div className="site-details">
+                {/* <div className="site-image">
+                  <img
+                    src={siteData[selectedSite]?.image || "/fallback-site-image.jpg"}
+                    alt={siteData[selectedSite]?.name || "Site"}
+                  />
+                </div> */}
+                <div className="site-info">
+                <div className="info-row flexRow">
+                    <span className="info-label">Site Name:</span>
+                    <span className="info-value">
+                      {siteData[selectedSite]?.name}
+                    </span>
+                  </div>
+                  <div className="info-row flexRow">
+                    <span className="info-label">Schedule:</span>
+                    <span className="info-value">
+                      {siteData[selectedSite]?.startDate && siteData[selectedSite]?.endDate
+                        ? `${dayjs(siteData[selectedSite].startDate).format("DD/MM/YYYY")} - ${dayjs(siteData[selectedSite].endDate).format("DD/MM/YYYY")}`
+                        : "No dates available"}
+                    </span>
+                  </div>
+                  <div className="info-row flexRow">
+                    <span className="info-label">Address:</span>
+                    <span className="info-value">{siteData[selectedSite]?.address}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="modal-footer">
+              <button className="close-button-text" onClick={closeModal}>
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      
     </div>
   )
 }

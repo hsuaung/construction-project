@@ -1,6 +1,4 @@
-"use client"
-
-import React, { useEffect, useState } from "react"
+import React, { useEffect, useRef, useState } from "react"
 import axios from "axios"
 import { useFetchData } from "../HOC/UseFetchData"
 import { useCRUD } from "../HOC/UseCRUD"
@@ -10,8 +8,36 @@ import "./staffschedule.scss"
 
 export default function Staff({ dateRange }) {
 
+  const [selectedStaff, setSelectedStaff] = useState(null)
+  const [clickDetails,setClickDetails] = useState(false)
+  const modalRef = useRef(null)
 
-  
+  const handleClickDetails = (staffId) => {
+    setSelectedStaff(staffId)
+    setClickDetails(true)
+  }
+  const closeModal = () => {
+    setClickDetails(false)
+    setSelectedStaff(null)
+  }
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (modalRef.current && !modalRef.current.contains(event.target)) {
+        closeModal()
+      }
+    }
+
+    if (clickDetails) {
+      document.addEventListener("mousedown", handleClickOutside)
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside)
+    }
+  }, [clickDetails])
+
+
   const [staffData, setStaffData] = useState({})
   const [operationTypes, setOperationTypes] = useState({})
   const [operationDetails, setOperationDetails] = useState({})
@@ -208,23 +234,28 @@ export default function Staff({ dateRange }) {
                   "Content-Type": "application/json",
                 },
               })
+              console.log(response.data);
               return {
                 staffId,
                 name: response.data.name,
                 position: response.data.position,
                 image: response.data.image || "fallback-image.jpg",
+                email:response.data.email,
+                phoneNumber:response.data.phoneNumber,
+                address:response.data.address,
+                dob:response.data.dob
               }
             } catch (error) {
               console.error(`Error fetching staff ${staffId}:`, error.response?.data || error)
-              return { staffId, name: "Unknown Staff", position: "No Position", image: "fallback-image.jpg" }
+              return { staffId, name: "Unknown Staff", position: "No Position", image: "fallback-image.jpg",email:null,phonenumber:null,address:null,dob:null }
             }
           }),
         )
 
         // Store staff details
         const staffMap = {}
-        staffData.forEach(({ staffId, name, position, image }) => {
-          staffMap[staffId] = { name, position, image }
+        staffData.forEach(({ staffId, name, position, image,email,phoneNumber,address,dob }) => {
+          staffMap[staffId] = { name, position, image,email,phoneNumber,address,dob }
         })
 
         setStaffData(staffMap)
@@ -343,7 +374,7 @@ export default function Staff({ dateRange }) {
               if (staffOperations.length === 0) return null
 
               return (
-                <div key={staffId} className="staffRow">
+                <div key={staffId} className="staffRow" onClick={() => handleClickDetails(staffId)}>
                   <div className="staffInfo">
                     <div className="staffAvatar">
                       <img
@@ -360,7 +391,7 @@ export default function Staff({ dateRange }) {
                   <div
                     className="staffTimeline"
                     style={{
-                      gridTemplateColumns: `repeat(${calendarDays.length}, 1fr)`,
+                      gridTemplateColumns: `repeat(${calendarDays.length +1}, 1fr)`,
                     }}
                   >
                     {staffOperations.map((operation, opIndex) => {
@@ -451,6 +482,63 @@ export default function Staff({ dateRange }) {
             })
           : !loading && <p className="no-data-message">No staff schedule available.</p>}
       </div>
+
+      {/* MOdal Box */}
+      {clickDetails && selectedStaff && (
+        <div className="modal-overlay">
+          <div className="modal-container" ref={modalRef}>
+                  <div className="modal-header">
+                    <h2>Staff Details</h2>
+                    <button className="close-button" onClick={closeModal}>
+                      ×
+                    </button>
+                  </div>
+                  <div className="modal-body">
+                    <div className="site-details flexRow" style={{gap:"20px",alignItems:"start"}}>
+                      <div className="site-image">
+                        <img
+                          src={staffData[selectedStaff]?.image || "/fallback-site-image.jpg"}
+                          alt={staffData[selectedStaff]?.name || "Staff"}
+                        />
+                      </div>
+                      <div className="site-info">
+                      <div className="info-row flexRow">
+                          <span className="info-label">Staff Name:</span>
+                          <span className="info-value">
+                            {staffData[selectedStaff]?.name}
+                          </span>
+                        </div>
+                        <div className="info-row flexRow">
+                          <span className="info-label">Position:</span>
+                          <span className="info-value">{staffData[selectedStaff]?.position}</span>
+                        </div>
+                        <div className="info-row flexRow">
+                          <span className="info-label">Email:</span>
+                          <span className="info-value">{staffData[selectedStaff]?.email}</span>
+                        </div>
+                        <div className="info-row flexRow">
+                          <span className="info-label">Phone number:</span>
+                          <span className="info-value">{staffData[selectedStaff]?.phoneNumber}</span>
+                        </div>
+                        <div className="info-row flexRow">
+                          <span className="info-label">Address:</span>
+                          <span className="info-value">{staffData[selectedStaff]?.address}</span>
+                        </div>
+                        <div className="info-row flexRow">
+                          <span className="info-label">Date of Birth:</span>
+                          <span className="info-value">{dayjs(staffData[selectedStaff].startDate).format("DD/MM/YYYY")}</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="modal-footer">
+                    <button className="close-button-text" onClick={closeModal}>
+                      Close
+                    </button>
+                  </div>
+          </div>
+        </div>
+            )}
     </div>
   )
 }

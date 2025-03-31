@@ -1,4 +1,3 @@
-
 //import function
 @use "../../assets/styles/components/functions" as *;
 
@@ -13,12 +12,13 @@ $border-color: #333333;
 $site-one-color: #4CAF50;
 $site-two-color: #2196F3;
 
-.staff-schedule-container{
+.staff-schedule-container {
     overflow-y: scroll;
     height: 60vh;
+
     &::-webkit-scrollbar {
         width: 5px; // Set scrollbar width
-        
+
     }
 
     &::-webkit-scrollbar-thumb {
@@ -31,11 +31,9 @@ $site-two-color: #2196F3;
     }
 
 }
+
 .staff-schedule-content {
-    // background-color: $background-c;
     color: $text-color;
-    // width: 100%;
-    // height: 100%;
     display: flex;
     flex-direction: column;
     padding-left: 15px;
@@ -50,11 +48,14 @@ $site-two-color: #2196F3;
         margin: 10px 0px;
         border-radius: 5px;
         padding: 15px 0px 15px 0px;
+        cursor: pointer;
+        transition: background-color 0.2s;
 
         .staffInfo {
             @include flex(row, start, center, 10px);
             padding-left: 15px;
-            .dateRange{
+
+            .dateRange {
                 font-size: 11px;
             }
 
@@ -81,13 +82,13 @@ $site-two-color: #2196F3;
             position: relative;
 
             .Bar {
-                height: 15px;
-                border-radius: 10px;
+                height: 5px;
+                border-radius: 2px;
                 display: flex;
                 align-items: center;
                 padding-left: 5px;
                 margin: 2px;
-                // position: relative;
+                position: relative;
 
                 .BarLabel {
                     font-size: 10px;
@@ -96,23 +97,29 @@ $site-two-color: #2196F3;
                     overflow: hidden;
                     text-overflow: ellipsis;
 
+                    position: absolute;
+                    top: 5px;
+
                 }
             }
 
             .operationTypeBar {
-                position: relative;
-                top: 0;
+                // position: relative;
+                // top: 0;
 
                 .operationLabel {
-                    position: absolute;
-                    top: 5px;
+                    // position: absolute;
+                    // top: 5px;
                 }
             }
         }
-        &:hover{
-            cursor: pointer;
-            .staffInfo{
-                .staffAvatar img{
+
+
+        &:hover {
+            background-color: rgba(99, 99, 99, 0.247);
+
+            .staffInfo {
+                .staffAvatar img {
                     border: 2px solid $primary-color;
                 }
             }
@@ -134,5 +141,111 @@ $site-two-color: #2196F3;
 
     .no-data-message {
         color: #aaa;
+    }
+}
+
+// model box
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal-container {
+    background-color: #1e1e1e;
+    border-radius: 15px;
+    width: 30%;
+    max-width: 500px;
+    max-height: 40vh;
+    overflow-y: auto;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    color: #fff;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 5px 20px;
+    border-bottom: 1px solid #333;
+}
+
+.modal-header h2 {
+    margin: 0;
+    color: #ff7b04;
+    font-size: 1.1rem;
+}
+
+.close-button {
+    background: none;
+    border: none;
+    font-size: 16px;
+    cursor: pointer;
+    color: #999;
+    transition: color 0.2s;
+}
+
+.close-button:hover {
+    color: #ff7b04;
+    background-color: #1e1e1e;
+}
+
+.modal-body {
+    padding: 15px 20px;
+}
+.site-image {
+    // flex: 0 0 200px;
+    width: 100px;
+    height: 100px;
+    margin-bottom: 10px;
+}
+
+.site-image img {
+    width: 100%;
+    height: 100%;
+    border-radius: 4px;
+    object-fit: cover;
+}
+
+.info-row {
+    margin-bottom: 5px;
+}
+
+.info-label {
+    font-weight: bold;
+    color: #ff7b04;
+    display: block;
+    // margin-bottom: 4px;
+}
+
+.info-value {
+    color: #ddd;
+}
+
+.modal-footer {
+    padding: 12px 20px;
+    border-top: 1px solid #333;
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+.close-button-text {
+    background-color: transparent;
+    border: 1px solid #666;
+    color: #ddd;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    &:hover{
+        background-color: #999;
+        color: white;
     }
 }

@@ -244,6 +244,7 @@ button {
   // background-color: red;
   // height: calc(100vh - #{px-to-rem(65)});
   padding: px-to-rem(10) px-to-rem(20) px-to-rem(10) px-to-rem(10);
+  overflow: hidden;
 }
 
 //button

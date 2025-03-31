@@ -94,6 +94,7 @@
     grid-template-columns: 15% 1fr;
     padding-left: 15px;
     padding-right: 5px;
+    height: 60px;
   }
 
   .calendar-days {
@@ -107,7 +108,7 @@
 
       .day-header {
         text-align: center;
-        background-color: #9A4600;
+        background-color: #9a46005c;
         // background: linear-gradient(45deg, #a3450f, #f27d14);
         padding: 6px 0px;
         border-radius: 3px 3px 0px 0px;
@@ -128,10 +129,10 @@
 
       .day-header-week {
         text-align: center;
-        background-color: #9A4600;
+        background-color: #9a46005c;
         padding: 6px 0px;
         border-radius: 3px 3px 0px 0px;
-        border-bottom: 2px double lightgray;
+        border-bottom: 2px double black;
 
         &.today {
           background: #363636;
@@ -162,7 +163,7 @@
       font-size: 12px;
 
       &.today {
-        background: $secondaryColor;
+        background-color: #e97211;
       }
     }
 
@@ -175,7 +176,7 @@
       font-size: 12px;
 
       &.today {
-        background: $secondaryColor;
+        background-color: #e97211;
       }
     }
 
