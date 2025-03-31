@@ -28,7 +28,7 @@ export default function Entry({
   const [formData, setFormData] = useState({
     name: "",
     address: "",
-    status: "",
+    status: "no scheduled",
     staffId: "",
     businesspartnerId: "",
     startDate: "",
@@ -74,35 +74,92 @@ export default function Entry({
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!validate()) return;
-    console.log("HEE", formData);
+
+    console.log("Form submission started");
+
+    if (!validate()) {
+      console.error("Validation failed", formData);
+      return;
+    }
+
+    console.log("Form is valid, preparing request...");
 
     const url = "http://localhost:8383/site/add";
     const method = "POST";
+    const token = localStorage.getItem("accessToken");
+
+    if (!token) {
+      console.error("No access token found. Redirecting to login...");
+      navigate("/login");
+      return;
+    }
+
     try {
       const response = await axios({
         method,
         url,
         data: formData,
         headers: {
-          Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+          Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
       });
+
       console.log("Response:", response.data);
-      console.log(formData);
+
       if (onSuccess) {
         onSuccess();
       }
+
       setShowCreateModelBox(false);
       navigate("/site");
     } catch (error) {
-      console.error("Error submitting form:", error.message);
+      console.error("Error submitting form:", error);
+
+      if (error.response) {
+        console.error(
+          "Server Response:",
+          error.response.status,
+          error.response.data
+        );
+      } else if (error.request) {
+        console.error("No Response from Server:", error.request);
+      } else {
+        console.error("Request Setup Error:", error.message);
+      }
     }
   };
+
+  // const handleSubmit = async (e) => {
+  //   e.preventDefault();
+  //   if (!validate()) return;
+  //   console.log("HEE", formData);
+
+  //   const url = "http://localhost:8383/site/add";
+  //   const method = "POST";
+  //   try {
+  //     const response = await axios({
+  //       method,
+  //       url,
+  //       data: formData,
+  //       headers: {
+  //         Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+  //         "Content-Type": "application/json",
+  //       },
+  //     });
+  //     console.log("Response:", response.data);
+  //     console.log(formData);
+  //     if (onSuccess) {
+  //       onSuccess();
+  //     }
+  //     setShowCreateModelBox(false);
+  //     navigate("/site");
+  //   } catch (error) {
+  //     console.error("Error submitting form:", error.message);
+  //   }
+  // };
 
   // Handle form clear/reset
   const handleClear = () => {
@@ -267,6 +324,9 @@ export default function Entry({
                           className="select"
                           required
                         >
+                          {/* <option value="" disabled>
+                            --- Select Schedule ---
+                          </option> */}
                           <option value="not scheduled">
                             &#x1F7E5; Not Scheduled (By Default)
                           </option>
@@ -278,6 +338,30 @@ export default function Entry({
                           </option>
                           <option value="completed">&#x1F7E7; Completed</option>
                         </select>
+
+                        {/*                         
+                        <select
+                          name="status"
+                          id="status"
+                          onChange={handleChange}
+                          value={formData.status}
+                          className="select"
+                          required
+                        >
+                          <option value="" disabled>
+                            --- Select Schedule ---
+                          </option>
+                          <option value="not scheduled">
+                            &#x1F7E5; Not Scheduled (By Default)
+                          </option>
+                          <option value="before construction">
+                            &#x1F7E6; Before Construction
+                          </option>
+                          <option value="under construction">
+                            &#x1F7E9; Under Construction
+                          </option>
+                          <option value="completed">&#x1F7E7; Completed</option>
+                        </select> */}
                       </div>
                     </div>
                     <div className="checkBoxContaier">

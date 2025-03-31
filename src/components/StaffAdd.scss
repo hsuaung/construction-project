@@ -1,0 +1,33 @@
+//import function
+@use "../assets/styles/components/functions" as *;
+
+//import components
+@import "../assets/styles/components/variables";
+@import "../assets/styles/components/mixins";
+
+.homeAddContainer {
+  top: 10%;
+  left: 20%;
+  z-index: 20;
+  width: 60vw;
+  .current,
+  .new {
+    background-color: $itemGrayColor;
+    height: 25vh;
+    margin: px-to-rem(10) px-to-rem(20);
+    border-radius: px-to-rem(10);
+    padding: px-to-rem(10);
+  }
+
+  hr {
+    width: 90%;
+    margin: 0 auto;
+    border: 1px solid #36363691;
+    margin-bottom: px-to-rem(5);
+  }
+  .btnGp {
+    width: 100%;
+    text-align: center;
+    margin: px-to-rem(10) 0;
+  }
+}

@@ -99,8 +99,28 @@
       }
     }
   }
+
+  .title {
+    background-color: $itemGrayColor;
+    width: 100%;
+    padding: px-to-rem(5) 0;
+    border-radius: px-to-rem(15) px-to-rem(15) px-to-rem(0) px-to-rem(0);
+    text-align: center;
+
+    h4 {
+      color: $secondaryColor;
+    }
+  }
   .editScheduleTab {
-    padding: px-to-rem(20);
+    background-color: $modelBoxBgColor;
+    position: absolute;
+    bottom: 5%;
+    left: 20%;
+    z-index: 20;
+    box-shadow: rgba(244, 244, 244, 0.15) 1.95px 1.95px 2.6px;
+    border-radius: 20px;
+    // z-index: 30;
+    // padding: px-to-rem(20);
     h1 {
       color: $secondaryColor;
     }
@@ -155,5 +175,20 @@
 }
 .editBtnContainer {
   @include flex(row, space-between, center, px-to-rem(10));
-  margin-top: px-to-rem(20);
+  margin-top: px-to-rem(5);
+  margin-bottom: px-to-rem(5);
+}
+
+.operationFormBtnContainer {
+  margin-right: px-to-rem(20) !important;
+}
+
+.addBtn {
+  background-color: $baseBgGrayColor;
+  border: px-to-rem(1) solid $secondaryColor;
+  padding: px-to-rem(3);
+  color: $secondaryColor;
+  font-size: large;
+  width: px-to-rem(32);
+  border-radius: px-to-rem(5);
 }
