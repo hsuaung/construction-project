@@ -10,7 +10,7 @@ import dayjs from "dayjs";
 import axios from "axios";
 import OperationForm from "./OperationForm";
 function Detail({ onCancel, siteId }) {
-  const { data: siteData } = useFetchData(
+  const { data: siteData} = useFetchData(
     `http://localhost:8383/site/getbyid/${siteId}`
   );
 
@@ -646,12 +646,12 @@ function EditSchedule({ siteId }) {
   const handleCloseOperation = () => setOperationForm(false);
 
   // Fetch site data
-  const { data: siteData } = useFetchData(
+  const { data: siteData,refetch:refetchSiteData } = useFetchData(
     siteId ? `http://localhost:8383/site/getbyid/${siteId}` : null
   );
 
   // Fetch site operations
-  const { data: siteoperationData } = useFetchData(
+  const { data: siteoperationData,refetch:refetchSiteoperationData } = useFetchData(
     siteId ? `http://localhost:8383/siteoperation/getbysiteid/${siteId}` : null
   );
 
@@ -735,6 +735,11 @@ function EditSchedule({ siteId }) {
   const canGoToNext = () => {
     if (!siteData?.endDate) return false;
     return currentDate.startOf("month").isBefore(dayjs(siteData.endDate).startOf("month"));
+  };
+  //refresh
+  const refetchAllData = () => {
+    refetchSiteData();
+    refetchSiteoperationData();
   };
 
   return (
@@ -822,7 +827,7 @@ function EditSchedule({ siteId }) {
           </svg>
       </button>
 
-      {operationForm && <OperationForm onCancel={handleCloseOperation} siteId={siteId} />}
+      {operationForm && <OperationForm onCancel={handleCloseOperation} siteId={siteId} onSuccess={refetchAllData}/>}
     </div>
   );
 }
