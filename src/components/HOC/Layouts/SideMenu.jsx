@@ -1,10 +1,11 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Logo from "../../../assets/images/logo.png";
 
 import { Link, useLocation } from "react-router-dom";
 
 export default function SideMenu() {
   const location = useLocation();
+  const [menuStatus, setMenuStatus] = useState(false);
   const isActive = (path) => {
     const subMenuRoutes = [
       "/staff",
@@ -12,14 +13,15 @@ export default function SideMenu() {
       "/business-partner",
       "/operation-type",
     ];
+  
     if (path === "menu") {
       return subMenuRoutes.includes(location.pathname);
     }
-
     return location.pathname === path;
   };
-  const [menuStatus, setMenuStatus] = useState(false);
-  const handleShowMenu = () => {
+
+
+  const handleShowMenu = (e) => {
     setMenuStatus(!menuStatus);
   };
   const handleLinkClick = () => {

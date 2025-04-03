@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useCRUD } from "../HOC/UseCRUD";
 import "./edit.scss";
 import "../../assets/styles/entry.scss";
@@ -8,10 +8,7 @@ import { useNavigate } from "react-router-dom";
 import { useFetchData } from "../HOC/UseFetchData";
 import dayjs from "dayjs";
 import axios from "axios";
-import OperationType from "./OperationType";
-import SchedularDate from "../HOC/buttons/SchedularDate";
 import OperationForm from "./OperationForm";
-// import "../menu/staff/entry.scss";
 function Detail({ onCancel, siteId }) {
   const { data: siteData } = useFetchData(
     `http://localhost:8383/site/getbyid/${siteId}`
@@ -22,117 +19,114 @@ function Detail({ onCancel, siteId }) {
   return (
     <div className="detailTab">
       <div className="detailTabContent">
-        <h1>Details</h1>
-        <div className="detailTabContentItem">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="28"
-            height="28"
-            viewBox="0 0 28 28"
-            fill="none"
-          >
-            <path
-              d="M16.0802 17.7004L18.5547 15.2259L25.55 22.2213L23.0755 24.6958L16.0802 17.7004ZM20.4167 11.6664C22.6683 11.6664 24.5 9.83477 24.5 7.58311C24.5 6.90644 24.3133 6.27644 24.0217 5.71644L20.8717 8.86644L19.1333 7.12811L22.2833 3.97811C21.7233 3.68644 21.0933 3.49977 20.4167 3.49977C18.165 3.49977 16.3333 5.33144 16.3333 7.58311C16.3333 8.06144 16.4267 8.51644 16.5783 8.93644L14.42 11.0948L12.3433 9.01811L13.1717 8.18977L11.5267 6.54477L14 4.07144C13.3438 3.416 12.4542 3.04785 11.5267 3.04785C10.5992 3.04785 9.7096 3.416 9.05335 4.07144L4.92335 8.20144L6.56835 9.84644H3.27835L2.45001 10.6748L6.58001 14.8048L7.40835 13.9764V10.6748L9.05335 12.3198L9.88168 11.4914L11.9583 13.5681L3.31335 22.2131L5.78668 24.6864L19.0633 11.4214C19.4833 11.5731 19.9383 11.6664 20.4167 11.6664Z"
-              fill="#F27D14"
-            />
-          </svg>
-          <p>{siteData.name}</p>
-        </div>
+        <h2>Details</h2>
+        <div>
+          <div className="detailTabContentItem">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="25"
+              viewBox="0 0 28 28"
+              fill="none"
+            >
+              <path
+                d="M16.0802 17.7004L18.5547 15.2259L25.55 22.2213L23.0755 24.6958L16.0802 17.7004ZM20.4167 11.6664C22.6683 11.6664 24.5 9.83477 24.5 7.58311C24.5 6.90644 24.3133 6.27644 24.0217 5.71644L20.8717 8.86644L19.1333 7.12811L22.2833 3.97811C21.7233 3.68644 21.0933 3.49977 20.4167 3.49977C18.165 3.49977 16.3333 5.33144 16.3333 7.58311C16.3333 8.06144 16.4267 8.51644 16.5783 8.93644L14.42 11.0948L12.3433 9.01811L13.1717 8.18977L11.5267 6.54477L14 4.07144C13.3438 3.416 12.4542 3.04785 11.5267 3.04785C10.5992 3.04785 9.7096 3.416 9.05335 4.07144L4.92335 8.20144L6.56835 9.84644H3.27835L2.45001 10.6748L6.58001 14.8048L7.40835 13.9764V10.6748L9.05335 12.3198L9.88168 11.4914L11.9583 13.5681L3.31335 22.2131L5.78668 24.6864L19.0633 11.4214C19.4833 11.5731 19.9383 11.6664 20.4167 11.6664Z"
+                fill="#F27D14"
+              />
+            </svg>
+            <p>{siteData.name}</p>
+          </div>
 
-        <div className="detailTabContentItem">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="22"
-            height="26"
-            viewBox="0 0 22 26"
-            fill="none"
-          >
-            <path
-              d="M11 13.1663C13.7953 13.1663 16.3375 13.976 18.2077 15.117C19.141 15.6863 19.939 16.3583 20.5153 17.0887C21.0823 17.8062 21.5 18.6648 21.5 19.583C21.5 20.5688 21.0205 21.3458 20.3298 21.9C19.6765 22.425 18.8143 22.7727 17.8985 23.0153C16.0575 23.5018 13.6005 23.6663 11 23.6663C8.3995 23.6663 5.9425 23.503 4.1015 23.0153C3.18567 22.7727 2.3235 22.425 1.67017 21.9C0.978333 21.3447 0.5 20.5688 0.5 19.583C0.5 18.6648 0.917667 17.8062 1.48467 17.0875C2.061 16.3583 2.85783 15.6875 3.79233 15.1158C5.6625 13.9772 8.20583 13.1663 11 13.1663ZM11 0.333008C12.5471 0.333008 14.0308 0.947589 15.1248 2.04155C16.2188 3.13551 16.8333 4.61924 16.8333 6.16634C16.8333 7.71344 16.2188 9.19717 15.1248 10.2911C14.0308 11.3851 12.5471 11.9997 11 11.9997C9.4529 11.9997 7.96917 11.3851 6.87521 10.2911C5.78125 9.19717 5.16667 7.71344 5.16667 6.16634C5.16667 4.61924 5.78125 3.13551 6.87521 2.04155C7.96917 0.947589 9.4529 0.333008 11 0.333008Z"
-              fill="#F27D14"
-            />
-          </svg>
-          {siteData.Businesspartner ? (
-            <p>{siteData.Businesspartner.name}</p>
-          ) : (
-            <p>Loading Business Partner...</p>
-          )}
-        </div>
-        <div className="detailTabContentItem">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="30"
-            height="30"
-            viewBox="0 0 30 30"
-            fill="none"
-          >
-            <path
-              d="M15 18.75C9.475 18.75 5 20.9875 5 23.75V26.25H25V23.75C25 20.9875 20.525 18.75 15 18.75ZM10 11.25C10 12.5761 10.5268 13.8479 11.4645 14.7855C12.4021 15.7232 13.6739 16.25 15 16.25C16.3261 16.25 17.5979 15.7232 18.5355 14.7855C19.4732 13.8479 20 12.5761 20 11.25M14.375 2.5C14 2.5 13.75 2.7625 13.75 3.125V6.875H12.5V3.75C12.5 3.75 9.6875 4.825 9.6875 8.4375C9.6875 8.4375 8.75 8.6125 8.75 10H21.25C21.1875 8.6125 20.3125 8.4375 20.3125 8.4375C20.3125 4.825 17.5 3.75 17.5 3.75V6.875H16.25V3.125C16.25 2.7625 16.0125 2.5 15.625 2.5H14.375Z"
-              fill="#F27D14"
-            />
-          </svg>
-          {siteData.Businesspartner ? (
-            <p>{siteData.Staff.name}</p>
-          ) : (
-            <p>Loading Site Manager ...</p>
-          )}
-        </div>
-        <div className="detailTabContentItem">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="30"
-            height="30"
-            viewBox="0 0 30 30"
-            fill="none"
-          >
-            <path
-              d="M9.6875 3.125C9.6875 2.87636 9.58873 2.6379 9.41292 2.46209C9.2371 2.28627 8.99865 2.1875 8.75 2.1875C8.50136 2.1875 8.26291 2.28627 8.08709 2.46209C7.91128 2.6379 7.8125 2.87636 7.8125 3.125V5.1C6.0125 5.24375 4.8325 5.59625 3.965 6.465C3.09625 7.3325 2.74375 8.51375 2.59875 10.3125H27.4013C27.2563 8.5125 26.9038 7.3325 26.035 6.465C25.1675 5.59625 23.9863 5.24375 22.1875 5.09875V3.125C22.1875 2.87636 22.0887 2.6379 21.9129 2.46209C21.7371 2.28627 21.4986 2.1875 21.25 2.1875C21.0014 2.1875 20.7629 2.28627 20.5871 2.46209C20.4113 2.6379 20.3125 2.87636 20.3125 3.125V5.01625C19.4813 5 18.5488 5 17.5 5H12.5C11.4513 5 10.5188 5 9.6875 5.01625V3.125Z"
-              fill="#F27D14"
-            />
-            <path
-              fill-rule="evenodd"
-              clip-rule="evenodd"
-              d="M2.5 15C2.5 13.9513 2.5 13.0188 2.51625 12.1875H27.4837C27.5 13.0188 27.5 13.9513 27.5 15V17.5C27.5 22.2137 27.5 24.5712 26.035 26.035C24.57 27.4987 22.2137 27.5 17.5 27.5H12.5C7.78625 27.5 5.42875 27.5 3.965 26.035C2.50125 24.57 2.5 22.2137 2.5 17.5V15ZM21.25 17.5C21.5815 17.5 21.8995 17.3683 22.1339 17.1339C22.3683 16.8995 22.5 16.5815 22.5 16.25C22.5 15.9185 22.3683 15.6005 22.1339 15.3661C21.8995 15.1317 21.5815 15 21.25 15C20.9185 15 20.6005 15.1317 20.3661 15.3661C20.1317 15.6005 20 15.9185 20 16.25C20 16.5815 20.1317 16.8995 20.3661 17.1339C20.6005 17.3683 20.9185 17.5 21.25 17.5ZM21.25 22.5C21.5815 22.5 21.8995 22.3683 22.1339 22.1339C22.3683 21.8995 22.5 21.5815 22.5 21.25C22.5 20.9185 22.3683 20.6005 22.1339 20.3661C21.8995 20.1317 21.5815 20 21.25 20C20.9185 20 20.6005 20.1317 20.3661 20.3661C20.1317 20.6005 20 20.9185 20 21.25C20 21.5815 20.1317 21.8995 20.3661 22.1339C20.6005 22.3683 20.9185 22.5 21.25 22.5ZM16.25 16.25C16.25 16.5815 16.1183 16.8995 15.8839 17.1339C15.6495 17.3683 15.3315 17.5 15 17.5C14.6685 17.5 14.3505 17.3683 14.1161 17.1339C13.8817 16.8995 13.75 16.5815 13.75 16.25C13.75 15.9185 13.8817 15.6005 14.1161 15.3661C14.3505 15.1317 14.6685 15 15 15C15.3315 15 15.6495 15.1317 15.8839 15.3661C16.1183 15.6005 16.25 15.9185 16.25 16.25ZM16.25 21.25C16.25 21.5815 16.1183 21.8995 15.8839 22.1339C15.6495 22.3683 15.3315 22.5 15 22.5C14.6685 22.5 14.3505 22.3683 14.1161 22.1339C13.8817 21.8995 13.75 21.5815 13.75 21.25C13.75 20.9185 13.8817 20.6005 14.1161 20.3661C14.3505 20.1317 14.6685 20 15 20C15.3315 20 15.6495 20.1317 15.8839 20.3661C16.1183 20.6005 16.25 20.9185 16.25 21.25ZM8.75 17.5C9.08152 17.5 9.39946 17.3683 9.63388 17.1339C9.8683 16.8995 10 16.5815 10 16.25C10 15.9185 9.8683 15.6005 9.63388 15.3661C9.39946 15.1317 9.08152 15 8.75 15C8.41848 15 8.10054 15.1317 7.86612 15.3661C7.6317 15.6005 7.5 15.9185 7.5 16.25C7.5 16.5815 7.6317 16.8995 7.86612 17.1339C8.10054 17.3683 8.41848 17.5 8.75 17.5ZM8.75 22.5C9.08152 22.5 9.39946 22.3683 9.63388 22.1339C9.8683 21.8995 10 21.5815 10 21.25C10 20.9185 9.8683 20.6005 9.63388 20.3661C9.39946 20.1317 9.08152 20 8.75 20C8.41848 20 8.10054 20.1317 7.86612 20.3661C7.6317 20.6005 7.5 20.9185 7.5 21.25C7.5 21.5815 7.6317 21.8995 7.86612 22.1339C8.10054 22.3683 8.41848 22.5 8.75 22.5Z"
-              fill="#F27D14"
-            />
-          </svg>{" "}
-          <p>
-            {forStartDate.toLocaleDateString("en-US", {
-              year: "numeric",
-              month: "long",
-              day: "numeric",
-            })}
-            ~
-            {forEndDate.toLocaleDateString("en-US", {
-              year: "numeric",
-              month: "long",
-              day: "numeric",
-            })}
-          </p>
-        </div>
-        <div className="detailTabContentItem">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="20"
-            height="28"
-            viewBox="0 0 20 28"
-            fill="none"
-          >
-            <path
-              d="M10 13.3C9.0528 13.3 8.14439 12.9313 7.47462 12.2749C6.80485 11.6185 6.42857 10.7283 6.42857 9.8C6.42857 8.87174 6.80485 7.9815 7.47462 7.32513C8.14439 6.66875 9.0528 6.3 10 6.3C10.9472 6.3 11.8556 6.66875 12.5254 7.32513C13.1952 7.9815 13.5714 8.87174 13.5714 9.8C13.5714 10.2596 13.4791 10.7148 13.2996 11.1394C13.1201 11.564 12.857 11.9499 12.5254 12.2749C12.1937 12.5999 11.8 12.8577 11.3667 13.0336C10.9334 13.2095 10.469 13.3 10 13.3ZM10 0C7.34784 0 4.8043 1.0325 2.92893 2.87035C1.05357 4.70821 0 7.20088 0 9.8C0 17.15 10 28 10 28C10 28 20 17.15 20 9.8C20 7.20088 18.9464 4.70821 17.0711 2.87035C15.1957 1.0325 12.6522 0 10 0Z"
-              fill="#F27D14"
-            />
-          </svg>
-          <p>{siteData.address}</p>
+          <div className="detailTabContentItem">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="25"
+              viewBox="0 0 22 26"
+              fill="none"
+            >
+              <path
+                d="M11 13.1663C13.7953 13.1663 16.3375 13.976 18.2077 15.117C19.141 15.6863 19.939 16.3583 20.5153 17.0887C21.0823 17.8062 21.5 18.6648 21.5 19.583C21.5 20.5688 21.0205 21.3458 20.3298 21.9C19.6765 22.425 18.8143 22.7727 17.8985 23.0153C16.0575 23.5018 13.6005 23.6663 11 23.6663C8.3995 23.6663 5.9425 23.503 4.1015 23.0153C3.18567 22.7727 2.3235 22.425 1.67017 21.9C0.978333 21.3447 0.5 20.5688 0.5 19.583C0.5 18.6648 0.917667 17.8062 1.48467 17.0875C2.061 16.3583 2.85783 15.6875 3.79233 15.1158C5.6625 13.9772 8.20583 13.1663 11 13.1663ZM11 0.333008C12.5471 0.333008 14.0308 0.947589 15.1248 2.04155C16.2188 3.13551 16.8333 4.61924 16.8333 6.16634C16.8333 7.71344 16.2188 9.19717 15.1248 10.2911C14.0308 11.3851 12.5471 11.9997 11 11.9997C9.4529 11.9997 7.96917 11.3851 6.87521 10.2911C5.78125 9.19717 5.16667 7.71344 5.16667 6.16634C5.16667 4.61924 5.78125 3.13551 6.87521 2.04155C7.96917 0.947589 9.4529 0.333008 11 0.333008Z"
+                fill="#F27D14"
+              />
+            </svg>
+            {siteData.Businesspartner ? (
+              <p>{siteData.Businesspartner.name}</p>
+            ) : (
+              <p>Loading Business Partner...</p>
+            )}
+          </div>
+          <div className="detailTabContentItem">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="25"
+              viewBox="0 0 30 30"
+              fill="none"
+            >
+              <path
+                d="M15 18.75C9.475 18.75 5 20.9875 5 23.75V26.25H25V23.75C25 20.9875 20.525 18.75 15 18.75ZM10 11.25C10 12.5761 10.5268 13.8479 11.4645 14.7855C12.4021 15.7232 13.6739 16.25 15 16.25C16.3261 16.25 17.5979 15.7232 18.5355 14.7855C19.4732 13.8479 20 12.5761 20 11.25M14.375 2.5C14 2.5 13.75 2.7625 13.75 3.125V6.875H12.5V3.75C12.5 3.75 9.6875 4.825 9.6875 8.4375C9.6875 8.4375 8.75 8.6125 8.75 10H21.25C21.1875 8.6125 20.3125 8.4375 20.3125 8.4375C20.3125 4.825 17.5 3.75 17.5 3.75V6.875H16.25V3.125C16.25 2.7625 16.0125 2.5 15.625 2.5H14.375Z"
+                fill="#F27D14"
+              />
+            </svg>
+            {siteData.Businesspartner ? (
+              <p>{siteData.Staff.name}</p>
+            ) : (
+              <p>Loading Site Manager ...</p>
+            )}
+          </div>
+          <div className="detailTabContentItem">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="25"
+              viewBox="0 0 30 30"
+              fill="none"
+            >
+              <path
+                d="M9.6875 3.125C9.6875 2.87636 9.58873 2.6379 9.41292 2.46209C9.2371 2.28627 8.99865 2.1875 8.75 2.1875C8.50136 2.1875 8.26291 2.28627 8.08709 2.46209C7.91128 2.6379 7.8125 2.87636 7.8125 3.125V5.1C6.0125 5.24375 4.8325 5.59625 3.965 6.465C3.09625 7.3325 2.74375 8.51375 2.59875 10.3125H27.4013C27.2563 8.5125 26.9038 7.3325 26.035 6.465C25.1675 5.59625 23.9863 5.24375 22.1875 5.09875V3.125C22.1875 2.87636 22.0887 2.6379 21.9129 2.46209C21.7371 2.28627 21.4986 2.1875 21.25 2.1875C21.0014 2.1875 20.7629 2.28627 20.5871 2.46209C20.4113 2.6379 20.3125 2.87636 20.3125 3.125V5.01625C19.4813 5 18.5488 5 17.5 5H12.5C11.4513 5 10.5188 5 9.6875 5.01625V3.125Z"
+                fill="#F27D14"
+              />
+              <path
+                fill-rule="evenodd"
+                clip-rule="evenodd"
+                d="M2.5 15C2.5 13.9513 2.5 13.0188 2.51625 12.1875H27.4837C27.5 13.0188 27.5 13.9513 27.5 15V17.5C27.5 22.2137 27.5 24.5712 26.035 26.035C24.57 27.4987 22.2137 27.5 17.5 27.5H12.5C7.78625 27.5 5.42875 27.5 3.965 26.035C2.50125 24.57 2.5 22.2137 2.5 17.5V15ZM21.25 17.5C21.5815 17.5 21.8995 17.3683 22.1339 17.1339C22.3683 16.8995 22.5 16.5815 22.5 16.25C22.5 15.9185 22.3683 15.6005 22.1339 15.3661C21.8995 15.1317 21.5815 15 21.25 15C20.9185 15 20.6005 15.1317 20.3661 15.3661C20.1317 15.6005 20 15.9185 20 16.25C20 16.5815 20.1317 16.8995 20.3661 17.1339C20.6005 17.3683 20.9185 17.5 21.25 17.5ZM21.25 22.5C21.5815 22.5 21.8995 22.3683 22.1339 22.1339C22.3683 21.8995 22.5 21.5815 22.5 21.25C22.5 20.9185 22.3683 20.6005 22.1339 20.3661C21.8995 20.1317 21.5815 20 21.25 20C20.9185 20 20.6005 20.1317 20.3661 20.3661C20.1317 20.6005 20 20.9185 20 21.25C20 21.5815 20.1317 21.8995 20.3661 22.1339C20.6005 22.3683 20.9185 22.5 21.25 22.5ZM16.25 16.25C16.25 16.5815 16.1183 16.8995 15.8839 17.1339C15.6495 17.3683 15.3315 17.5 15 17.5C14.6685 17.5 14.3505 17.3683 14.1161 17.1339C13.8817 16.8995 13.75 16.5815 13.75 16.25C13.75 15.9185 13.8817 15.6005 14.1161 15.3661C14.3505 15.1317 14.6685 15 15 15C15.3315 15 15.6495 15.1317 15.8839 15.3661C16.1183 15.6005 16.25 15.9185 16.25 16.25ZM16.25 21.25C16.25 21.5815 16.1183 21.8995 15.8839 22.1339C15.6495 22.3683 15.3315 22.5 15 22.5C14.6685 22.5 14.3505 22.3683 14.1161 22.1339C13.8817 21.8995 13.75 21.5815 13.75 21.25C13.75 20.9185 13.8817 20.6005 14.1161 20.3661C14.3505 20.1317 14.6685 20 15 20C15.3315 20 15.6495 20.1317 15.8839 20.3661C16.1183 20.6005 16.25 20.9185 16.25 21.25ZM8.75 17.5C9.08152 17.5 9.39946 17.3683 9.63388 17.1339C9.8683 16.8995 10 16.5815 10 16.25C10 15.9185 9.8683 15.6005 9.63388 15.3661C9.39946 15.1317 9.08152 15 8.75 15C8.41848 15 8.10054 15.1317 7.86612 15.3661C7.6317 15.6005 7.5 15.9185 7.5 16.25C7.5 16.5815 7.6317 16.8995 7.86612 17.1339C8.10054 17.3683 8.41848 17.5 8.75 17.5ZM8.75 22.5C9.08152 22.5 9.39946 22.3683 9.63388 22.1339C9.8683 21.8995 10 21.5815 10 21.25C10 20.9185 9.8683 20.6005 9.63388 20.3661C9.39946 20.1317 9.08152 20 8.75 20C8.41848 20 8.10054 20.1317 7.86612 20.3661C7.6317 20.6005 7.5 20.9185 7.5 21.25C7.5 21.5815 7.6317 21.8995 7.86612 22.1339C8.10054 22.3683 8.41848 22.5 8.75 22.5Z"
+                fill="#F27D14"
+              />
+            </svg>{" "}
+            <p>
+              {forStartDate.toLocaleDateString("en-US", {
+                year: "numeric",
+                month: "long",
+                day: "numeric",
+              })}
+              ~
+              {forEndDate.toLocaleDateString("en-US", {
+                year: "numeric",
+                month: "long",
+                day: "numeric",
+              })}
+            </p>
+          </div>
+          <div className="detailTabContentItem">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="25"
+              viewBox="0 0 20 28"
+              fill="none"
+            >
+              <path
+                d="M10 13.3C9.0528 13.3 8.14439 12.9313 7.47462 12.2749C6.80485 11.6185 6.42857 10.7283 6.42857 9.8C6.42857 8.87174 6.80485 7.9815 7.47462 7.32513C8.14439 6.66875 9.0528 6.3 10 6.3C10.9472 6.3 11.8556 6.66875 12.5254 7.32513C13.1952 7.9815 13.5714 8.87174 13.5714 9.8C13.5714 10.2596 13.4791 10.7148 13.2996 11.1394C13.1201 11.564 12.857 11.9499 12.5254 12.2749C12.1937 12.5999 11.8 12.8577 11.3667 13.0336C10.9334 13.2095 10.469 13.3 10 13.3ZM10 0C7.34784 0 4.8043 1.0325 2.92893 2.87035C1.05357 4.70821 0 7.20088 0 9.8C0 17.15 10 28 10 28C10 28 20 17.15 20 9.8C20 7.20088 18.9464 4.70821 17.0711 2.87035C15.1957 1.0325 12.6522 0 10 0Z"
+                fill="#F27D14"
+              />
+            </svg>
+            <p>{siteData.address}</p>
+          </div>
         </div>
       </div>
       <div className="detailTabMapContainer">
         <div>
           <GoogleMapComoponent />
         </div>
-        <button onClick={onCancel} className="saveBtn ">
+        {/* <button onClick={onCancel} className="saveBtn ">
           Close
-        </button>
+        </button> */}
       </div>
     </div>
   );
@@ -219,7 +213,7 @@ function EditSite({ onCancel, onSuccess, siteId }) {
 
   return (
     <form onSubmit={handleSubmit} className="editSiteTab">
-      <h1>Edit Site</h1>
+      <h2>Edit Site</h2>
       <div className="editSiteTabContent">
         <div>
           <div>
@@ -258,7 +252,7 @@ function EditSite({ onCancel, onSuccess, siteId }) {
                 value={formData.businesspartnerId}
                 name="businesspartnerId"
                 id="businesspartnerId"
-                className="select"
+                className="input"
                 required
               >
                 <option value="" disabled>
@@ -284,7 +278,7 @@ function EditSite({ onCancel, onSuccess, siteId }) {
               value={formData.staffId}
               name="staffId"
               id="staffId"
-              className="select"
+              className="input"
               required
             >
               <option value="" disabled>
@@ -331,7 +325,7 @@ function EditSite({ onCancel, onSuccess, siteId }) {
               id="status"
               onChange={handleChange}
               value={formData.status}
-              className="select"
+              className="input"
               required
             >
               <option value="not scheduled">
@@ -348,9 +342,7 @@ function EditSite({ onCancel, onSuccess, siteId }) {
           </div>
           <div className="scheduleDiv">
             <label htmlFor="name" className="inputLabel">
-              <div className="flexRow">
-                <p>Schedule</p>
-              </div>
+              <p style={{color:"#f27d14"}}>Schedule</p>
             </label>
             <div>
               <label htmlFor="joinedDate" className="inputLabel">
@@ -406,7 +398,7 @@ function EditSite({ onCancel, onSuccess, siteId }) {
           <svg
             onClick={() => handleDeleteData(siteId)}
             xmlns="http://www.w3.org/2000/svg"
-            width="30"
+            width="25"
             viewBox="0 0 30 30"
             fill="none"
           >
@@ -417,7 +409,7 @@ function EditSite({ onCancel, onSuccess, siteId }) {
           </svg>
         </div>
         <div className="btnWrapper">
-          <button onClick={onCancel} className="">
+          <button onClick={onCancel} className="cancelBtn">
             Cancel
           </button>
           <button type="submit" className="saveBtn">
@@ -428,163 +420,415 @@ function EditSite({ onCancel, onSuccess, siteId }) {
     </form>
   );
 }
+// function EditSchedule({ siteId }) {
+//   const [operationForm, setOperationForm] = useState(false);
+//   const [calendarDays, setCalendarDays] = useState([]);
+//   const [currentDate, setCurrentDate] = useState(dayjs());
+//   const calendarRef = useRef(null);
 
-function EditSchedule({
-  onCancel,
-  onSuccess,
-  siteId,
-  showCreateModelBox,
-  setShowCreateModelBox,
-  setShowEditModelBox,
-  showEditModelBox,
-}) {
+//   const handleOpenOperation = () => setOperationForm(true);
+//   const handleCloseOperation = () => setOperationForm(false);
+
+//   // Fetch site data
+//   const { data: siteData } = useFetchData(
+//     siteId ? `http://localhost:8383/site/getbyid/${siteId}` : null
+//   );
+
+//   // Fetch site operation data
+//   const { data: siteoperationData } = useFetchData(
+//     siteId ? `http://localhost:8383/siteoperation/getbysiteid/${siteId}` : null
+//   );
+
+//   console.log("Site Operation Data:", siteoperationData);
+
+//   const operationtypesId = siteoperationData?.[0]?.operationtypesId;
+
+//   console.log("Operation Types ID:", operationtypesId);
+
+//   const { data: operationData } = useFetchData(
+//     operationtypesId ? `http://localhost:8383/operationtypes/getbyid/${operationtypesId}` : null
+//   );
+
+//   console.log("Operation Data:", operationData);
+
+//   // Generate calendar days for the current month only
+//   useEffect(() => {
+//     if (siteData?.startDate && siteData?.endDate) {
+//       const siteStart = dayjs(siteData.startDate);
+//       const siteEnd = dayjs(siteData.endDate);
+      
+//       // If current date is outside the site date range, set to site start date
+//       if (currentDate.isBefore(siteStart) || currentDate.isAfter(siteEnd)) {
+//         setCurrentDate(siteStart);
+//         return;
+//       }
+      
+//       // Get start and end of the current month
+//       const monthStart = currentDate.startOf('month');
+//       const monthEnd = currentDate.endOf('month');
+      
+//       // Adjust to site date range if needed
+//       const displayStart = monthStart.isBefore(siteStart) ? siteStart : monthStart;
+//       const displayEnd = monthEnd.isAfter(siteEnd) ? siteEnd : monthEnd;
+      
+//       let days = [];
+//       let date = displayStart;
+      
+//       while (date.isBefore(displayEnd) || date.isSame(displayEnd, 'day')) {
+//         days.push({
+//           date: date,
+//           dayOfMonth: date.date(),
+//           weekday: date.format("dd").charAt(0),
+//           isToday: date.isSame(dayjs(), "day"),
+//         });
+        
+//         date = date.add(1, 'day');
+//       }
+      
+//       setCalendarDays(days);
+//     }
+//   }, [siteData, currentDate]);
+
+//   // Format date range for display
+//   const formatDateRange = () => {
+//     if (calendarDays.length > 0) {
+//       return currentDate.format("MMMM YYYY");
+//     }
+//     return "No dates available";
+//   };
+
+//   // Adjust date range (prev, next, today)
+//   const adjustDate = (direction) => {
+//     if (direction === "prev") {
+//       setCurrentDate(currentDate.subtract(1, "month"));
+//     } else if (direction === "next") {
+//       setCurrentDate(currentDate.add(1, "month"));
+//     } else if (direction === "today") {
+//       setCurrentDate(dayjs());
+//     }
+//   };
+
+//   // Check if navigation buttons should be disabled
+//   const canGoToPrev = () => {
+//     if (!siteData?.startDate) return false;
+//     const siteStart = dayjs(siteData.startDate);
+//     return !currentDate.startOf('month').isSame(siteStart.startOf('month'));
+//   };
+
+//   const canGoToNext = () => {
+//     if (!siteData?.endDate) return false;
+//     const siteEnd = dayjs(siteData.endDate);
+//     return !currentDate.startOf('month').isSame(siteEnd.startOf('month'));
+//   };
+
+//   return (
+//     <div className="scheduleEdit">
+//       <h2>Schedule</h2>
+      
+//       {/* Date Navigation */}
+//       <div className="dateNavigateDiv">
+//         <div className="dateNavigation">
+//           <button 
+//             className="nav-btn" 
+//             onClick={() => adjustDate("prev")} 
+//             disabled={!canGoToPrev()}
+//             style={{ opacity: canGoToPrev() ? 1 : 0.5 }}
+//           >
+//             <svg xmlns="http://www.w3.org/2000/svg" width="10" height="12" viewBox="0 0 10 12" fill="none">
+//               <path fillRule="evenodd" clipRule="evenodd" d="M8 0.48291L10 1.86222L4 6.00015L10 10.1381L8 11.5174L0 6.00015L8 0.48291Z" fill="#F27D14"/>
+//             </svg>
+//           </button>
+//           <div className="selectedDate">{formatDateRange()}</div>
+//           <button 
+//             className="nav-btn" 
+//             onClick={() => adjustDate("next")} 
+//             disabled={!canGoToNext()}
+//             style={{ opacity: canGoToNext() ? 1 : 0.5 }}
+//           >
+//             <svg xmlns="http://www.w3.org/2000/svg" width="11" height="12" viewBox="0 0 11 12" fill="none">
+//               <path fillRule="evenodd" clipRule="evenodd" d="M2.65934 11.05L0.583257 9.72522L6.34597 5.42987L0.117708 1.45559L2.03861 0.0238068L10.343 5.32285L2.65934 11.05Z" fill="#F27D14"/>
+//             </svg>
+//           </button>
+//         </div>
+//         <button className="todayBtn" onClick={() => adjustDate("today")}>Today</button>
+//       </div>
+
+//       {/* Calendar Timeline */}
+//       <div className="timeline">
+//         <div className="calendarWrapper" ref={calendarRef}>
+//           <div className="calendarTimeline2">
+//             <div className="calendar-days-container2">
+//               <div className="calendar-days2">
+//                 <div className="days-header2">
+//                   {calendarDays.map((day, index) => (
+//                     <div key={index} className={`day-header ${day.isToday ? "today" : ""}`}>
+//                       {day.weekday}
+//                     </div>
+//                   ))}
+//                 </div>
+//                 <div className="days-grid2">
+//                   {calendarDays.map((day, index) => (
+//                     <div key={index} className={`day-cell ${day.isToday ? "today" : ""}`}>
+//                       {day.dayOfMonth}
+//                     </div>
+//                   ))}
+//                 </div>
+//               </div>
+//             </div>
+//           </div>
+//         </div>
+//       </div>
+
+//       {/* Operations Display */}
+//       <div className="operations-container">
+//         {siteoperationData?.map((operation, index) => {
+//           const opStart = dayjs(operation.startDate);
+//           const opEnd = dayjs(operation.endDate);
+          
+//           // Check if operation overlaps with current month view
+//           const monthStart = currentDate.startOf('month');
+//           const monthEnd = currentDate.endOf('month');
+          
+//           // Skip if operation doesn't overlap with current month
+//           if (opEnd.isBefore(monthStart) || opStart.isAfter(monthEnd)) {
+//             return null;
+//           }
+          
+//           // Adjust start and end to current month view if needed
+//           const displayStart = opStart.isBefore(monthStart) ? monthStart : opStart;
+//           const displayEnd = opEnd.isAfter(monthEnd) ? monthEnd : opEnd;
+          
+//           // Get index of operation start and end within calendarDays
+//           const startIndex = calendarDays.findIndex(d => 
+//             d.date.format('YYYY-MM-DD') === displayStart.format('YYYY-MM-DD')
+//           );
+          
+//           const endIndex = calendarDays.findIndex(d => 
+//             d.date.format('YYYY-MM-DD') === displayEnd.format('YYYY-MM-DD')
+//           );
+
+//           if (startIndex === -1 || endIndex === -1) return null; // Skip if dates not in range
+
+//           return (
+//             <div
+//               key={index}
+//               className="operation-bar"
+//               style={{
+//                 display: 'grid',
+//                 backgroundColor: index % 2 === 0 ? "#ff9800" : "#4caf50", // Alternate colors
+//               }}
+//             >
+//               <p>{operation.Operationtype?.name || `Operation ${index + 1}`}</p>
+//             </div>
+//           );
+//         })}
+//       </div>
+
+//       {/* Add new operation */}
+//       <button onClick={handleOpenOperation} className="addOperationFormButton">
+//         <svg xmlns="http://www.w3.org/2000/svg" width="25" height="22" viewBox="0 0 25 22" fill="white">
+//           <path d="M24.6617 12.4777H14.4201V21.3447H11.0062V12.4777H0.764648V9.52203H11.0062V0.655029H14.4201V9.52203H24.6617V12.4777Z" fill="white" />
+//         </svg>
+//       </button>
+
+//       {operationForm && <OperationForm onCancel={handleCloseOperation} siteId={siteId} />}
+//     </div>
+//   );
+// }
+
+function EditSchedule({ siteId }) {
   const [operationForm, setOperationForm] = useState(false);
-  const handleOpenOperation = () => {
-    console.log("handle Create Operation");
-    setOperationForm(true);
-  };
+  const [calendarDays, setCalendarDays] = useState([]);
+  const [currentDate, setCurrentDate] = useState(dayjs());
+  const calendarRef = useRef(null);
 
-  const handleCloseOperation = () => {
-    setOperationForm(false);
-  };
-  console.log("EDIT SCHEDULE SITE ID", siteId);
-  const {
-    handleDelete,
-    handleCreate,
-    handleEdit,
-    loading: crudLoading,
-    error: crudError,
-    deleteStatus,
-    refetch,
-  } = useCRUD();
-  const {
-    data: initialOperations,
-    loading,
-    error,
-    refetch: refetchOperationList,
-  } = useFetchData("http://localhost:8383/operationtypes/list", deleteStatus);
-  console.log("Operation", initialOperations);
-  const [formData, setFormData] = useState({
-    siteId: "",
-    operationtypesId: "",
-    startDate: "",
-    endDate: "",
-    workinghourStart: "",
-    workinghourEnd: "",
-    requiredStaff: "",
-    requiredVehicle: "",
-  });
-  const [operationOptions, setOperationOptions] = useState([]);
-  const [createOperation, setCreateOperation] = useState(false);
+  const handleOpenOperation = () => setOperationForm(true);
+  const handleCloseOperation = () => setOperationForm(false);
+
+  // Fetch site data
+  const { data: siteData } = useFetchData(
+    siteId ? `http://localhost:8383/site/getbyid/${siteId}` : null
+  );
+
+  // Fetch site operations
+  const { data: siteoperationData } = useFetchData(
+    siteId ? `http://localhost:8383/siteoperation/getbysiteid/${siteId}` : null
+  );
+
+  const operationtypesId = siteoperationData?.[0]?.operationtypesId;
+
+  // Fetch operation type data
+  const { data: operationData } = useFetchData(
+    operationtypesId ? `http://localhost:8383/operationtypes/getbyid/${operationtypesId}` : null
+  );
+
+  // Generate calendar days for the current month
   useEffect(() => {
-    setOperationOptions(initialOperations || []);
-  }, [initialOperations]);
-  console.log("Operation Option from Edit", operationOptions);
+    if (siteData?.startDate && siteData?.endDate) {
+      const siteStart = dayjs(siteData.startDate);
+      const siteEnd = dayjs(siteData.endDate);
 
-  const handleOperationCreated = (newOperation) => {
-    setOperationOptions((prevOperations) => [...prevOperations, newOperation]);
+      // Ensure currentDate is within the site’s date range
+      if (currentDate.isBefore(siteStart) || currentDate.isAfter(siteEnd)) {
+        setCurrentDate(siteStart);
+        return;
+      }
+
+      const monthStart = currentDate.startOf("month");
+      const monthEnd = currentDate.endOf("month");
+
+      const displayStart = monthStart.isBefore(siteStart) ? siteStart : monthStart;
+      const displayEnd = monthEnd.isAfter(siteEnd) ? siteEnd : monthEnd;
+
+      let days = [];
+      let date = displayStart;
+
+      while (date.isBefore(displayEnd) || date.isSame(displayEnd, "day")) {
+        days.push({
+          date: date,
+          dayOfMonth: date.date(),
+          weekday: date.format("dd").charAt(0),
+          isToday: date.isSame(dayjs(), "day"),
+        });
+        date = date.add(1, "day");
+      }
+
+      setCalendarDays(days);
+    }
+  }, [siteData, currentDate]);
+
+  // Format month-year for display
+  const formatDateRange = () => {
+    return calendarDays.length > 0 ? currentDate.format("MMMM YYYY") : "No dates available";
   };
 
-  const handleClear = () => {
-    setFormData({
-      siteId: "",
-      operationtypesId: "",
-      startDate: "",
-      endDate: "",
-      workinghourStart: "",
-      workinghourEnd: "",
-      requiredStaff: "",
-      requiredVehicle: "",
-    });
+  // Adjust date range for navigation
+  const adjustDate = (direction) => {
+    if (direction === "prev") {
+      setCurrentDate(currentDate.subtract(1, "month"));
+    } else if (direction === "next") {
+      setCurrentDate(currentDate.add(1, "month"));
+    } else if (direction === "today") {
+      const today = dayjs();
+      if (siteData?.startDate && siteData?.endDate) {
+        const siteStart = dayjs(siteData.startDate);
+        const siteEnd = dayjs(siteData.endDate);
+        if (today.isBefore(siteStart)) {
+          setCurrentDate(siteStart);
+        } else if (today.isAfter(siteEnd)) {
+          setCurrentDate(siteEnd);
+        } else {
+          setCurrentDate(today);
+        }
+      } else {
+        setCurrentDate(today);
+      }
+    }
   };
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value,
-    });
-  };
-  const handleCreateOperation = () => {
-    // navigate("/staff/team");
-    console.log("handle Create Operation");
-    setCreateOperation(true);
-  };
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    console.log("formdata", formData);
-    // if (!validate()) return;
-    // console.log("HEE", formData);
 
-    // const url = "http://localhost:8383/site/add";
-    // const method = "POST";
-    // try {
-    //   const response = await axios({
-    //     method,
-    //     url,
-    //     data: formData,
-    //     headers: {
-    //       Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
-    //       "Content-Type": "application/json",
-    //     },
-    //   });
-    //   console.log("Response:", response.data);
-    //   console.log(formData);
-    //   if (onSuccess) {
-    //     onSuccess();
-    //   }
-    //   setShowCreateModelBox(false);
-    //   navigate("/site");
-    // } catch (error) {
-    //   console.error("Error submitting form:", error.message);
-    // }
+  // Check if navigation buttons should be disabled
+  const canGoToPrev = () => {
+    if (!siteData?.startDate) return false;
+    return currentDate.startOf("month").isAfter(dayjs(siteData.startDate).startOf("month"));
   };
+
+  const canGoToNext = () => {
+    if (!siteData?.endDate) return false;
+    return currentDate.startOf("month").isBefore(dayjs(siteData.endDate).startOf("month"));
+  };
+
   return (
-    <div>
-      {/* <SchedularDate /> */}
-      <h1>{siteId}</h1>
-      <button onClick={handleOpenOperation} className="addOperationFormButton">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="25"
-          height="22"
-          viewBox="0 0 25 22"
-          fill="white"
-        >
-          <path
-            d="M24.6617 12.4777H14.4201V21.3447H11.0062V12.4777H0.764648V9.52203H11.0062V0.655029H14.4201V9.52203H24.6617V12.4777Z"
-            fill="white"
-          />
-        </svg>
+    <div className="scheduleEdit">
+      <h2>Schedule</h2>
 
-        {/* <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="30"
-          height="30"
-          viewBox="0 0 30 30"
-          fill="none"
-        >
-          <path
-            d="M15 3.75H6.25C5.58696 3.75 4.95107 4.01339 4.48223 4.48223C4.01339 4.95107 3.75 5.58696 3.75 6.25V23.75C3.75 24.413 4.01339 25.0489 4.48223 25.5178C4.95107 25.9866 5.58696 26.25 6.25 26.25H23.75C24.413 26.25 25.0489 25.9866 25.5178 25.5178C25.9866 25.0489 26.25 24.413 26.25 23.75V15"
-            stroke="white"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          />
-          <path
-            d="M22.9689 3.28104C23.4661 2.78376 24.1406 2.50439 24.8439 2.50439C25.5471 2.50439 26.2216 2.78376 26.7189 3.28104C27.2161 3.77833 27.4955 4.45278 27.4955 5.15604C27.4955 5.85931 27.2161 6.53376 26.7189 7.03104L15.4526 18.2985C15.1558 18.5951 14.7891 18.8122 14.3864 18.9298L10.7951 19.9798C10.6876 20.0112 10.5735 20.013 10.465 19.9852C10.3565 19.9574 10.2574 19.901 10.1782 19.8217C10.0989 19.7425 10.0425 19.6434 10.0147 19.5349C9.98686 19.4264 9.98875 19.3124 10.0201 19.2048L11.0701 15.6135C11.1883 15.2111 11.4058 14.8449 11.7026 14.5485L22.9689 3.28104Z"
-            stroke="white"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          />
-        </svg> */}
+      {/* Date Navigation */}
+      <div className="dateNavigateDiv">
+        <div className="dateNavigation">
+          <button className="nav-btn" onClick={() => adjustDate("prev")} disabled={!canGoToPrev()}>
+            &lt;
+          </button>
+          <div className="selectedDate">{formatDateRange()}</div>
+          <button className="nav-btn" onClick={() => adjustDate("next")} disabled={!canGoToNext()}>
+            &gt;
+          </button>
+        </div>
+        <button className="todayBtn" onClick={() => adjustDate("today")}>Today</button>
+      </div>
+
+      {/* Calendar Timeline */}
+      <div className="timeline">
+        <div className="calendarWrapper" ref={calendarRef}>
+          <div className="calendarTimeline2">
+            <div className="calendar-days-container2">
+              <div className="calendar-days2">
+                <div className="days-header2">
+                  {calendarDays.map((day, index) => (
+                    <div key={index} className={`day-header ${day.isToday ? "today" : ""}`}>
+                      {day.weekday}
+                    </div>
+                  ))}
+                </div>
+                <div className="days-grid2">
+                  {calendarDays.map((day, index) => (
+                    <div key={index} className={`day-cell ${day.isToday ? "today" : ""}`}>
+                      {day.dayOfMonth}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        {/* Operations Display */}
+      <div className="operations-container">
+        {siteoperationData?.map((operation, index) => {
+          const opStart = dayjs(operation.startDate);
+          const opEnd = dayjs(operation.endDate);
+          const monthStart = currentDate.startOf("month");
+          const monthEnd = currentDate.endOf("month");
+
+          if (opEnd.isBefore(monthStart) || opStart.isAfter(monthEnd)) return null;
+
+          const displayStart = opStart.isBefore(monthStart) ? monthStart : opStart;
+          const displayEnd = opEnd.isAfter(monthEnd) ? monthEnd : opEnd;
+
+          const startIndex = calendarDays.findIndex(d => d.date.isSame(displayStart, "day"));
+          const endIndex = calendarDays.findIndex(d => d.date.isSame(displayEnd, "day"));
+
+          if (startIndex === -1 || endIndex === -1) return null;
+
+          return (
+            <div
+              key={index}
+              className="operation-bar"
+              style={{
+                gridColumn: `${startIndex + 1} / ${endIndex + 2}`,
+                backgroundColor: index % 2 === 0 ? "#ff9800" : "#4caf50",
+              }}
+            >
+              <p>{operation.Operationtype?.name || `Operation ${index + 1}`}</p>
+            </div>
+          );
+        })}
+      </div>
+      </div>
+
+      
+
+      {/* Add Operation Button */}
+      <button onClick={handleOpenOperation} className="addOperationFormButton">
+        <svg xmlns="http://www.w3.org/2000/svg" width="25" height="22" viewBox="0 0 25 22" fill="white">
+            <path d="M24.6617 12.4777H14.4201V21.3447H11.0062V12.4777H0.764648V9.52203H11.0062V0.655029H14.4201V9.52203H24.6617V12.4777Z" fill="white" />
+          </svg>
       </button>
-      {operationForm && (
-        <OperationForm onCancel={handleCloseOperation} siteId={siteId} />
-      )}
+
+      {operationForm && <OperationForm onCancel={handleCloseOperation} siteId={siteId} />}
     </div>
   );
 }
+
+
+
 
 const tabs = [
   {
@@ -698,6 +942,9 @@ export default function Edit({
         <div className=" entryContainer  siteEdit ">
           <div className="modelTitle">
             <h4>Detail Modal Box</h4>
+            <button className="close-button" onClick={closeModal}>
+                ×
+            </button>
           </div>
           <div className="modalContent siteEditForm">
             <div className="tabMenu">
