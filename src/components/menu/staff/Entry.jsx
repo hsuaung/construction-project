@@ -1,16 +1,16 @@
-import dayjs from "dayjs";
-import axios from "axios";
-import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import { useCRUD } from "../../HOC/UseCRUD";
-import { useFetchData } from "../../HOC/UseFetchData";
-import "../../../assets/styles/list.scss";
-import "../../menu/staff/entry.scss";
-import "../../../assets/styles/entry.scss";
-import ImageUpload from "../../HOC/inputBoxes/ImageUpload";
+import dayjs from "dayjs"
+import axios from "axios"
+import { useState, useEffect } from "react"
+import { useNavigate } from "react-router-dom"
+import { useCRUD } from "../../HOC/UseCRUD"
+import { useFetchData } from "../../HOC/UseFetchData"
+import "../../../assets/styles/list.scss"
+import "../../menu/staff/entry.scss"
+import "../../../assets/styles/entry.scss"
+import ImageUpload from "../../HOC/inputBoxes/ImageUpload"
 // import Checkbox from "../../HOC/inputBoxes/Checkbox";
 // import MapComponent from "../../HOC/inputBoxes/MapComponent";
-import Team from "./Team";
+import Team from "./Team"
 export default function Entry({
   id,
   showCreateModelBox,
@@ -27,24 +27,19 @@ export default function Entry({
     error: crudError,
     deleteStatus,
     refetch,
-  } = useCRUD();
+  } = useCRUD()
   const {
     data: initialTeams,
     loading,
     error,
     refetch: refetchTeamList,
-  } = useFetchData("http://localhost:8383/team/list", deleteStatus);
-  const { data: usertypes } = useFetchData(
-    "http://localhost:8383/usertypes/list",
-    deleteStatus
-  );
+  } = useFetchData("http://localhost:8383/team/list", deleteStatus)
+  const { data: usertypes } = useFetchData("http://localhost:8383/usertypes/list", deleteStatus)
   // const { data: skills } = useFetchData("http://localhost:8383/skill/list", deleteStatus);
   // console.log(usertypes);
   // console.log(skills);
   // Fetch data if id is provided
-  const { data: staffData } = useFetchData(
-    id ? `http://localhost:8383/staff/getbyid/${id}` : null
-  );
+  const { data: staffData } = useFetchData(id ? `http://localhost:8383/staff/getbyid/${id}` : null)
 
   const [formData, setFormData] = useState({
     name: "",
@@ -60,59 +55,116 @@ export default function Entry({
     position: "",
     dob: "",
     joinedDate: "",
-  });
+  })
 
-  const [teamOptions, setTeamOptions] = useState([]);
-  const [createTeam, setCreateTeam] = useState(false);
-  const navigate = useNavigate();
+  const [errors, setErrors] = useState({})
+
+  const [teamOptions, setTeamOptions] = useState([])
+  const [createTeam, setCreateTeam] = useState(false)
+  const navigate = useNavigate()
 
   useEffect(() => {
-    setTeamOptions(initialTeams || []);
-  }, [initialTeams]);
+    setTeamOptions(initialTeams || [])
+  }, [initialTeams])
   // console.log(teamOptions);
 
   useEffect(() => {
     if (staffData) {
-      setFormData(staffData);
+      setFormData(staffData)
     }
-  }, [staffData]);
+  }, [staffData])
 
   // Handle input changes
   const handleChange = (e) => {
-    const { name, value } = e.target;
+    const { name, value } = e.target
     setFormData({
       ...formData,
       [name]: value,
-    });
-  };
+    })
+  }
 
   const handleFileChange = (e) => {
-    const file = e.target.files[0];
+    const file = e.target.files[0]
     if (!file.type.startsWith("image/")) {
-      alert("Please upload an image file.");
-      return;
+      alert("Please upload an image file.")
+      return
     }
-    const reader = new FileReader();
+    const reader = new FileReader()
     reader.onload = () => {
-      setFormData({ ...formData, image: reader.result });
-    };
-    reader.readAsDataURL(file);
-  };
+      setFormData({ ...formData, image: reader.result })
+    }
+    reader.readAsDataURL(file)
+  }
 
   const handleTeamCreated = (newTeam) => {
-    setTeamOptions((prevTeams) => [...prevTeams, newTeam]);
-  };
+    setTeamOptions((prevTeams) => [...prevTeams, newTeam])
+  }
+
+  const validate = () => {
+    const newErrors = {}
+
+    // Check required fields with null/undefined checks
+    if (!formData.name || !formData.name.trim()) newErrors.name = "Staff Name is required"
+    if (!formData.teamId) newErrors.teamId = "Please select a Team"
+    if (!formData.email || !formData.email.trim()) newErrors.email = "Email is required"
+    if ((!formData.password || !formData.password.trim()) && !id) newErrors.password = "Password is required"
+    if (!formData.address || !formData.address.trim()) newErrors.address = "Address is required"
+    if (!formData.phoneNumber || !formData.phoneNumber.trim()) newErrors.phoneNumber = "Phone Number is required"
+    if (!formData.employmentStatus) newErrors.employmentStatus = "Employment Status is required"
+    if (!formData.workingStatus) newErrors.workingStatus = "Working Status is required"
+    if (!formData.position) newErrors.position = "Position is required"
+    if (!formData.dob) newErrors.dob = "Date of Birth is required"
+    if (!formData.joinedDate) newErrors.joinedDate = "Joined Date is required"
+    if (!formData.usertypesId) newErrors.usertypesId = "Account Type is required"
+
+    // Email validation - only if email exists
+    if (formData.email && formData.email.trim()) {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+      if (!emailRegex.test(formData.email)) {
+        newErrors.email = "Please enter a valid email address"
+      }
+    }
+
+    // Phone validation - only if phone exists
+    if (formData.phoneNumber && formData.phoneNumber.trim()) {
+      const phoneRegex = /^\d{10,}$/
+      if (!phoneRegex.test(formData.phoneNumber.replace(/[^0-9]/g, ""))) {
+        newErrors.phoneNumber = "Please enter a valid phone number"
+      }
+    }
+
+    // Date validation - only if both dates exist
+    if (formData.dob && formData.joinedDate) {
+      const dobDate = dayjs(formData.dob)
+      const joinedDate = dayjs(formData.joinedDate)
+
+      if (dobDate.isAfter(joinedDate)) {
+        newErrors.joinedDate = "Joined Date cannot be before Date of Birth"
+      }
+
+      if (dobDate.isAfter(dayjs())) {
+        newErrors.dob = "Date of Birth cannot be in the future"
+      }
+    }
+
+    setErrors(newErrors)
+    return Object.keys(newErrors).length === 0
+  }
 
   // Handle form submission
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    console.log("Form Submitted:", formData);
+    e.preventDefault()
 
-    const url = id
-      ? `http://localhost:8383/staff/edit/${id}`
-      : "http://localhost:8383/staff/add";
+    if (!validate()) {
+      console.error("Validation failed", formData)
+      return
+    }
 
-    const method = id ? "PUT" : "POST";
+    console.log("Form Submitted:", formData)
+
+    const url = id ? `http://localhost:8383/staff/edit/${id}` : "http://localhost:8383/staff/add"
+
+    const method = id ? "PUT" : "POST"
     try {
       const response = await axios({
         method,
@@ -122,35 +174,35 @@ export default function Entry({
           Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
           "Content-Type": "application/json",
         },
-      });
+      })
 
-      console.log("Response:", response.data);
-      console.log(formData);
+      console.log("Response:", response.data)
+      console.log(formData)
       // console.log(onSuccessEdit);
       if (onSuccess) {
-        onSuccess();
+        onSuccess()
       }
 
       if (id) {
-        setShowEditModelBox(false);
+        setShowEditModelBox(false)
       } else {
-        setShowCreateModelBox(false);
+        setShowCreateModelBox(false)
       }
-      navigate("/staff");
+      navigate("/staff")
     } catch (error) {
-      console.error("Error submitting form:", error.message);
+      console.error("Error submitting form:", error.message)
     }
-  };
+  }
 
   const handleDeleteData = async (id) => {
-    const url = `http://localhost:8383/staff/delete`;
-    await handleDelete(url, id); // Trigger the delete action
+    const url = `http://localhost:8383/staff/delete`
+    await handleDelete(url, id) // Trigger the delete action
     if (onSuccess) {
-      onSuccess();
+      onSuccess()
     }
-    setShowEditModelBox(false);
-    navigate("/staff");
-  };
+    setShowEditModelBox(false)
+    navigate("/staff")
+  }
 
   // Handle form clear/reset
   const handleClear = () => {
@@ -168,26 +220,28 @@ export default function Entry({
       position: "",
       dob: "",
       joinedDate: "",
-    });
-  };
+    })
+    setErrors({})
+  }
+
   const handleCancel = () => {
     if (!id) {
-      handleClear();
-      setShowCreateModelBox(false);
+      handleClear()
+      setShowCreateModelBox(false)
     } else {
-      setShowEditModelBox(false);
-      handleClear();
+      setShowEditModelBox(false)
+      handleClear()
     }
-    navigate("/staff");
-  };
+    navigate("/staff")
+  }
 
   const handleCreateTeam = () => {
     // navigate("/staff/team");
-    setCreateTeam(true);
-  };
+    setCreateTeam(true)
+  }
 
-  if (loading) return <div>Loading...</div>;
-  if (error) return <div>Error occurred: {error.message}</div>;
+  if (loading) return <div>Loading...</div>
+  if (error) return <div>Error occurred: {error.message}</div>
 
   return (
     <>
@@ -209,7 +263,7 @@ export default function Entry({
                         <p>Team</p>
                       </div>
                       <div className="instruction">
-                        <small>Please Select Team</small>
+                        {errors.teamId && <small className="error">{errors.teamId}</small>}
                       </div>
                     </label>
                     <div className="flexRow" style={{ flexWrap: "nowrap" }}>
@@ -248,7 +302,7 @@ export default function Entry({
                         <path
                           d="M16.917 16.25C18.2977 16.25 19.417 15.1307 19.417 13.75C19.417 12.3693 18.2977 11.25 16.917 11.25C15.5363 11.25 14.417 12.3693 14.417 13.75C14.417 15.1307 15.5363 16.25 16.917 16.25Z"
                           stroke="#F27D14"
-                          stroke-linecap="round"
+                          strokeLinecap="round"
                         />
                         <path
                           d="M20.685 14.2498C20.8153 14.0205 20.9898 13.8192 21.1982 13.6576C21.4067 13.496 21.645 13.3773 21.8996 13.3082C22.1541 13.239 22.4198 13.221 22.6814 13.255C22.9429 13.289 23.1952 13.3744 23.4236 13.5062C23.652 13.6381 23.8521 13.8139 24.0123 14.0234C24.1725 14.2329 24.2897 14.4721 24.3572 14.7271C24.4246 14.9821 24.4409 15.2479 24.4052 15.5092C24.3694 15.7705 24.2824 16.0222 24.149 16.2498C23.8819 16.7054 23.4454 17.0369 22.9348 17.1718C22.4242 17.3068 21.8809 17.2344 21.4236 16.9703C20.9662 16.7062 20.6318 16.272 20.4935 15.7623C20.3551 15.2526 20.4239 14.7089 20.685 14.2498Z"
@@ -265,14 +319,14 @@ export default function Entry({
                         <path
                           d="M29.417 11H25.417C25.2789 11 25.167 11.1119 25.167 11.25C25.167 11.3881 25.2789 11.5 25.417 11.5H29.417C29.5551 11.5 29.667 11.3881 29.667 11.25C29.667 11.1119 29.5551 11 29.417 11Z"
                           stroke="#F27D14"
-                          stroke-width="0.5"
-                          stroke-linecap="round"
+                          strokeWidth="0.5"
+                          strokeLinecap="round"
                         />
                         <path
                           d="M27.667 13.25V9.25C27.667 9.11193 27.5551 9 27.417 9C27.2789 9 27.167 9.11193 27.167 9.25V13.25C27.167 13.3881 27.2789 13.5 27.417 13.5C27.5551 13.5 27.667 13.3881 27.667 13.25Z"
                           stroke="#F27D14"
-                          stroke-width="0.5"
-                          stroke-linecap="round"
+                          strokeWidth="0.5"
+                          strokeLinecap="round"
                         />
                       </svg>
                       {createTeam && (
@@ -299,9 +353,7 @@ export default function Entry({
                         <small>[Required]</small>
                         <p>Staff Name</p>
                       </div>
-                      <div className="instruction">
-                        <small>Please Enter Staff Name</small>
-                      </div>
+                      <div className="instruction">{errors.name && <small className="error">{errors.name}</small>}</div>
                     </label>
                     <div className="flexRow inputRow">
                       <input
@@ -309,7 +361,6 @@ export default function Entry({
                         name="name"
                         value={formData.name}
                         onChange={handleChange}
-                        required
                         className="input"
                         placeholder="Enter Staff Name"
                       />
@@ -324,7 +375,7 @@ export default function Entry({
                         <p>Employment Status</p>
                       </div>
                       <div className="instruction">
-                        <small>Please Select Employment Status</small>
+                        {errors.employmentStatus && <small className="error">{errors.employmentStatus}</small>}
                       </div>
                     </label>
                     <select
@@ -333,7 +384,7 @@ export default function Entry({
                       onChange={handleChange}
                       value={formData.employmentStatus}
                       className="input"
-                      required
+                      
                     >
                       <option value="">--- Select Status ---</option>
                       <option value="Employed">Currently Employed</option>
@@ -349,7 +400,7 @@ export default function Entry({
                         <p>Working Status</p>
                       </div>
                       <div className="instruction">
-                        <small>Please Select Employment Status</small>
+                        {errors.workingStatus && <small className="error">{errors.workingStatus}</small>}
                       </div>
                     </label>
                     <select
@@ -358,7 +409,7 @@ export default function Entry({
                       onChange={handleChange}
                       value={formData.workingStatus}
                       className="input"
-                      required
+                      
                     >
                       <option value="">--- Select Status ---</option>
                       <option value="Available">Available</option>
@@ -374,7 +425,7 @@ export default function Entry({
                         <p>Phone</p>
                       </div>
                       <div className="instruction">
-                        <small>Please Enter Staff Phone</small>
+                        {errors.phoneNumber && <small className="error">{errors.phoneNumber}</small>}
                       </div>
                     </label>
                     <div className="flexRow inputRow">
@@ -383,7 +434,7 @@ export default function Entry({
                         name="phoneNumber"
                         value={formData.phoneNumber}
                         onChange={handleChange}
-                        required
+                        
                         className="input"
                         placeholder="Enter Staff Phone"
                       />
@@ -398,7 +449,7 @@ export default function Entry({
                         <p>Address</p>
                       </div>
                       <div className="instruction">
-                        <small>Please Enter Staff Address</small>
+                        {errors.address && <small className="error">{errors.address}</small>}
                       </div>
                     </label>
 
@@ -420,7 +471,7 @@ export default function Entry({
                         <p>Position</p>
                       </div>
                       <div className="instruction">
-                        <small>Please Select Position</small>
+                        {errors.position && <small className="error">{errors.position}</small>}
                       </div>
                     </label>
                     <div className="flexRow">
@@ -430,11 +481,9 @@ export default function Entry({
                         className="input"
                         onChange={handleChange}
                         value={formData.position}
-                        required
+                        
                       >
-                        <option value="">
-                          --- Select Staff's Position ---
-                        </option>
+                        <option value="">--- Select Staff's Position ---</option>
                         <option value="manager">Manager</option>
                         <option value="engineer">Engineer</option>
                         <option value="driver">Driver</option>
@@ -448,21 +497,15 @@ export default function Entry({
                         <small>[Required]</small>
                         <p>DOB</p>
                       </div>
-                      <div className="instruction">
-                        <small>Please Select DOB</small>
-                      </div>
+                      <div className="instruction">{errors.dob && <small className="error">{errors.dob}</small>}</div>
                     </label>
                     <div className="flexRow inputRow">
                       <input
                         type="date"
                         name="dob"
-                        value={
-                          formData.dob
-                            ? dayjs(formData.dob).format("YYYY-MM-DD")
-                            : ""
-                        }
+                        value={formData.dob ? dayjs(formData.dob).format("YYYY-MM-DD") : ""}
                         onChange={handleChange}
-                        required
+                        
                         className="input"
                         placeholder="Enter Staff DOB"
                       />
@@ -475,20 +518,16 @@ export default function Entry({
                         <p>Joined Date</p>
                       </div>
                       <div className="instruction">
-                        <small>Please Select Joined Date</small>
+                        {errors.joinedDate && <small className="error">{errors.joinedDate}</small>}
                       </div>
                     </label>
                     <div className="flexRow">
                       <input
                         type="date"
                         name="joinedDate"
-                        value={
-                          formData.joinedDate
-                            ? dayjs(formData.joinedDate).format("YYYY-MM-DD")
-                            : ""
-                        }
+                        value={formData.joinedDate ? dayjs(formData.joinedDate).format("YYYY-MM-DD") : ""}
                         onChange={handleChange}
-                        required
+                        
                         className="input"
                       />
                     </div>
@@ -496,17 +535,17 @@ export default function Entry({
                 </div>
                 <div>
                   <div>
-                    <label htmlFor="address" className="inputLabel">
+                    <label htmlFor="image" className="inputLabel">
                       <div className="flexRow">
                         <small>[Required]</small>
                         <p>Profile Photo</p>
                       </div>
+                      <div className="instruction">
+                        {errors.image && <small className="error">{errors.image}</small>}
+                      </div>
                     </label>
                     <div className=" inputRow">
-                      <ImageUpload
-                        handleFileChange={handleFileChange}
-                        value={formData.image}
-                      />
+                      <ImageUpload handleFileChange={handleFileChange} value={formData.image} />
                     </div>
                   </div>
                   <div>
@@ -516,7 +555,7 @@ export default function Entry({
                         <p>Staff Email</p>
                       </div>
                       <div className="instruction">
-                        <small>Please Enter Staff Email</small>
+                        {errors.email && <small className="error">{errors.email}</small>}
                       </div>
                     </label>
                     <div className="flexRow inputRow">
@@ -525,7 +564,7 @@ export default function Entry({
                         name="email"
                         value={formData.email}
                         onChange={handleChange}
-                        required
+                        
                         className="input"
                         placeholder="example@gmail.com"
                       />
@@ -538,7 +577,7 @@ export default function Entry({
                         <p>Staff Password</p>
                       </div>
                       <div className="instruction">
-                        <small>Please Enter Staff Password</small>
+                        {errors.password && <small className="error">{errors.password}</small>}
                       </div>
                     </label>
                     <div className="flexRow inputRow">
@@ -547,20 +586,14 @@ export default function Entry({
                         name="password"
                         value={formData.password}
                         onChange={handleChange}
-                        required
-                        className={`input ${
-                          formData.id ? "readOnlyInput" : ""
-                        }`}
+                        
+                        className={`input ${formData.id ? "readOnlyInput" : ""}`}
                         placeholder="Enter Staff Password"
                         readOnly={!!id}
                       />
                     </div>
                   </div>
-                  <input
-                    type="hidden"
-                    name="workingStatus"
-                    value={formData.workingStatus}
-                  />
+                  <input type="hidden" name="workingStatus" value={formData.workingStatus} />
                   <div>
                     <label htmlFor="usertypesId" className="inputLabel">
                       <div className="flexRow">
@@ -568,7 +601,7 @@ export default function Entry({
                         <p>Account Type</p>
                       </div>
                       <div className="instruction">
-                        <small>Please Account Type</small>
+                        {errors.usertypesId && <small className="error">{errors.usertypesId}</small>}
                       </div>
                     </label>
                     <div className="flexRow inputRow">
@@ -579,8 +612,6 @@ export default function Entry({
                         onChange={handleChange}
                         value={formData.usertypesId}
                       >
-                        {/* <option value="admin">Admin</option>
-                          <option value="staff">Staff</option> */}
                         <option value="">--- Select Account type ---</option>
                         {usertypes.map((option, index) => (
                           <option key={option.id} value={option.id}>
@@ -612,30 +643,18 @@ export default function Entry({
             <div className="btnGp">
               {/* <hr /> */}
               <div className="btnContainer">
-                <button
-                  type="button"
-                  onClick={handleCancel}
-                  className="cancelBtn"
-                >
+                <button type="button" onClick={handleCancel} className="cancelBtn">
                   Cancel
                 </button>
                 <button type="submit" className="saveBtn">
                   {id ? "Update" : "Register"}
                 </button>
                 {id && (
-                  <div
-                    onClick={() => handleDeleteData(id)}
-                    className="deleteBtn"
-                  >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="30"
-                      viewBox="0 0 30 30"
-                      fill="none"
-                    >
+                  <div onClick={() => handleDeleteData(id)} className="deleteBtn">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="30" viewBox="0 0 30 30" fill="none">
                       <path
-                        d="M4.6875 7.5H8.4375V5.15625C8.4375 4.12207 9.27832 3.28125 10.3125 3.28125H19.6875C20.7217 3.28125 21.5625 4.12207 21.5625 5.15625V7.5H25.3125C25.8311 7.5 26.25 7.91895 26.25 8.4375V9.375C26.25 9.50391 26.1445 9.60938 26.0156 9.60938H24.2461L23.5225 24.9316C23.4756 25.9307 22.6494 26.7188 21.6504 26.7188H8.34961C7.34766 26.7188 6.52441 25.9336 6.47754 24.9316L5.75391 9.60938H3.98438C3.85547 9.60938 3.75 9.50391 3.75 9.375V8.4375C3.75 7.91895 4.16895 7.5 4.6875 7.5ZM10.5469 7.5H19.4531V5.39062H10.5469V7.5Z"
-                        fill="#F24822"
+                        d="M4.6875 7.5H8.4375V5.15625C8.4375 4.12207 9.27832 3.28125 10.3125 3.28125H19.6875C20.7217 3.28125 21.5625 4.12207 21.5625 5.15625V7.5H25.3125C25.8311 7.5 26.25 7.91895 26.25 8.4375V9.375C26.25 9.50391 26.1445 9.60938 26.0156 9.60938H24.2461L23.5225 24.9316C23.4756 25.9307 22.6494 26.7188 21.6504 26.7188H8.34961C7.34766 26.7188 6.52441 25.9336 6.47754 24.9316L5.75391 9.60938H3.98438C3.85547 9.60938 3.75 9.50391 3.75 9.375V8.4375C3.75 7.91895 4.16895 7.5 4.6875 7.5Z"
+                        fill="#F27D14"
                       />
                     </svg>
                   </div>
@@ -644,7 +663,25 @@ export default function Entry({
             </div>
           </form>
         </div>
+        {createTeam && (
+          <Team
+            createTeam={createTeam}
+            setCreateTeam={setCreateTeam}
+            teamOptions={teamOptions}
+            setTeamOptions={setTeamOptions}
+            onTeamCreated={handleTeamCreated}
+            showCreateModelBox={showCreateModelBox}
+            showEditModelBox={showEditModelBox}
+            setShowCreateModelBox={setShowCreateModelBox}
+            setShowEditModelBox={setShowEditModelBox}
+            onSuccess={refetchTeamList}
+          />
+        )}
       </div>
     </>
-  );
+  )
 }
+
+
+
+            

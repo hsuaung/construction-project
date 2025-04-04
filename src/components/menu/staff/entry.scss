@@ -11,9 +11,11 @@
   z-index: 20;
   width: 60vw;
 }
-.btnGp{
+
+.btnGp {
   border-top: 1px solid #333;
 }
+
 .imageUploadContainer {
   @include flex(row, center, center, 0);
   width: 100%;
@@ -55,4 +57,18 @@
   &::-webkit-scrollbar-track {
     background: transparent; // Optional: Customize scrollbar track
   }
+}
+
+.error {
+  color: #f24822;
+  font-size: 12px;
+  margin-top: 2px;
+}
+
+.input.error {
+  border-color: #f24822;
+}
+
+.instruction {
+  min-height: 18px;
 }

@@ -801,6 +801,7 @@ function EditSchedule({ siteId }) {
           const endIndex = calendarDays.findIndex(d => d.date.isSame(displayEnd, "day"));
 
           if (startIndex === -1 || endIndex === -1) return null;
+          // console.log(operationData.color);
 
           return (
             <div
@@ -808,11 +809,12 @@ function EditSchedule({ siteId }) {
               className="operation-bar"
               style={{
                 gridColumn: `${startIndex + 1} / ${endIndex + 2}`,
-                backgroundColor: index % 2 === 0 ? "#ff9800" : "#4caf50",
+                backgroundColor: operation.Operationtype?.color || (index % 2 === 0 ? "#ff9800" : "#4caf50"),
               }}
             >
               <p>{operation.Operationtype?.name || `Operation ${index + 1}`}</p>
             </div>
+
           );
         })}
       </div>
