@@ -14,6 +14,7 @@ import Entry from "./Entry";
 import Column from "./Column/Column";
 import "../../../assets/styles/list.scss";
 import { restrictToVerticalAxis } from "@dnd-kit/modifiers";
+import * as XLSX from "xlsx";
 export default function List(params) {
   const {
     handleDelete,
@@ -75,8 +76,32 @@ export default function List(params) {
       setFilteredOperationTypes(filtered)
     }, [operationTypes, searchQuery,siteCounts])
   
+  // const fetchSiteOperationsCount = async (operationTypes) => {
+  //   try { 
+  //     const countPromises = operationTypes.map((o) =>
+  //       axios.get(`http://localhost:8383/siteoperation/getbyoperationtypeid/${o.id}`, {
+  //         headers: {
+  //           Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+  //           "Content-Type": "application/json",
+  //         },
+  //       })
+  //     );
+  
+  //     const countResponses = await Promise.all(countPromises);
+  
+  //     const projectCountMap = countResponses.reduce((acc, response, index) => {
+  //       acc[operationTypes[index].id] = response.data.length || 0;
+  //       return acc;
+  //     }, {});
+  
+  //     setSiteCounts(projectCountMap);
+  //     console.log(siteCounts);
+  //   } catch (error) {
+  //     console.error("Error fetching project counts:", error);
+  //   }
+  // };
   const fetchSiteOperationsCount = async (operationTypes) => {
-    try { 
+    try {
       const countPromises = operationTypes.map((o) =>
         axios.get(`http://localhost:8383/siteoperation/getbyoperationtypeid/${o.id}`, {
           headers: {
@@ -94,9 +119,10 @@ export default function List(params) {
       }, {});
   
       setSiteCounts(projectCountMap);
-      console.log(siteCounts);
+      return projectCountMap; 
     } catch (error) {
       console.error("Error fetching project counts:", error);
+      return {};
     }
   };
   
@@ -149,6 +175,21 @@ export default function List(params) {
     // setSelectedTaskId(null);
   };
 
+  const handleDownloadExcel = async () => {
+    const latestSiteCounts = await fetchSiteOperationsCount(filteredOperationTypes);
+  
+    console.log(latestSiteCounts);
+    const workbook = XLSX.utils.book_new();
+    const formattedData = filteredOperationTypes.map((operationType) => ({
+      "Operation Type Name": operationType.name || "",
+      "Number of Sites Used": latestSiteCounts[operationType.id] || 0,
+    }));
+  
+    const worksheet = XLSX.utils.json_to_sheet(formattedData);
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Operation Types");
+    XLSX.writeFile(workbook, "operation_types.xlsx");
+  };
+  
   if (loading) return <div>Loading...</div>;
   if (error) return <div>Error: {error.message}</div>;
 
@@ -158,8 +199,8 @@ export default function List(params) {
         <section className="searchAndFilter">
           <Search searchQuery={searchQuery} onSearch={setSearchQuery} />
           <div className="filterContainer">
-            <div className="download buttonOne">
-              <svg
+            <div className="download buttonOne" onClick={handleDownloadExcel}>
+              <svg 
                 xmlns="http://www.w3.org/2000/svg"
                 width="20"
                 viewBox="0 0 24 24"

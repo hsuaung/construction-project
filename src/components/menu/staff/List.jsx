@@ -15,6 +15,7 @@ import Entry from "./Entry";
 import Column from "./Column/Column";
 import "./list.scss";
 import Filter from "../../HOC/searchAndFilter/Filter";
+import * as XLSX from "xlsx";
 export default function List(params) {
   const {
     handleDelete,
@@ -199,6 +200,30 @@ export default function List(params) {
 
   const handleFilterModelBox = () => setShowFitlerBox((prev) => !prev)
 
+  		
+  const handleDownloadExcel = () => {
+    // Create a new workbook
+    const workbook = XLSX.utils.book_new();
+    
+    // Format the data for Excel
+    const formattedData = filteredStaffs.map(staff => ({
+      'Name': staff.name,
+      'Email': staff.email,
+      'Team': teamData[staff.teamId] || '',
+      'Staff Type': userTypesData[staff.usertypesId] || '',
+      'Status': staff.workingStatus
+    }));
+    
+    // Convert the data to a worksheet
+    const worksheet = XLSX.utils.json_to_sheet(formattedData);
+    
+    // Add the worksheet to the workbook
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Staff List');
+    
+    // Generate the Excel file and trigger download
+    XLSX.writeFile(workbook, 'staff_list.xlsx');
+  };
+
   if (loading) return <div>Loading...</div>;
   if (error) return <div>Error: {error.message}</div>;
 
@@ -224,7 +249,7 @@ export default function List(params) {
                           />
                         )}
             <div className="download buttonOne">
-              <svg
+              <svg onClick={handleDownloadExcel}
                 xmlns="http://www.w3.org/2000/svg"
                 width="20"
                 viewBox="0 0 24 24"

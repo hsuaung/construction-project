@@ -10,6 +10,7 @@ import Entry from "./Entry";
 import Column from "./Column/Column";
 import "../../../assets/styles/list.scss"
 import { restrictToVerticalAxis } from "@dnd-kit/modifiers";
+import * as XLSX from "xlsx";
 
 export default function List(params) {
   const { handleDelete, 
@@ -92,12 +93,13 @@ export default function List(params) {
   const fetchProjectCounts = async () => {
     try { 
       const countPromises = businessPartners.map((bp) =>
-        axios.get(`http://localhost:8383/site/getbybusinesspartnerid/${bp.id}`),{
+        axios.get(`http://localhost:8383/site/getbybusinesspartnerid/${bp.id}`, {
           headers: {
             Authorization: `Bearer ${accessToken}`,
             "Content-Type": "application/json",
           },
-        }
+        })
+      
       );
   
       const countResponses = await Promise.all(countPromises);
@@ -194,6 +196,26 @@ export default function List(params) {
     navigate('/business-partner/entry')
   }
 
+  const handleDownloadExcel = () => {
+    if (Object.keys(projectCounts).length === 0) {
+      fetchProjectCounts(); // wait for fresh data
+    }
+    console.log("projectCounts:", projectCounts)
+    const workbook = XLSX.utils.book_new()
+
+    const formattedData = filteredbusinessPartners.map((partner) => ({
+      "Partner Name": partner.name,
+      Email: partner.email,
+      "Phone Number": partner.phonenumber,
+      "Number of Projects": projectCounts[partner.id] || 0,
+      "Added By": adminData[partner.staffId] || "",
+    }))
+    const worksheet = XLSX.utils.json_to_sheet(formattedData)
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Business Partners")
+    XLSX.writeFile(workbook, "business_partners.xlsx")
+  }
+
+
   if (loading) return <div>Loading...</div>;
   if (error) return <div>Error: {error.message}</div>;
 
@@ -204,7 +226,7 @@ export default function List(params) {
           <Search searchQuery={searchQuery} onSearch={setSearchQuery} />
           <div className="filterContainer">
             <div className="download buttonOne">
-              <svg xmlns="http://www.w3.org/2000/svg" width="20" viewBox="0 0 24 24" fill="currentColor">
+              <svg onClick={handleDownloadExcel} xmlns="http://www.w3.org/2000/svg" width="20" viewBox="0 0 24 24" fill="currentColor">
                 <path d="M12 16L17 11L15.6 9.55L13 12.15V4H11V12.15L8.4 9.55L7 11L12 16ZM18 20C18.55 20 19.0207 19.8043 19.412 19.413C19.8033 19.0217 19.9993 18.5507 20 18V15H18V18H6V15H4V18C4 18.55 4.19567 19.021 4.587 19.413C4.97833 19.805 5.44933 20.0007 6 20H18Z" />
               </svg>
             </div>

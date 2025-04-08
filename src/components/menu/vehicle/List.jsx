@@ -11,6 +11,7 @@ import { useCRUD } from "../../HOC/UseCRUD"
 import { useFetchData } from "../../HOC/UseFetchData"
 import { useNavigate } from "react-router-dom"
 import { restrictToVerticalAxis } from "@dnd-kit/modifiers"
+import * as XLSX from "xlsx";
 
 export default function List(params) {
   const { 
@@ -153,6 +154,37 @@ export default function List(params) {
   }
 
   const handleFilterModelBox = () => setShowFitlerBox((prev) => !prev)
+  const handleDownloadExcel = () => {
+    // Create a new workbook
+    const workbook = XLSX.utils.book_new()
+
+    // Format the data for Excel
+    const formattedData = filteredVehicles.map((vehicle) => {
+      // Format dates for better readability in Excel
+      const formatDate = (dateString) => {
+        if (!dateString) return ""
+        const date = new Date(dateString)
+        return date instanceof Date && !isNaN(date) ? date.toLocaleDateString() : dateString
+      }
+
+      return {
+        "Vehicle Name": vehicle.name,
+        Group: groupData[vehicle.groupId] || "",
+        "Inspection Expiry": formatDate(vehicle.inspectionExpiry),
+        "Insurance Expiry": formatDate(vehicle.insuranceExpiry),
+        Status: vehicle.status,
+      }
+    })
+
+    // Convert the data to a worksheet
+    const worksheet = XLSX.utils.json_to_sheet(formattedData)
+
+    // Add the worksheet to the workbook
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Vehicle List")
+
+    // Generate the Excel file and trigger download
+    XLSX.writeFile(workbook, "vehicle_list.xlsx")
+  }
 
   if (loading) return <div>Loading...</div>
   if (error) return <div>Error: {error.message}</div>
@@ -173,13 +205,13 @@ export default function List(params) {
             </div>
             {showFitlerBox && (
               <Filter
-                uniqueStatuses={uniqueStatuses}
-                onSelect={(status) => setSearchQuery(status)}
+                uniqueStatuses={uniqueStatuses}     
+                onSelect={(status) => setSearchQuery(status)} 
                 isVisible={showFitlerBox}
               />
             )}
             <div className="download buttonOne">
-              <svg xmlns="http://www.w3.org/2000/svg" width="20" viewBox="0 0 24 24" fill="currentColor">
+              <svg onClick={handleDownloadExcel} xmlns="http://www.w3.org/2000/svg" width="20" viewBox="0 0 24 24" fill="currentColor">
                 <path
                   d="M12 16L17 11L15.6 9.55L13 12.15V4H11V12.15L8.4 9.55L7 11L12 16ZM18 20C18.55 20 19.0207 19.8043 19.412 19.413C19.8033 19.0217 19.9993 18.5507 20 18V15H18V18H6V15H4V18C4 18.55 4.19567 19.021 4.587 19.413C4.97833 19.805 5.44933 20.0007 6 20H18Z"
                   fill="currentColor"
