@@ -97,7 +97,8 @@ const Login = () => {
   };
 
   return (
-    <div className="loginContainer">
+    <div className="flexColLogin">
+      <div className="loginContainer">
       <form onSubmit={handleLogin} className="loginBox">
         <img src={Logo} alt="Logo" width={180} height={150} />
         <div>
@@ -171,6 +172,7 @@ const Login = () => {
 
         <button type="submit">Login</button>
       </form>
+      </div>
     </div>
   );
 };
