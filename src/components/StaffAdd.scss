@@ -17,17 +17,30 @@
     margin: px-to-rem(10) px-to-rem(20);
     border-radius: px-to-rem(10);
     padding: px-to-rem(10);
+    overflow-y: scroll;
+    .search {
+      width: 200px;
+    }
+    .singleAddContainer {
+      background-color: $itemGrayColor;
+      @include flex(row, left, center, px-to-rem(10));
+    }
+    .singleAddData {
+      background-color: $instructionGrayColor;
+      border-radius: px-to-rem(50);
+      padding: px-to-rem(3);
+      min-width: px-to-rem(200);
+      @include flex(row, center, center, px-to-rem(10));
+    }
+    .singleAddData.disabled {
+      pointer-events: none;
+      opacity: 0.5;
+    }
   }
 
-  hr {
-    width: 90%;
-    margin: 0 auto;
-    border: 1px solid #36363691;
-    margin-bottom: px-to-rem(5);
-  }
   .btnGp {
     width: 100%;
     text-align: center;
-    margin: px-to-rem(10) 0;
+    padding: px-to-rem(10) 0;
   }
 }

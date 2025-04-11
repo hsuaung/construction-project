@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-// import BtnModelBox from "./HOC/buttons/BtnModelBox";
+
 import "../assets/styles/buttons/btnModalBox.scss";
 import Profile from "../assets/images/sampleProfile.jpg";
 import HomeDate from "./HOC/buttons/HomeDate";
@@ -11,6 +11,10 @@ import { useCRUD } from "../components/HOC/UseCRUD";
 
 import StaffAdd from "./StaffAdd";
 import VehicleAdd from "./VehicleAdd";
+
+import Entry from "./site/Entry";
+
+import Edit from "./site/Edit";
 export default function Home() {
   const navigate = useNavigate();
   const {
@@ -42,18 +46,23 @@ export default function Home() {
       setSites(siteList);
     }
   }, [siteList]);
-  console.log(siteList);
 
   const SiteDetail = ({ site }) => {
     const { data: operationData } = useFetchData(
       `http://localhost:8383/siteoperation/getBySiteId/${site.id}`
     );
 
+    const { data: selectedStaffs } = useFetchData(
+      `http://localhost:8383/siteoperationstaffvehicle/getbysiteoperationtypeid/${siteOperationId}`,
+      deleteStatus
+    );
     return (
       <div className="detailContainer">
         <div className="detailHeader">
           <h3>{site.name}</h3>
+          {/* <h1>{site.id}</h1> */}
           <svg
+            onClick={() => handleEditModelBox(site.id)}
             xmlns="http://www.w3.org/2000/svg"
             width="18"
             viewBox="0 0 18 4"
@@ -74,11 +83,11 @@ export default function Home() {
                     <h4>
                       {operation.Operationtype?.name || "No Operation Type"}
                     </h4>
-                    {/* <p>{JSON.stringify(site)}</p> */}
+
                     <div className="operationDetailInfo">
                       <div className="flexStart">
                         <svg
-                          xmlns="http://www.w3.org/2000/svg"
+                          xmlns="http://ww>w.w3.org/2000/svg"
                           width="16"
                           viewBox="0 0 16 14"
                           fill="none"
@@ -164,19 +173,13 @@ export default function Home() {
                     </div>
                   </div>
                 </section>
+
                 <section className="staffVehicleDetail">
                   <div className="staffContainer">
                     {/* staff */}
                     <div className="staffDetailContainer">
-                      <div className="staffDetail">
-                        <div className="staffImgContainer">
-                          <div className="teamColor"></div>
-                          <img src={Profile} alt="" className="staffImg" />
-                        </div>
-                        <p className="staffName">Staff 1</p>
-                      </div>
+                      <StaffPreview id={operation.id} />
                     </div>
-
                     {/* add btn */}
                     <div className="addStaffBtn">
                       <svg
@@ -203,19 +206,18 @@ export default function Home() {
                   <div className="vehicleContainer">
                     {/* vehicle */}
                     <div className="vehicleDetailContainer">
-                      <div className="vehicleDetail">
+                      <VehiclePreview id={operation.id} />
+                      {/* <div className="vehicleDetail">
                         <div className="vehicleImgContainer">
                           <div className="gpColor"></div>
                           <img src={Profile} alt="" className="vehicleImg" />
                         </div>
                         <p className="vehicleName">Vehicle 1</p>
-                      </div>
+                      </div> */}
                     </div>
                     <div className="addVehicleBtn">
                       <svg
-                        onClick={() => {
-                          setShowVehicleAdd(true);
-                        }}
+                        onClick={() => handleVehicleShow(site, operation)}
                         xmlns="http://www.w3.org/2000/svg"
                         width="35"
                         viewBox="0 0 50 50"
@@ -259,29 +261,141 @@ export default function Home() {
       </>
     );
   };
+  const StaffPreview = ({ id }) => {
+    const { data: selectedStaffs } = useFetchData(
+      `http://localhost:8383/siteoperationstaffvehicle/getstaffbysiteoperationtypeid/${id}`,
+      deleteStatus
+    );
+    const { data: Teams } = useFetchData(
+      "http://localhost:8383/team/list",
+      deleteStatus
+    );
+    return (
+      <>
+        {selectedStaffs.length > 0 ? (
+          selectedStaffs.map((staff) => {
+            const teamId = staff.Staff?.teamId;
+            const team = Teams?.find((g) => g.id === teamId) || {};
+
+            return (
+              <div className="staffDetail" key={staff.Staff?.id}>
+                <div className="staffImgContainer">
+                  <div
+                    className="teamColor"
+                    style={{ backgroundColor: team.color || "gray" }}
+                  ></div>
+                  <img
+                    src={staff.Staff?.image || "/default-avatar.png"}
+                    alt={staff.Staff?.name}
+                    className="staffImg"
+                  />
+                </div>
+                <p className="staffName">{staff.Staff?.name}</p>
+              </div>
+            );
+          })
+        ) : (
+          <p className="noStaffMessage">No staff assigned</p>
+        )}
+      </>
+    );
+  };
+  const VehiclePreview = ({ id }) => {
+    const { data: selectedVehicles } = useFetchData(
+      `http://localhost:8383/siteoperationstaffvehicle/getvehiclebysiteoperationtypeid/${id}`,
+      deleteStatus
+    );
+
+    const { data: Groups } = useFetchData(
+      "http://localhost:8383/group/list",
+      deleteStatus
+    );
+    return (
+      <>
+        {selectedVehicles.length > 0 ? (
+          selectedVehicles.map((vehicle) => {
+            const groupId = vehicle.Vehicle?.groupId;
+            const group = Groups?.find((g) => g.id === groupId) || {};
+
+            return (
+              <div className="staffDetail" key={vehicle.Vehicle?.id}>
+                <div className="staffImgContainer">
+                  <div
+                    className="teamColor"
+                    style={{ backgroundColor: group.color || "gray" }}
+                  ></div>
+                  <img
+                    src={vehicle.Vehicle?.image || "/default-avatar.png"}
+                    alt={vehicle.Vehicle?.name}
+                    className="staffImg"
+                  />
+                </div>
+                <p className="staffName">{vehicle.Vehicle?.name}</p>
+              </div>
+            );
+          })
+        ) : (
+          <p className="noStaffMessage">No Vehicle assigned</p>
+        )}
+      </>
+    );
+  };
 
   // for staff add
   const [showStaffAdd, setShowStaffAdd] = useState(false);
-  const [showVehicleAdd, setShowVehicleAdd] = useState(false);
+
   const [site, setSite] = useState("Example");
   const [siteOperationId, setSiteOperationId] = useState(null);
   const handleStaffShow = (site, operation) => {
-    // alert("Click");
     setSiteOperationId(operation.id);
     setSite(site.name);
-
     setShowStaffAdd(true);
   };
+
+  //for vehicle add
+  const [showVehicleAdd, setShowVehicleAdd] = useState(false);
+  const handleVehicleShow = (site, operation) => {
+    setSiteOperationId(operation.id);
+    setSite(site.name);
+    setShowVehicleAdd(true);
+  };
+
+  // for add site
+  const [showCreateModelBox, setShowCreateModelBox] = useState(false);
+  // const [selectedTaskId, setSelectedTaskId] = useState(null);
+
+  const handleCreateModelBox = () => {
+    setShowCreateModelBox(true);
+    console.log("Testing CreateModelBox");
+    // setSelectedTaskId(null);
+  };
+
+  // for edit site
+  const [showEditModelBox, setShowEditModelBox] = useState(false);
+  const [selectedTaskId, setSelectedTaskId] = useState(null);
+  const handleEditModelBox = (id) => {
+    console.log("Editing task:", id);
+    setShowEditModelBox(true);
+    setSelectedTaskId(id); // Store only the ID, not an object
+  };
+  const closeModal = () => {
+    // setShowEditModelBox(false); // Hide modal
+    setSelectedTaskId(null);
+    if (refetchSiteList) {
+      refetchSiteList();
+    }
+  };
+
   return (
     <div>
-      {/* <BtnModelBox cancel="Return" save="Add" /> */}
       <section className="dateFilterSection">
-        {/* Filter Section */}
         <HomeDate />
-        <button className="createNewBtn">+ New Site</button>
+
+        <button className="createNewBtn" onClick={handleCreateModelBox}>
+          + New Site
+        </button>
       </section>
       <section className="allDetailsSection">
-        {/* Info Section */}
         <div className="allDetails">
           <SiteList siteList={siteList} />
         </div>
@@ -296,11 +410,30 @@ export default function Home() {
       )}
       {showVehicleAdd && (
         <VehicleAdd
+          site={site}
+          siteOperationId={siteOperationId}
           showVehicleAdd={showVehicleAdd}
           setShowVehicleAdd={setShowVehicleAdd}
         />
       )}
-      {/* {showStaffAdd ? } */}
+
+      {showCreateModelBox && (
+        <Entry
+          showCreateModelBox={showCreateModelBox}
+          setShowCreateModelBox={setShowCreateModelBox}
+          onSuccess={refetchSiteList}
+        />
+      )}
+
+      {showEditModelBox && selectedTaskId && (
+        <Edit
+          showEditModelBox={showEditModelBox}
+          setShowEditModelBox={setShowEditModelBox}
+          id={selectedTaskId} // Use the selected task ID
+          closeModal={closeModal} // Ensure modal can close
+          onSuccess={refetchSiteList}
+        />
+      )}
     </div>
   );
 }

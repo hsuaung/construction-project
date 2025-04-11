@@ -114,7 +114,9 @@ export default function Entry({
       }
 
       setShowCreateModelBox(false);
-      navigate("/site");
+      // navigate(-1);
+
+      // navigate("/site");
     } catch (error) {
       console.error("Error submitting form:", error);
 
@@ -367,7 +369,7 @@ export default function Entry({
                     <div className="checkBoxContaier">
                       <label htmlFor="name" className="inputLabel">
                         <div className="flexRow">
-                          <p style={{color:"#f27d14"}}>Schedule</p>
+                          <p style={{ color: "#f27d14" }}>Schedule</p>
                         </div>
                       </label>
                       <div>
