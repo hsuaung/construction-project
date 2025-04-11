@@ -23,6 +23,7 @@ import {
 import Entry from "./Entry";
 import Column from "./Column/Column";
 import "./list.scss";
+import * as XLSX from "xlsx";
 
 export default function List(params) {
   const {
@@ -139,7 +140,39 @@ export default function List(params) {
   if (error) return <div>Error: {error.message}</div>;
 
   const handleFilterModelBox = () => setShowFitlerBox((prev) => !prev);
+  const handleDownloadExcel = () => {
+    // Create a new workbook
+    const workbook = XLSX.utils.book_new()
 
+    // Format the data for Excel
+    const formattedData = filteredSites.map((site) => {
+      // Format dates for better readability in Excel
+      const formatDate = (dateString) => {
+        if (!dateString) return ""
+        const date = new Date(dateString)
+        return date instanceof Date && !isNaN(date) ? date.toLocaleDateString() : dateString
+      }
+
+      return {
+        "Site Name": site.name,
+        "Business Partner": site.Businesspartner?.name || "",
+        "Company Representative": site.Staff?.name || "",
+        Address: site.address || "",
+        "Start Date": formatDate(site.startDate),
+        "End Date": formatDate(site.endDate),
+        Status: site.status || "",
+      }
+    })
+
+    // Convert the data to a worksheet
+    const worksheet = XLSX.utils.json_to_sheet(formattedData)
+
+    // Add the worksheet to the workbook
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Site List")
+
+    // Generate the Excel file and trigger download
+    XLSX.writeFile(workbook, "site_list.xlsx")
+  }
   return (
     <>
       <div className="container">
@@ -167,7 +200,7 @@ export default function List(params) {
               />
             )}
             <div className="download buttonOne">
-              <svg
+              <svg onClick={handleDownloadExcel}
                 xmlns="http://www.w3.org/2000/svg"
                 width="20"
                 viewBox="0 0 24 24"

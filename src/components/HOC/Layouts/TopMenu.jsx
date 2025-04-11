@@ -1,9 +1,21 @@
 import React from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import Profile from "../../../assets/images/sampleProfile.jpg";
+// import Profile from "../../../assets/images/sampleProfile.jpg";
+import { useFetchData } from "../UseFetchData";
 // import Profile from "../assets/images/sampleProfile.jpg";
 
 export default function TopMenu() {
+  const adminId = localStorage.getItem("id");
+  console.log(adminId);
+  const {
+      data: AdminData,
+      loading,
+      error
+  } = useFetchData(`http://localhost:8383/staff/getbyid/${adminId}`);
+  console.log(AdminData.image);
+  const image = AdminData.image;
+
+
   const { pathname } = useLocation();
   const navigate = useNavigate();
   const titles = {
@@ -20,7 +32,7 @@ export default function TopMenu() {
   return (
     <section className="topMenu">
       <div className="menuTitle">
-        <button onClick={()=> navigate(-1)} style={{backgroundColor:"transparent",border:"none"}}>
+        <button onClick={()=> navigate("/")} style={{backgroundColor:"transparent",border:"none"}}>
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="10"
@@ -42,7 +54,7 @@ export default function TopMenu() {
         <p>Welcome Back!</p>
         <div>
           <Link to="/userprofile">
-            <img src={Profile} alt="profile" className="profilePopUp" />
+            <img src={image} alt="profile" className="profilePopUp" />
           </Link>
         </div>
       </div>

@@ -492,7 +492,7 @@ export default function Vehicle({ dateRange }) {
           <div className="modal-container" ref={modalRef}>
                   <div className="modal-header">
                     <h2>Vehicle Details</h2>
-                    <button className="close-button" onClick={closeModal}>
+                    <button className="closeButton" onClick={closeModal}>
                       ×
                     </button>
                   </div>

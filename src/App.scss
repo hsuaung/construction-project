@@ -175,6 +175,7 @@ button {
 
   .menu {
     position: absolute;
+    z-index: 5000;
     left: 100px;
     top: 0px;
     min-width: 150px;
@@ -295,16 +296,21 @@ button {
 }
 
 .cancelBtn {
-  background-color: $itemGrayColor;
+  background-color: #333;
   border: none;
-  color: $itemOrangeColor;
+  color: $whiteColor;
   border-radius: px-to-rem(20);
-  opacity: 0.9;
-  padding: px-to-rem(7) px-to-rem(10);
+  // opacity: 0.5;
+  // padding: px-to-rem(7) px-to-rem(10);
+  padding: px-to-rem(7) px-to-rem(13);
+  // opacity: 0.9;
+  padding: px-to-rem(6) px-to-rem(15);
 
-  &:hover,
-  &:focus {
-    opacity: 0.5;
+  &:hover{
+    background-color: $itemGrayColor;
+    color: $secondaryColor;
+    // opacity: 1;
+    
   }
 }
 
@@ -314,14 +320,15 @@ button {
   color: $whiteColor;
   border-radius: px-to-rem(20);
   padding: px-to-rem(7) px-to-rem(13);
-  opacity: 0.9;
+  // opacity: 0.9;
   padding: px-to-rem(6) px-to-rem(15);
 
-  &:hover,
-  &:focus {
-    opacity: 0.5;
-    color: $whiteColor;
+  &:hover{
+    background-color: $itemGrayColor;
+    color: $secondaryColor;
+    // opacity: 1;
   }
+  
 }
 
 .createNewBtn {

@@ -291,7 +291,7 @@ export default function OperationForm({
         <div className="operationFormBtnContainer editBtnContainer ">
           <div></div>
           <div className="btnWrapper">
-            <button onClick={onCancel} className="">
+            <button onClick={onCancel} className="cancelBtn">
               Cancel
             </button>
             <button type="submit" className="saveBtn">
